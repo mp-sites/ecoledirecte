@@ -623,7 +623,7 @@ body.auth-pending #loginOverlay{ display:flex }
 /* Mode élève : consultation uniquement */
 body.student-mode .locks,
 body.student-mode #settingsBtn, body.student-mode .tab-btn[data-target="classesView"], body.student-mode #saveStatusBanner,
-body.student-mode #importBanner, body.student-mode #deleteStudentBtn, body.student-mode #appreciationWarning,
+body.student-mode #importBanner, body.student-mode #deleteStudentBtn, body.student-mode #openAddStudentBtn, body.student-mode #editStudentBtn, body.student-mode #appreciationWarning,
 body.student-mode .split-student > .panel:first-child, body.student-mode #appreciationsView .split > .panel:first-child,
 body.student-mode #addNoteBtn, body.student-mode #addGroupNoteBtn, body.student-mode #addCompBtn,
 body.student-mode #studentContent .subtabs, body.student-mode #prof,
@@ -2005,22 +2005,20 @@ header .header-actions{margin-left:auto;align-items:center}
   <div class="card">
    <div class="card-header">
     <div class="hdr-left"><div class="carnet-sub" style="display:none"><div class="subtabs" role="tablist" aria-label="Carnet de notes"><button type="button" class="subtab-btn" data-carnet="eleves" role="tab"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 21v-1.5a5.5 5.5 0 0 1 5.5-5.5h3a5.5 5.5 0 0 1 5.5 5.5V21z"/></svg><span>Élèves</span></button><button type="button" class="subtab-btn" data-carnet="classes" role="tab"><svg viewBox="0 0 24 24" width="24" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.2"/><path d="M6.5 21v-1.5a4.5 4.5 0 0 1 4.5-4.5h2a4.5 4.5 0 0 1 4.5 4.5V21z"/><circle cx="4.2" cy="9.5" r="2.2"/><path d="M1.5 21v-1.2a3 3 0 0 1 3-3"/><circle cx="19.8" cy="9.5" r="2.2"/><path d="M22.5 21v-1.2a3 3 0 0 0-3-3"/></svg><span>Classes &amp; groupes</span></button></div></div></div>
-    <div style="display:flex;gap:8px;">
+    <div class="hdr-actions" style="display:flex;gap:8px;">
+     <button class="btn btn-primary" id="openAddStudentBtn" type="button">＋ Ajouter élève</button>
+     <button class="btn" id="editStudentBtn" type="button">Modifier élève</button>
      <button class="btn btn-danger" id="deleteStudentBtn">Supprimer élève</button>
     </div>
    </div>
    <div class="card-body split-student">
     <div class="panel">
-     <button class="btn btn-primary add-big" id="openAddStudentBtn" type="button">＋ Ajouter élève</button>
      <div class="filter-pair"><select id="newClassSelect" class="modern-select" aria-label="Filtrer par classe"></select><select id="newGroupSelect" class="modern-select" aria-label="Filtrer par groupe"></select></div>
      <div class="search-row">
       <input id="studentSearch" class="modern-input" placeholder="Rechercher..." style="flex:1;">
      </div>
      <div id="studentListUI" class="pl" role="listbox" aria-label="Liste des élèves"></div>
      <select id="studentList" size="12" style="display:none"></select>
-     <div class="form-row">
-      <button class="btn" id="editStudentBtn">Modifier élève</button>
-     </div>
     </div>
     <div class="panel" id="studentPanel">
      <div id="studentPlaceholder" style="color:#64748b;">Sélectionne un élève pour saisir les notes.</div>
@@ -2061,7 +2059,11 @@ header .header-actions{margin-left:auto;align-items:center}
   <div class="card">
    <div class="card-header">
     <div class="hdr-left"><div class="carnet-sub" style="display:none"><div class="subtabs" role="tablist" aria-label="Carnet de notes"><button type="button" class="subtab-btn" data-carnet="eleves" role="tab"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 21v-1.5a5.5 5.5 0 0 1 5.5-5.5h3a5.5 5.5 0 0 1 5.5 5.5V21z"/></svg><span>Élèves</span></button><button type="button" class="subtab-btn" data-carnet="classes" role="tab"><svg viewBox="0 0 24 24" width="24" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.2"/><path d="M6.5 21v-1.5a4.5 4.5 0 0 1 4.5-4.5h2a4.5 4.5 0 0 1 4.5 4.5V21z"/><circle cx="4.2" cy="9.5" r="2.2"/><path d="M1.5 21v-1.2a3 3 0 0 1 3-3"/><circle cx="19.8" cy="9.5" r="2.2"/><path d="M22.5 21v-1.2a3 3 0 0 0-3-3"/></svg><span>Classes &amp; groupes</span></button></div></div></div>
-    <div style="display:flex;gap:8px;">
+    <div class="hdr-actions" style="display:flex;gap:8px;">
+     <button class="btn btn-primary" id="addClassBtn" type="button">＋ Ajouter classe</button>
+     <button class="btn" id="editClassBtn" type="button">Modifier classe</button>
+     <button class="btn btn-primary" id="addGroupBtn" type="button" style="display:none">＋ Ajouter groupe</button>
+     <button class="btn" id="editGroupBtn" type="button" style="display:none">Modifier groupe</button>
      <button class="btn btn-danger" id="deleteClassBtn">Supprimer classe</button>
     </div>
    </div>
@@ -2072,29 +2074,21 @@ header .header-actions{margin-left:auto;align-items:center}
       <button type="button" class="cl-tab" data-cltab="groups" role="tab">Groupes</button>
      </div>
      <div id="clPaneClasses">
-     <button class="btn btn-primary add-big" id="addClassBtn" type="button">＋ Ajouter classe</button>
      <div class="search-row">
       <input id="classSearch" class="modern-input" placeholder="Rechercher classe..." style="flex:1;">
      </div>
      <div id="classListUI" class="pl" role="listbox" aria-label="Liste des classes"></div>
      <select id="classList" size="12" style="display:none"></select>
-     <div class="form-row">
-      <button class="btn" id="editClassBtn">Modifier classe</button>
-     </div>
      <div id="subjectsEmptyWarn" class="import-banner" style="display:none;">
       Le registre des matières est vide. Clique sur « Gérer les matières » pour ajouter des matières.
      </div>
      </div>
      <div id="clPaneGroups" style="display:none">
-     <button class="btn btn-primary add-big" id="addGroupBtn" type="button">＋ Ajouter groupe</button>
      <div class="search-row">
       <input id="groupSearch" class="modern-input" placeholder="Rechercher groupe..." style="flex:1;">
      </div>
      <div id="groupListUI" class="pl" role="listbox" aria-label="Liste des groupes"></div>
      <select id="groupList" size="6" style="display:none"></select>
-     <div class="form-row">
-      <button class="btn" id="editGroupBtn">Modifier groupe</button>
-     </div>
      </div>
     </div>
     <div class="panel" id="classPanel">
@@ -2318,6 +2312,7 @@ header .header-actions{margin-left:auto;align-items:center}
   <button type="submit" class="btn btn-primary" id="loginBtn">Se connecter</button>
   <div id="loginError"></div>
  </form>
+ <p class="login-legal">Ceci n’est pas le site Ecole Directe officiel. Réservé aux connaissances de Martin POMMÉ. Ne pas saisir vos informations du véritable site Ecole Directe. Ce site n’est en aucun cas frauduleux, sinon à but éducatif et personnel, entièrement gratuit. Il n’y a aucune volonté de récupérer des données ou de vous arnaquer.</p>
 </div>
 
 <div id="settingsModal" class="modal" aria-hidden="true" style="z-index:300;">
@@ -2389,39 +2384,36 @@ header .header-actions{margin-left:auto;align-items:center}
     <label>Élève</label><select name="studentid" id="noteStudentSelect"></select>
     <label>Matière</label><select name="subject" id="noteSubject"></select>
     <label>Évaluation</label><input name="label" id="noteLabel" placeholder="Ex: Contrôle chapitre 2">
-    <label>Date (JJ/MM/AA)</label><input name="date" id="noteDate" placeholder="JJ/MM/AA">
-    <div style="display:flex;gap:8px;align-items:center;">
-     <div style="flex:1;">
-      <label>Note (nombre ou Abs, Disp, NE, NR, EA)</label>
-      <input name="note" id="noteValue" placeholder="Ex: 15.75 ou Abs">
+    <div class="frow">
+     <div class="fcol"><label>Date (JJ/MM/AA)</label><input name="date" id="noteDate" placeholder="JJ/MM/AA"></div>
+     <div class="fcol"><label>Trimestre</label>
+      <select name="period" id="notePeriod">
+      <option value="T1">Trimestre 1</option><option value="T2">Trimestre 2</option>
+      <option value="T3">Trimestre 3</option><option value="T4">Trimestre 4</option>
+      <option value="YEAR">Année</option>
+      </select>
      </div>
-     <div style="flex:0;">
-      <button type="button" class="btn btn-sm" id="noteCreateBaremeBtn" style="margin-top:18px;font-size:12px;">Créer un barème</button>
-     </div>
+    </div>
+    <div class="frow">
+     <div class="fcol" style="flex:2 1 150px;"><label>Note</label><input name="note" id="noteValue" placeholder="15.75, Abs, Disp…" title="Nombre ou Abs, Disp, NE, NR, EA"></div>
+     <div class="fcol fbtn"><button type="button" class="btn btn-sm" id="noteCreateBaremeBtn" style="font-size:12px;white-space:nowrap;">Créer un barème</button></div>
+     <div class="fcol"><label>Sur</label><input type="number" step="0.01" name="outof" id="noteOutof" value="20"></div>
+     <div class="fcol"><label>Coef</label><input type="number" step="any" name="coef" id="noteCoef" value="1"></div>
     </div>
     <!-- Indicateur barème actif -->
     <div id="baremeActiveIndicator" style="display:none; margin:4px 0 8px 0; padding:8px 12px; background:#ecf7fd; border:1px solid #b9e0f5; border-radius:8px; font-size:13px; color:#00508f;">
       📊 <strong>Barème actif</strong> — la note est calculée automatiquement.
       <button type="button" id="baremeRemoveBtn" style="margin-left:8px; background:none; border:none; color:#ef4444; cursor:pointer; font-size:12px;">✕ Supprimer le barème</button>
     </div>
-    <label>Sur</label><input type="number" step="0.01" name="outof" id="noteOutof" value="20">
-    <label>Coef</label><input type="number" step="any" name="coef" id="noteCoef" value="1">
-    <label>Trimestre</label>
-    <select name="period" id="notePeriod">
-     <option value="T1">Trimestre 1</option><option value="T2">Trimestre 2</option>
-     <option value="T3">Trimestre 3</option><option value="T4">Trimestre 4</option>
-     <option value="YEAR">Année</option>
-    </select>
-    <label><input type="checkbox" id="noteImportant"> Note importante</label>
-    <label><input type="checkbox" id="noteHideFromStudent"> Masquer vision élève</label>
+    <label class="chk-big"><input type="checkbox" id="noteImportant"> Note importante</label>
+    <label class="chk-big"><input type="checkbox" id="noteHideFromStudent"> Masquer vision élève</label>
     <div id="noteHideUntilWrap" style="display:none;margin:2px 0 8px 24px;font-size:13px;"><label style="font-weight:500;">Visible à partir du : <input type="date" id="noteHideUntil" style="width:auto;display:inline-block;"></label> <span style="color:#64748b;">(vide = reste masquée tant que tu ne la rends pas visible ; sinon elle apparaît à 00h00 ce jour-là)</span></div>
     <div style="margin-top:10px;border-top:1px solid #e5e7eb;padding-top:10px;">
-     <label>Compétences associées</label>
-     <div id="noteCompetenciesContainer" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;"></div>
-     <button type="button" class="btn" id="addCompToNoteBtn" style="font-size:0.9em;">+ Attribuer des compétences</button>
-    </div>
-    <div style="margin-top:10px;border-top:1px solid #e5e7eb;padding-top:10px;">
-     <button type="button" class="btn" id="noteAddCommentBtn" style="font-size:0.9em;">+ Ajouter un commentaire</button>
+     <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button type="button" class="btn" id="addCompToNoteBtn" style="font-size:0.9em;">+ Attribuer des compétences</button>
+      <button type="button" class="btn" id="noteAddCommentBtn" style="font-size:0.9em;">+ Ajouter un commentaire</button>
+     </div>
+     <div id="noteCompetenciesContainer" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;"></div>
      <div id="noteCommentWrap" style="display:none;margin-top:8px;">
       <label>Commentaire</label>
       <textarea id="noteComment" rows="3" placeholder="Commentaire (optionnel)"></textarea>
@@ -2549,25 +2541,30 @@ header .header-actions{margin-left:auto;align-items:center}
     <label>Classe</label><select id="classSelect"></select>
     <label>Matière</label><select id="classSubject"></select>
     <label>Évaluation</label><input id="classLabel" placeholder="Ex: Interro chapitre 3">
-    <label>Date (JJ/MM/AA)</label><input id="classDate" placeholder="JJ/MM/AA">
-    <div style="display:flex;gap:8px;align-items:center;">
-     <div style="flex:1;"><label>Sur</label><input type="number" step="0.01" id="classOutof" value="20"></div>
-     <div style="flex:0;display:flex;gap:6px;"><button type="button" class="btn btn-sm" id="classEvalCreateBaremeBtn" style="margin-top:18px;font-size:12px;white-space:nowrap;">Créer un barème</button><button type="button" class="btn btn-sm btn-primary" id="classEvalPointsBtn" style="display:none;margin-top:18px;font-size:12px;white-space:nowrap;">Saisir les points</button></div>
+    <div class="frow">
+     <div class="fcol"><label>Date (JJ/MM/AA)</label><input id="classDate" placeholder="JJ/MM/AA"></div>
+     <div class="fcol"><label>Trimestre</label>
+      <select id="classEvalPeriod">
+      <option value="T1">Trimestre 1</option><option value="T2">Trimestre 2</option>
+      <option value="T3">Trimestre 3</option><option value="T4">Trimestre 4</option>
+      <option value="YEAR">Année</option>
+      </select>
+     </div>
     </div>
-    <label>Coef</label><input type="number" step="any" id="classCoef" value="1">
-    <label>Trimestre</label>
-    <select id="classEvalPeriod">
-     <option value="T1">Trimestre 1</option><option value="T2">Trimestre 2</option>
-     <option value="T3">Trimestre 3</option><option value="T4">Trimestre 4</option>
-     <option value="YEAR">Année</option>
-    </select>
-    <label><input type="checkbox" id="classEvalDefaultImportant"> Note importante (par défaut)</label>
-    <label><input type="checkbox" id="classEvalHideFromStudent"> Masquer vision élève</label>
+    <div class="frow">
+     <div class="fcol"><label>Sur</label><input type="number" step="0.01" id="classOutof" value="20"></div>
+     <div class="fcol"><label>Coef</label><input type="number" step="any" id="classCoef" value="1"></div>
+     <div class="fcol fbtn" style="display:flex;gap:6px;"><button type="button" class="btn btn-sm" id="classEvalCreateBaremeBtn" style="font-size:12px;white-space:nowrap;">Créer un barème</button><button type="button" class="btn btn-sm btn-primary" id="classEvalPointsBtn" style="display:none;font-size:12px;white-space:nowrap;">Saisir les points</button></div>
+    </div>
+    <label class="chk-big"><input type="checkbox" id="classEvalDefaultImportant"> Note importante (par défaut)</label>
+    <label class="chk-big"><input type="checkbox" id="classEvalHideFromStudent"> Masquer vision élève</label>
     <div id="classEvalHideUntilWrap" style="display:none;margin:2px 0 8px 24px;font-size:13px;"><label style="font-weight:500;">Visible à partir du : <input type="date" id="classEvalHideUntil" style="width:auto;display:inline-block;"></label> <span style="color:#64748b;">(vide = reste masquée tant que tu ne la rends pas visible ; sinon elle apparaît à 00h00 ce jour-là)</span></div>
     <div style="margin-top:10px;border-top:1px solid #e5e7eb;padding-top:10px;">
-     <button type="button" class="btn" id="classEvalAddCompBtn" style="background:#f1f5f9;border:1px solid #ccc;font-size:0.9em;">Associer des compétences</button>
+     <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button type="button" class="btn" id="classEvalAddCompBtn" style="background:#f1f5f9;border:1px solid #ccc;font-size:0.9em;">Associer des compétences</button>
+      <button type="button" class="btn" id="classEvalAddCommentBtn" style="font-size:0.9em;">+ Commentaire général</button>
+     </div>
      <div id="classEvalCompsList" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px;"></div>
-     <button type="button" class="btn" id="classEvalAddCommentBtn" style="font-size:0.9em;">+ Commentaire général</button>
      <div id="classEvalCommentWrap" style="display:none;margin-top:8px;">
       <label>Commentaire général</label>
       <textarea id="classEvalGeneralComment" rows="3" placeholder="Commentaire (optionnel)"></textarea>
@@ -2662,11 +2659,9 @@ header .header-actions{margin-left:auto;align-items:center}
         </div>
 
         <div style="margin-top:10px; display:flex; gap:20px;">
-          <label style="display:flex; align-items:center; gap:5px; font-weight:normal; cursor:pointer;">
-            <input type="checkbox" id="profBatchEditImportant"> Note importante
+          <label class="chk-big" style="font-weight:normal;">\1 Note importante
           </label>
-          <label style="display:flex; align-items:center; gap:5px; font-weight:normal; cursor:pointer;">
-            <input type="checkbox" id="profBatchEditHide"> Masquer vision élève
+          <label class="chk-big" style="font-weight:normal;">\1 Masquer vision élève
           </label>
         </div>
 
@@ -3050,7 +3045,7 @@ header .header-actions{margin-left:auto;align-items:center}
      <option value="YEAR">Année</option>
     </select>
    </div>
-   <div class="form-row"><label><input type="checkbox" id="studentCompHideFromStudent"> Masquer vision élève</label></div>
+   <div class="form-row"><label class="chk-big"><input type="checkbox" id="studentCompHideFromStudent"> Masquer vision élève</label></div>
     <div id="studentCompHideUntilWrap" style="display:none;margin:2px 0 8px 24px;font-size:13px;"><label style="font-weight:500;">Visible à partir du : <input type="date" id="studentCompHideUntil" style="width:auto;display:inline-block;"></label> <span style="color:#64748b;">(vide = reste masquée tant que tu ne la rends pas visible ; sinon elle apparaît à 00h00 ce jour-là)</span></div>
    <div style="margin:10px 0;border-top:1px solid #e5e7eb;padding-top:10px;">
     <button class="btn" id="studentCompAddCommentBtn" style="background:#f1f5f9;border:1px solid #ccc;font-size:0.9em;">+ Ajouter un commentaire</button>
@@ -3081,7 +3076,7 @@ header .header-actions{margin-left:auto;align-items:center}
    <div class="form-row"><label>Matière</label><select id="classCompSetupSubject" style="width:100%;"></select></div>
    <div class="form-row"><label>Nom de l'évaluation</label><input id="classCompSetupLabel" placeholder="Ex: Comportement T1"></div>
    <div class="form-row"><label>Date</label><input id="classCompSetupDate" placeholder="JJ/MM/AA"></div>
-   <div class="form-row"><label><input type="checkbox" id="classCompSetupHideFromStudent"> Masquer vision élève</label></div>
+   <div class="form-row"><label class="chk-big"><input type="checkbox" id="classCompSetupHideFromStudent"> Masquer vision élève</label></div>
     <div id="classCompSetupHideUntilWrap" style="display:none;margin:2px 0 8px 24px;font-size:13px;"><label style="font-weight:500;">Visible à partir du : <input type="date" id="classCompSetupHideUntil" style="width:auto;display:inline-block;"></label> <span style="color:#64748b;">(vide = reste masquée tant que tu ne la rends pas visible ; sinon elle apparaît à 00h00 ce jour-là)</span></div>
    <div style="margin:10px 0;border-top:1px solid #e5e7eb;padding-top:10px;">
     <button class="btn" id="classCompSetupAddCommentBtn" style="background:#f1f5f9;border:1px solid #ccc;font-size:0.9em;">+ Commentaire général</button>
@@ -16626,6 +16621,8 @@ document.getElementById("schSigNo").onclick=()=>schSignal(false);
   document.querySelectorAll("#clTabs .cl-tab").forEach(b=>b.classList.toggle("active",b.dataset.cltab===name));
   document.getElementById("clPaneClasses").style.display=name==="classes"?"":"none";
   document.getElementById("clPaneGroups").style.display=name==="groups"?"":"none";
+  ["addClassBtn","editClassBtn"].forEach(i=>{ const b=document.getElementById(i); if(b) b.style.display=name==="classes"?"":"none"; });
+  ["addGroupBtn","editGroupBtn"].forEach(i=>{ const b=document.getElementById(i); if(b) b.style.display=name==="groups"?"":"none"; });
   // une seule sélection à la fois : on repart d'un panneau vide pour la liste affichée
   clearCommonSel("class"); clearCommonSel("group"); syncCommonButtons();
   const c=document.getElementById("classContent"), p=document.getElementById("classPlaceholder");
@@ -18559,6 +18556,17 @@ document.addEventListener("keydown",e=>{
 });
 
 /* ───────── Paramétrage : Matières + Compétences ───────── */
+function paramFixSize(){
+ const body=document.querySelector("#manageSubjectsModal .modal-body"); if(!body) return;
+ const panes=["subj","comp","imp","lock","year"].map(k=>$("paramPane_"+k)).filter(Boolean);
+ const was=panes.map(p=>p.hidden);
+ body.style.height="";
+ if(typeof renderCompHierarchyUI==="function") try{ renderCompHierarchyUI(); }catch(e){}
+ let max=0;
+ panes.forEach(p=>{ panes.forEach(q=>{ q.hidden=(q!==p); }); max=Math.max(max,body.scrollHeight); });
+ panes.forEach((p,i)=>{ p.hidden=was[i]; });
+ body.style.height=Math.min(max,Math.round(window.innerHeight*0.7))+"px";
+}
 function paramShow(w){
  ["subj","comp","imp","lock","year"].forEach(k=>{
   const pane=$("paramPane_"+k); if(pane) pane.hidden=(k!==w);
@@ -18566,7 +18574,7 @@ function paramShow(w){
  });
  if(w==="comp"&&typeof renderCompHierarchyUI==="function") renderCompHierarchyUI();
 }
-$("paramBtn")?.addEventListener("click",()=>{ openManageSubjectsModal(); paramShow("subj"); });
+$("paramBtn")?.addEventListener("click",()=>{ openManageSubjectsModal(); paramShow("subj"); paramFixSize(); });
 $("paramTabs")?.addEventListener("click",e=>{ const b=e.target.closest("[data-p]"); if(b) paramShow(b.dataset.p); });
 })();
 
@@ -18668,6 +18676,35 @@ body.admin-mode .topbar,body.admin-mode .container,body.admin-mode #locksBar,bod
 .hwt-blank.is-ko{border-color:#ef4444;background:#fef2f2}
 .hwt-blank.is-sel{box-shadow:0 0 0 3px rgba(0,104,170,.3)}
 .hwt-empty{color:#94a3b8}
+/* ── Zones de commentaire : bords arrondis (comme les autres champs) ── */
+textarea[id*="omment"]{
+ width:100%; box-sizing:border-box; padding:10px 12px; border:1px solid var(--border); border-radius:12px; background:#fff;
+ font:inherit; font-size:14px; line-height:1.4; color:var(--text); transition:border-color .15s, box-shadow .15s;
+}
+textarea[id*="omment"]:focus{ outline:none; border-color:#4fb0e0; box-shadow:0 0 0 3px rgba(147,197,253,.45) }
+textarea[id*="omment"]::placeholder{ color:#94a3b8 }
+/* ── Page de connexion : mention légale en bas à gauche ── */
+.login-legal{ position:absolute; left:12px; bottom:10px; margin:0; max-width:calc(100% - 24px); font-size:9px; line-height:1.35; color:#fff; text-align:left }
+
+/* ── Cases à cocher : plus grosses, alignées sur le texte, collées à sa gauche ── */
+label.chk-big{ display:flex!important; align-items:center; justify-content:flex-start; gap:10px; margin:8px 0!important; font-weight:500; line-height:1.25; cursor:pointer; width:max-content; max-width:100% }
+label.chk-big>input[type=checkbox]{ width:20px!important; height:20px; min-width:20px; flex:none; margin:0!important; padding:0!important; accent-color:var(--primary); cursor:pointer }
+/* ── Pop-ups de création d'éval : champs côte à côte ── */
+.frow{ display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap }
+.frow>.fcol{ flex:1 1 110px; min-width:0 }
+.frow>.fcol.fbtn{ flex:0 0 auto; padding-bottom:2px }
+/* ── Consultation : marge sous les onglets ── */
+#consultView .cs-wrap{ margin-top:20px }
+/* ── Tests (début / fin) : les encadrés ne se touchent jamais ── */
+.homework-quiz-card,.online-preview-card{ display:flex; flex-direction:column; gap:14px }
+.homework-quiz-card>*,.online-preview-card>*{ margin-top:0!important; margin-bottom:0!important }
+.online-preview-note,.online-preview-message,.online-preview-score,.hwc-notebar,.hwc-comment{ margin-top:0 }
+.hwc-comment+.hwc-comment,.online-preview-note+.online-preview-score{ margin-top:12px }
+/* ── Classes et groupes : même liste que les élèves ── */
+#classListUI .pl-item,#groupListUI .pl-item{ padding:4px 10px; border:1px solid transparent; font-size:13.5px; line-height:1.2 }
+#classListUI .pl-item + .pl-item,#groupListUI .pl-item + .pl-item{ margin-top:2px }
+#classListUI .pl-item:hover,#groupListUI .pl-item:hover{ background:transparent; border-color:#1a8ad0 }
+#classListUI .pl-item.sel:hover,#groupListUI .pl-item.sel:hover{ background:#dcedf8 }
 </style>
 <script id="ed-admin">
 (function(){
