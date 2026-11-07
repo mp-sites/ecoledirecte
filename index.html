@@ -17674,8 +17674,9 @@ function myMessages(){ ensure(); return isStu()?DATA.messages.filter(m=>m.sid===
 function unreadMessages(){ return myMessages().filter(m=>incoming(m)&&!isRead(m)); }
 
 function markRead(sid){
- ensure(); const gset=(!isStu()&&isGrp(sid))?new Set(grpMessages(grpId(sid)).map(z=>z.id)):null, GMr=(isStu()||gset)?{}:grpMap();
- const list=myMessages().filter(m=>incoming(m)&&!isRead(m)&&(isStu()||(gset?gset.has(m.id):(m.sid===sid&&!GMr[m.id]))));
+ ensure(); let scope=null;
+ if(sid){ const GMr=grpMap(); scope=isGrp(sid)?(m=>GMr[m.id]===grpId(sid)):(isStu()?(m=>!GMr[m.id]):(m=>m.sid===sid&&!GMr[m.id])); }
+ const list=myMessages().filter(m=>incoming(m)&&!isRead(m)&&(!scope||scope(m)));
  if(!list.length) return false;
  if(isStu()){
   list.forEach(m=>H.read.add(m.id)); saveRead();
@@ -17773,11 +17774,11 @@ function tlItems(){
    });
   }catch(x){ console.warn("appels timeline:",x); }
  }
- const groups={}, GMt=isStu()?{}:grpMap();
- unreadMessages().forEach(m=>{ const k=GMt[m.id]?"g:"+GMt[m.id]:m.sid; (groups[k]||(groups[k]=[])).push(m); });
+ const groups={}, GMt=grpMap();
+ unreadMessages().forEach(m=>{ const k=GMt[m.id]?"g:"+GMt[m.id]:(isStu()?"stu":m.sid); (groups[k]||(groups[k]=[])).push(m); });
  Object.keys(groups).forEach(sid=>{
   const l=groups[sid].sort((a,b)=>new Date(a.at)-new Date(b.at)), last=l[l.length-1], ts=new Date(last.at).getTime()||Date.now();
-  const G=(!isStu()&&isGrp(sid))?grpInfo(grpId(sid)):null;
+  const G=isGrp(sid)?grpInfo(grpId(sid)):null;
   const who=isStu()?profName():(G?"":stuName(sid)), iso=isoOf(new Date(ts));
   out.push({k:"m"+sid,type:"msg",act:"msg",sid,ts,iso,today:iso===today,
    title:G?((l.length>1?l.length+" nouveaux messages dans « ":"Nouveau message dans « ")+G.subject+" »"):((l.length>1?l.length+" nouveaux messages de ":"Nouveau message de ")+who),
@@ -17984,20 +17985,12 @@ const grpId=k=>String(k).slice(2);
 const ICON_GRP='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.6 6-5.6s6 2.3 6 5.6"/><circle cx="17" cy="9" r="2.6"/><path d="M17.5 14.6c2.3.3 3.8 2.2 3.8 5"/></svg>';
 /* Discussion de groupe : message du prof envoyé à plusieurs élèves (même bid) + réponses des élèves qui le suivent */
 function grpMessages(bid){
- const by={}, out=[];
- (DATA.messages||[]).forEach(m=>{ (by[m.sid]||(by[m.sid]=[])).push(m); });
- Object.keys(by).forEach(sid=>{
-  let cur="";
-  by[sid].slice().sort((a,b)=>new Date(a.at)-new Date(b.at)).forEach(m=>{
-   if(m.dir==="p2s"){ cur=m.bid||""; if(cur===bid) out.push(m); }
-   else if(cur===bid) out.push(m);
-  });
- });
- return out.sort((a,b)=>new Date(a.at)-new Date(b.at));
+ const GM=grpMap();
+ return grpBase().filter(m=>GM[m.id]===bid).sort((a,b)=>new Date(a.at)-new Date(b.at));
 }
 function grpList(){
  const ids={}, order=[];
- (DATA.messages||[]).forEach(m=>{ if(m.dir==="p2s"&&m.bid){ if(!ids[m.bid]){ ids[m.bid]={bid:m.bid,subject:m.bs||m.bl||"Message groupé",label:m.bl||"",members:new Set()}; order.push(m.bid); } if(m.bs&&!ids[m.bid].bsSet){ ids[m.bid].subject=m.bs; ids[m.bid].bsSet=1; } ids[m.bid].members.add(m.sid); } });
+ grpBase().forEach(m=>{ if(m.dir==="p2s"&&m.bid){ if(!ids[m.bid]){ ids[m.bid]={bid:m.bid,subject:m.bs||m.bl||"Message groupé",label:m.bl||"",members:new Set()}; order.push(m.bid); } if(m.bs&&!ids[m.bid].bsSet){ ids[m.bid].subject=m.bs; ids[m.bid].bsSet=1; } ids[m.bid].members.add(m.sid); } });
  return order.map(b=>{ const g=ids[b]; g.members=[...g.members]; const nm=stableName(b); if(nm){ g.subject=nm; g.label=""; g.stable=true; } return g; });
 }
 function grpInfo(bid){ return grpList().find(g=>g.bid===bid)||null; }
@@ -18017,29 +18010,60 @@ function stableTarget(all,ids){
  return null;
 }
 /* id de message -> bid de la discussion de groupe à laquelle il appartient (message du prof envoyé en groupe + réponses de l'élève qui le suivent) */
+const grpBase=()=>isStu()?myMessages():(DATA.messages||[]);
 function grpMap(){
  const by={}, map={};
- (DATA.messages||[]).forEach(m=>{ (by[m.sid]||(by[m.sid]=[])).push(m); });
+ grpBase().forEach(m=>{ (by[m.sid]||(by[m.sid]=[])).push(m); });
  Object.keys(by).forEach(sid=>{
   let cur="";
-  by[sid].slice().sort((a,b)=>new Date(a.at)-new Date(b.at)).forEach(m=>{ if(m.dir==="p2s") cur=m.bid||""; if(cur) map[m.id]=cur; });
+  by[sid].slice().sort((a,b)=>new Date(a.at)-new Date(b.at)).forEach(m=>{
+   if(m.dir==="p2s"){ cur=m.bid||""; if(cur) map[m.id]=cur; }
+   else if(m.bid==="-") return;              /* réponse de l'élève dans la conversation personnelle */
+   else if(m.bid) map[m.id]=m.bid;           /* réponse de l'élève dans la discussion de groupe indiquée */
+   else if(cur) map[m.id]=cur;               /* anciens messages : rattachés au dernier envoi groupé */
+  });
  });
  return map;
 }
+/* Discussions de groupe visibles par l'élève connecté (uniquement les siennes) */
+function stuGroups(){ return isStu()?grpList().filter(g=>grpMessages(g.bid).length):[]; }
 /* Conversation individuelle côté prof : sans les messages envoyés à une classe / un groupe */
 function soloMessages(sid){
+ if(isStu()) sid=AUTH.studentId;
  const GM=grpMap();
- return (DATA.messages||[]).filter(z=>z.sid===sid&&!GM[z.id]);
+ return grpBase().filter(z=>z.sid===sid&&!GM[z.id]);
 }
-function threadList(key){ return isGrp(key)?grpMessages(grpId(key)):(isStu()?(DATA.messages||[]).filter(z=>z.sid===key):soloMessages(key)); }
-function threadMessages(sid){ return (isStu()?myMessages().filter(m=>m.sid===sid):soloMessages(sid)).sort((a,b)=>new Date(a.at)-new Date(b.at)); }
+function threadList(key){ return isGrp(key)?grpMessages(grpId(key)):soloMessages(key); }
+function threadMessages(sid){ return soloMessages(sid).sort((a,b)=>new Date(a.at)-new Date(b.at)); }
+function stuGrpThreadHtml(bid){
+ const ms=grpMessages(bid); let html="", day="", newDone=false;
+ ms.forEach(m=>{
+  const iso=isoOf(new Date(m.at));
+  if(iso!==day){ html+='<div class="cm-day">'+esc(dayLabel(iso))+'</div>'; day=iso; }
+  if(!newDone&&incoming(m)&&!isRead(m)){ html+='<div class="cm-new">Nouveaux messages</div>'; newDone=true; }
+  html+=bubble(m);
+ });
+ return html||'<p class="home-empty">Aucun message.</p>';
+}
+/* Liste des conversations de l'élève : échange personnel avec le prof + discussions de classe / groupe */
+function stuListHtml(){
+ const GM=grpMap(), solo=myMessages().filter(m=>!GM[m.id]).sort((a,b)=>new Date(a.at)-new Date(b.at));
+ const rows=[{key:"stu",name:profName(),grp:false,last:solo[solo.length-1]||null,unread:solo.filter(m=>incoming(m)&&!isRead(m)).length}];
+ stuGroups().forEach(g=>{ const l=grpMessages(g.bid); rows.push({key:"g:"+g.bid,name:g.subject,grp:true,last:l[l.length-1],unread:l.filter(m=>incoming(m)&&!isRead(m)).length}); });
+ rows.sort((a,b)=>(b.last?new Date(b.last.at).getTime():0)-(a.last?new Date(a.last.at).getTime():0));
+ return rows.map(r=>{
+  const sub=r.last?((incoming(r.last)?"":"Vous : ")+String(r.last.text).replace(/\s+/g," ").slice(0,60)):"Message personnel";
+  return '<button type="button" class="cl-it" data-act="thread" data-sid="'+esc(r.key)+'"><span class="av'+(r.grp?" av-grp":"")+'">'+(r.grp?ICON_GRP:"P")+'</span>'
+   +'<span class="cl-tx"><b>'+esc(r.name)+'</b><small>'+esc(sub)+'</small></span>'
+   +'<span class="cl-mt">'+(r.last?'<time>'+esc(shortStamp(r.last.at))+'</time>':"")+(r.unread?'<i class="cl-bd">'+r.unread+'</i>':"")+'</span></button>';
+ }).join("");
+}
 const selMsgOn=()=>!isStu()&&H.sel.on&&H.sel.kind==="msg";
 const selThrOn=()=>!isStu()&&H.sel.on&&H.sel.kind==="thread";
 function bubble(m){
  const me=!incoming(m);
  const tick=me?(isRead(m)?'<span class="tk r">✓✓</span>':'<span class="tk">✓</span>'):"";
- let bl=(me&&!isStu()&&m.bl)?'<div class="cm-bl">Envoyé à : '+esc(m.bl)+'</div>':"";
- if(isStu()&&!me&&m.bid){ const gn=stableName(m.bid)||((m.bs&&m.bs!==m.bl)?m.bs:""); if(gn) bl='<div class="cm-bl">'+esc(gn)+'</div>'; }
+ const bl=(me&&!isStu()&&m.bl)?'<div class="cm-bl">Envoyé à : '+esc(m.bl)+'</div>':"";
  return '<div class="cm '+(me?"me":"th")+(selMsgOn()&&H.sel.ids.has(m.id)?" picked":"")+'" data-mid="'+esc(m.id)+'">'+(selMsgOn()?'<span class="cm-ck" aria-hidden="true"></span>':"")+bl+'<div>'+esc(m.text).replace(/\n/g,"<br>")+'</div><div class="cm-m">'+(m.editedAt?'<span class="cm-ed">modifié</span>':"")+hhmm(m.at)+tick+'</div></div>';
 }
 function threadHtml(sid){
@@ -18109,14 +18133,17 @@ const isRead_p2s=m=>!!m.read||H.read.has(m.id);
 function renderChat(){
  const host=$("homeChat"); if(!host) return;
  if(!isStu()&&H.thread&&(isGrp(H.thread)?!grpInfo(grpId(H.thread)):!stuById(H.thread))) H.thread=null;
- const view=isStu()?"thread":(H.thread?"thread":"list"), sid=isStu()?AUTH.studentId:H.thread;
- const key=view==="thread"?(isStu()?"stu":H.thread):"";
+ if(isStu()){ if(!stuGroups().length) H.thread="stu"; else if(H.thread&&H.thread!=="stu"&&!(isGrp(H.thread)&&grpInfo(grpId(H.thread)))) H.thread=null; }
+ const view=H.thread?"thread":"list", sid=isStu()?AUTH.studentId:H.thread;
+ const key=view==="thread"?H.thread:"";
  if(H.sel.on&&(isStu()||H.sel.kind!==(view==="list"?"thread":"msg"))){ H.sel.on=false; H.sel.ids.clear(); }
  if(H.sel.on){ const ex=H.sel.kind==="thread"?(k=>threadList(k).length>0):(k=>!!findMsg(k)); [...H.sel.ids].forEach(k=>{ if(!ex(k)) H.sel.ids.delete(k); }); }
  const oldTa=host.querySelector("textarea"), hadFocus=oldTa&&document.activeElement===oldTa, oldMsgs=host.querySelector(".ch-msgs");
  if(oldTa) H.draft[host.dataset.key||""]=oldTa.value;
  const wasBottom=!oldMsgs||(oldMsgs.scrollHeight-oldMsgs.scrollTop-oldMsgs.clientHeight<40), prevTop=oldMsgs?oldMsgs.scrollTop:0, sameView=host.dataset.view===view+":"+key;
- if(view==="list"){
+ if(view==="list"&&isStu()){
+  host.innerHTML='<div class="ch-head"><div class="ti"><b>Messagerie</b></div></div><div class="ch-list">'+stuListHtml()+'</div>';
+ }else if(view==="list"){
   const oldQ=host.querySelector(".ch-search"), keepQ=oldQ&&document.activeElement===oldQ;
   host.innerHTML='<div class="ch-head"><div class="ti"><b>Messagerie</b></div><button type="button" class="btn btn-primary" data-act="newmsg">＋ Nouveau</button></div>'
    +'<input class="ch-search" type="search" placeholder="Rechercher un élève…" aria-label="Rechercher un élève" value="'+esc(H.filter)+'">'
@@ -18124,11 +18151,11 @@ function renderChat(){
   if(H.sel.on) selRefresh();
   if(keepQ){ const q=host.querySelector(".ch-search"); q.focus(); q.setSelectionRange(q.value.length,q.value.length); }
  }else{
-  const G=(!isStu()&&isGrp(sid))?grpInfo(grpId(sid)):null;
-  const who=isStu()?profName():(G?G.subject:stuName(sid)), sub=isStu()?"Professeur":(G?(G.label||(G.members.length+" élèves")):className(sid)), av=isStu()?"P":(G?ICON_GRP:initials(sid));
-  host.innerHTML='<div class="ch-head">'+(isStu()?"":'<button type="button" class="ch-back" data-act="back" aria-label="Retour aux conversations">'+ICON_BACK+'</button>')
+  const G=isGrp(H.thread)?grpInfo(grpId(H.thread)):null;
+  const who=G?G.subject:(isStu()?profName():stuName(sid)), sub=G?(isStu()?"Discussion de groupe":(G.label||(G.members.length+" élèves"))):(isStu()?"Professeur":className(sid)), av=G?ICON_GRP:(isStu()?"P":initials(sid));
+  host.innerHTML='<div class="ch-head">'+((isStu()&&!stuGroups().length)?"":'<button type="button" class="ch-back" data-act="back" aria-label="Retour aux conversations">'+ICON_BACK+'</button>')
    +'<span class="av'+(G?" av-grp":"")+'">'+(G?av:esc(av))+'</span><div class="ti"><b>'+esc(who)+'</b>'+(sub?'<small>'+esc(sub)+'</small>':"")+'</div></div>'
-   +'<div class="ch-msgs'+(selMsgOn()?" selecting":"")+'">'+(G?grpThreadHtml(G.bid):threadHtml(sid))+'</div>'
+   +'<div class="ch-msgs'+(selMsgOn()?" selecting":"")+'">'+(G?(isStu()?stuGrpThreadHtml(G.bid):grpThreadHtml(G.bid)):threadHtml(sid))+'</div>'
    +(selMsgOn()?selBarHtml():'<div class="ch-compose"><textarea rows="1" placeholder="Écrire un message…" aria-label="Message"></textarea><button type="button" class="ch-send" data-act="send" aria-label="Envoyer">'+ICON_SEND+'</button></div>');
   const ta=host.querySelector("textarea"); if(ta){ ta.value=H.draft[key]||""; autosize(ta); }
   if(selMsgOn()) selRefresh();
@@ -18160,10 +18187,11 @@ async function sendFromThread(){
  }
  const sid=isStu()?AUTH.studentId:H.thread;
  const m={id:uid("m"),sid,dir:isStu()?"s2p":"p2s",text,at:new Date().toISOString(),read:false};
+ if(isStu()) m.bid=isGrp(H.thread)?grpId(H.thread):"-";   /* « - » = conversation personnelle ; sinon identifiant de la discussion de groupe */
  if(isStu()){
   if(isPrev()){
    const P=window.EDPREV; if(P){ (P.msgs||(P.msgs=[])).push(m); }
-   DATA.messages.push(m); ta.value=""; H.draft.stu=""; H.pendingScroll=true; renderChat(); toast("Message envoyé au nom de l’élève."); return;
+   DATA.messages.push(m); ta.value=""; H.draft[H.thread||"stu"]=""; H.pendingScroll=true; renderChat(); toast("Message envoyé au nom de l’élève."); return;
   }
   ta.disabled=true;
   try{
@@ -18171,7 +18199,7 @@ async function sendFromThread(){
    if(!j||!j.ok) throw new Error((j&&j.error)||"erreur");
    if(j.messageId) m.id=j.messageId;
    if(j.rev!=null) CLOUD.rev=Number(j.rev)||CLOUD.rev;
-   DATA.messages.push(m); ta.value=""; H.draft.stu=""; H.pendingScroll=true; renderChat();
+   DATA.messages.push(m); ta.value=""; H.draft[H.thread||"stu"]=""; H.pendingScroll=true; renderChat();
   }catch(e){ ta.disabled=false; toast("Message non envoyé : "+(e.message||e)); }
   return;
  }
@@ -18468,7 +18496,7 @@ $("homeView").addEventListener("click",e=>{
     else goTab("appelView");
    }catch(x){ goTab("appelView"); }
   }
-  else if(k==="msg"){ if(isStu()){ markRead(); renderTimeline(); renderChat(); $("homeChat").querySelector("textarea")?.focus(); } else openThread(b.dataset.sid); }
+  else if(k==="msg"){ openThread(b.dataset.sid||"stu"); }
  }
  else if(act==="thread") openThread(b.dataset.sid);
  else if(act==="back"){ H.thread=null; renderChat(); }
@@ -18488,8 +18516,8 @@ $("homeChat").addEventListener("keydown",e=>{
  if(e.key==="Enter"&&!e.shiftKey&&e.target.matches("textarea")){ e.preventDefault(); sendFromThread(); }
 });
 /* Côté élève, les messages sont marqués « lus » dès qu’il interagit avec la conversation */
-$("homeChat").addEventListener("focusin",e=>{ if(isStu()&&e.target.matches("textarea")&&markRead()) renderTimeline(); });
-$("homeChat").addEventListener("pointerdown",()=>{ if(isStu()&&unreadMessages().length){ setTimeout(()=>{ if(markRead()){ renderTimeline(); const ms=$("homeChat").querySelectorAll(".cm-new"); ms.forEach(n=>n.remove()); } },400); } });
+$("homeChat").addEventListener("focusin",e=>{ if(isStu()&&H.thread&&e.target.matches("textarea")&&markRead(H.thread)) renderTimeline(); });
+$("homeChat").addEventListener("pointerdown",()=>{ if(isStu()&&H.thread&&unreadMessages().length){ setTimeout(()=>{ if(H.thread&&markRead(H.thread)){ renderTimeline(); const ms=$("homeChat").querySelectorAll(".cm-new"); ms.forEach(n=>n.remove()); } },400); } });
 
 $("homeTabBtn").addEventListener("click",renderHome);
 
