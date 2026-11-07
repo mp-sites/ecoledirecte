@@ -2249,7 +2249,7 @@ header .header-actions{margin-left:auto;align-items:center}
   <div class="modal-body">
    <div class="pm-lab">Destinataires</div>
    <div id="mmPick"></div>
-   <div class="pm-lab" style="margin-top:14px">Objet <small style="font-weight:500;color:var(--muted)">(nom de la discussion en cas d’envoi groupé)</small></div>
+   <div class="pm-lab" style="margin-top:14px">Objet <small style="font-weight:500;color:var(--muted)">(utile pour une sélection personnalisée ; une classe, un groupe ou « Tous » a sa propre discussion)</small></div>
    <input id="mmSubject" type="text" maxlength="80" placeholder="Ex. : Sortie du vendredi" autocomplete="off" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:10px;font:inherit">
    <textarea id="mmText" placeholder="Écris ton message…"></textarea>
   </div>
@@ -17674,8 +17674,8 @@ function myMessages(){ ensure(); return isStu()?DATA.messages.filter(m=>m.sid===
 function unreadMessages(){ return myMessages().filter(m=>incoming(m)&&!isRead(m)); }
 
 function markRead(sid){
- ensure(); const gset=(!isStu()&&isGrp(sid))?new Set(grpMessages(grpId(sid)).map(z=>z.id)):null;
- const list=myMessages().filter(m=>incoming(m)&&!isRead(m)&&(isStu()||(gset?gset.has(m.id):m.sid===sid)));
+ ensure(); const gset=(!isStu()&&isGrp(sid))?new Set(grpMessages(grpId(sid)).map(z=>z.id)):null, GMr=(isStu()||gset)?{}:grpMap();
+ const list=myMessages().filter(m=>incoming(m)&&!isRead(m)&&(isStu()||(gset?gset.has(m.id):(m.sid===sid&&!GMr[m.id]))));
  if(!list.length) return false;
  if(isStu()){
   list.forEach(m=>H.read.add(m.id)); saveRead();
@@ -17773,13 +17773,14 @@ function tlItems(){
    });
   }catch(x){ console.warn("appels timeline:",x); }
  }
- const groups={};
- unreadMessages().forEach(m=>{ (groups[m.sid]||(groups[m.sid]=[])).push(m); });
+ const groups={}, GMt=isStu()?{}:grpMap();
+ unreadMessages().forEach(m=>{ const k=GMt[m.id]?"g:"+GMt[m.id]:m.sid; (groups[k]||(groups[k]=[])).push(m); });
  Object.keys(groups).forEach(sid=>{
   const l=groups[sid].sort((a,b)=>new Date(a.at)-new Date(b.at)), last=l[l.length-1], ts=new Date(last.at).getTime()||Date.now();
-  const who=isStu()?profName():stuName(sid), iso=isoOf(new Date(ts));
+  const G=(!isStu()&&isGrp(sid))?grpInfo(grpId(sid)):null;
+  const who=isStu()?profName():(G?"":stuName(sid)), iso=isoOf(new Date(ts));
   out.push({k:"m"+sid,type:"msg",act:"msg",sid,ts,iso,today:iso===today,
-   title:(l.length>1?l.length+" nouveaux messages de ":"Nouveau message de ")+who,
+   title:G?((l.length>1?l.length+" nouveaux messages dans « ":"Nouveau message dans « ")+G.subject+" »"):((l.length>1?l.length+" nouveaux messages de ":"Nouveau message de ")+who),
    sub:String(last.text||"").replace(/\s+/g," ").slice(0,70)});
  });
  out.forEach(it=>{ if(!isFinite(it.ts)) it.ts=0; });
@@ -17997,17 +17998,48 @@ function grpMessages(bid){
 function grpList(){
  const ids={}, order=[];
  (DATA.messages||[]).forEach(m=>{ if(m.dir==="p2s"&&m.bid){ if(!ids[m.bid]){ ids[m.bid]={bid:m.bid,subject:m.bs||m.bl||"Message groupé",label:m.bl||"",members:new Set()}; order.push(m.bid); } if(m.bs&&!ids[m.bid].bsSet){ ids[m.bid].subject=m.bs; ids[m.bid].bsSet=1; } ids[m.bid].members.add(m.sid); } });
- return order.map(b=>{ const g=ids[b]; g.members=[...g.members]; return g; });
+ return order.map(b=>{ const g=ids[b]; g.members=[...g.members]; const nm=stableName(b); if(nm){ g.subject=nm; g.label=""; g.stable=true; } return g; });
 }
 function grpInfo(bid){ return grpList().find(g=>g.bid===bid)||null; }
-function threadList(key){ return isGrp(key)?grpMessages(grpId(key)):(DATA.messages||[]).filter(z=>z.sid===key); }
-function threadMessages(sid){ return myMessages().filter(m=>m.sid===sid).sort((a,b)=>new Date(a.at)-new Date(b.at)); }
+/* Chaque classe / groupe (ou « Tous les élèves ») = UNE discussion de groupe, au bid stable */
+function stableName(bid){
+ bid=String(bid||"");
+ if(bid==="all") return "Tous les élèves";
+ if(bid.slice(0,2)==="c:"){ const c=(DATA.classes||[]).find(x=>x.id===bid.slice(2)); return c?((/^classe/i.test(c.name)?"":"Classe ")+c.name):""; }
+ if(bid.slice(0,3)==="gr:"){ const g=groupsList().find(x=>x.id===bid.slice(3)); return g?((/^groupe/i.test(g.name)?"":"Groupe ")+g.name):""; }
+ return "";
+}
+function stableTarget(all,ids){
+ const set=new Set(ids), total=(DATA.students||[]).length;
+ if(all||(total&&set.size===total)) return {bid:"all",label:"Tous les élèves"};
+ for(const c of (DATA.classes||[])){ const m=classMembers(c); if(m.length&&m.length===set.size&&m.every(x=>set.has(x.id))) return {bid:"c:"+c.id,label:(/^classe/i.test(c.name)?"":"Classe ")+c.name}; }
+ for(const g of groupsList()){ const m=g.memberIds||[]; if(m.length&&m.length===set.size&&m.every(i=>set.has(i))) return {bid:"gr:"+g.id,label:(/^groupe/i.test(g.name)?"":"Groupe ")+g.name}; }
+ return null;
+}
+/* id de message -> bid de la discussion de groupe à laquelle il appartient (message du prof envoyé en groupe + réponses de l'élève qui le suivent) */
+function grpMap(){
+ const by={}, map={};
+ (DATA.messages||[]).forEach(m=>{ (by[m.sid]||(by[m.sid]=[])).push(m); });
+ Object.keys(by).forEach(sid=>{
+  let cur="";
+  by[sid].slice().sort((a,b)=>new Date(a.at)-new Date(b.at)).forEach(m=>{ if(m.dir==="p2s") cur=m.bid||""; if(cur) map[m.id]=cur; });
+ });
+ return map;
+}
+/* Conversation individuelle côté prof : sans les messages envoyés à une classe / un groupe */
+function soloMessages(sid){
+ const GM=grpMap();
+ return (DATA.messages||[]).filter(z=>z.sid===sid&&!GM[z.id]);
+}
+function threadList(key){ return isGrp(key)?grpMessages(grpId(key)):(isStu()?(DATA.messages||[]).filter(z=>z.sid===key):soloMessages(key)); }
+function threadMessages(sid){ return (isStu()?myMessages().filter(m=>m.sid===sid):soloMessages(sid)).sort((a,b)=>new Date(a.at)-new Date(b.at)); }
 const selMsgOn=()=>!isStu()&&H.sel.on&&H.sel.kind==="msg";
 const selThrOn=()=>!isStu()&&H.sel.on&&H.sel.kind==="thread";
 function bubble(m){
  const me=!incoming(m);
  const tick=me?(isRead(m)?'<span class="tk r">✓✓</span>':'<span class="tk">✓</span>'):"";
- const bl=(me&&!isStu()&&m.bl)?'<div class="cm-bl">Envoyé à : '+esc(m.bl)+'</div>':"";
+ let bl=(me&&!isStu()&&m.bl)?'<div class="cm-bl">Envoyé à : '+esc(m.bl)+'</div>':"";
+ if(isStu()&&!me&&m.bid){ const gn=stableName(m.bid)||((m.bs&&m.bs!==m.bl)?m.bs:""); if(gn) bl='<div class="cm-bl">'+esc(gn)+'</div>'; }
  return '<div class="cm '+(me?"me":"th")+(selMsgOn()&&H.sel.ids.has(m.id)?" picked":"")+'" data-mid="'+esc(m.id)+'">'+(selMsgOn()?'<span class="cm-ck" aria-hidden="true"></span>':"")+bl+'<div>'+esc(m.text).replace(/\n/g,"<br>")+'</div><div class="cm-m">'+(m.editedAt?'<span class="cm-ed">modifié</span>':"")+hhmm(m.at)+tick+'</div></div>';
 }
 function threadHtml(sid){
@@ -18022,7 +18054,8 @@ function threadHtml(sid){
 }
 function listHtml(){
  const needle=H.filter.trim().toLowerCase(), by={};
- myMessages().forEach(m=>{ (by[m.sid]||(by[m.sid]=[])).push(m); });
+ const GM0=isStu()?{}:grpMap();
+ myMessages().forEach(m=>{ if(GM0[m.id]) return; (by[m.sid]||(by[m.sid]=[])).push(m); });
  let rows=Object.keys(by).filter(sid=>stuById(sid)).map(sid=>{
   const l=by[sid].sort((a,b)=>new Date(a.at)-new Date(b.at));
   return {sid,key:sid,last:l[l.length-1],unread:l.filter(m=>incoming(m)&&!isRead(m)).length};
@@ -18157,13 +18190,14 @@ function sendNewMsg(){
  const ids=MM.pick.all?(DATA.students||[]).map(s=>s.id):[...MM.pick.ids].filter(stuById);
  if(!ids.length){ toast("Choisis au moins un destinataire."); return; }
  if(!text){ toast("Écris un message."); return; }
- ensure(); const at=new Date().toISOString(), bid=ids.length>1?uid("b"):"", bl=ids.length>1?audLabel(MM.pick.all,new Set(ids)):"";
- const bs=ids.length>1?(($("mmSubject")&&$("mmSubject").value.trim())||bl):"";
- ids.forEach(sid=>DATA.messages.push(ids.length>1?{id:uid("m"),sid,dir:"p2s",text,at,read:false,bid,bl,bs}:{id:uid("m"),sid,dir:"p2s",text,at,read:false,bid,bl}));
+ ensure(); const at=new Date().toISOString(), st=stableTarget(MM.pick.all,ids), multi=ids.length>1||!!st;
+ const bid=st?st.bid:(ids.length>1?uid("b"):""), bl=multi?(st?st.label:audLabel(MM.pick.all,new Set(ids))):"";
+ const bs=multi?(st?st.label:(($("mmSubject")&&$("mmSubject").value.trim())||bl)):"";
+ ids.forEach(sid=>DATA.messages.push(multi?{id:uid("m"),sid,dir:"p2s",text,at,read:false,bid,bl,bs}:{id:uid("m"),sid,dir:"p2s",text,at,read:false,bid,bl}));
  saveData(); closeModal("msgModal");
- if(ids.length===1){ H.thread=ids[0]; H.pendingScroll=true; }
+ if(!multi){ H.thread=ids[0]; H.pendingScroll=true; }
  else { H.thread="g:"+bid; H.pendingScroll=true; }
- renderChat(); toast(ids.length>1?"Message envoyé à "+ids.length+" élèves.":"Message envoyé.");
+ renderChat(); toast(multi?"Message envoyé dans la discussion « "+bs+" »."  :"Message envoyé.");
 }
 
 /* ───────── Fenêtre de confirmation du site (remplace la boîte du navigateur) ───────── */
