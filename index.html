@@ -8670,7 +8670,13 @@ function showNoteDetailByObj(n, studentId){
   }
 
   let personalCommentHtml="";
-  if(n.comment) personalCommentHtml=`<div style="margin-top:12px;padding:10px;background:#fff7ed;border-radius:8px;border:1px solid #f97316;"><p style="margin:0 0 6px 0;font-weight:600;color:#ea580c;">Commentaire</p><div style="white-space:pre-wrap;color:#111827;">${escHtml(n.comment)}</div></div>`;
+  const _cmBox=(title,txt,bg,bd,col)=>`<div style="margin-top:12px;padding:10px;background:${bg};border-radius:8px;border:1px solid ${bd};"><p style="margin:0 0 6px 0;font-weight:600;color:${col};">${title}</p><div style="white-space:pre-wrap;color:#111827;">${escHtml(txt)}</div></div>`;
+  if(n.classCommon&&n.classId&&n.classNoteId){
+    /* Éval de classe/groupe : commentaire général (de l'éval, orange) distinct du commentaire personnel de l'élève (vert) */
+    const _cl=classLike(n.classId), _ev=(_cl?.evals||[]).find(e=>e.id===n.classNoteId), _gen=String(_ev?.generalComment||"").trim();
+    if(_gen) personalCommentHtml+=_cmBox("Commentaire général",_gen,"#fff7ed","#f97316","#ea580c");
+    if(n.comment) personalCommentHtml+=_cmBox("Commentaire personnel",n.comment,"#f0fdf4","#22c55e","#15803d");
+  }else if(n.comment) personalCommentHtml=_cmBox("Commentaire",n.comment,"#fff7ed","#f97316","#ea580c");
 
   // Rendu des statistiques de classe
   let classStatsHtml="";
