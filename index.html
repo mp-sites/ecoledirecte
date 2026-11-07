@@ -2029,7 +2029,7 @@ header .header-actions{margin-left:auto;align-items:center}
     <div class="panel" id="studentLegend">
      <h4>Légende</h4>
      <h5>Notes</h5>
-     <div class="lg"><span class="sample"><span class="note-pill today">note</span></span><span>Nouvelle note (évaluation du jour)</span></div>
+     <div class="lg"><span class="sample"><span class="note-pill today">note</span></span><span>Nouvelle note (évaluation du jour, ou à venir jusqu’à sa date incluse)</span></div>
      <div class="lg"><span class="sample"><span class="note-pill important">note</span></span><span>Note importante</span></div>
      <div class="lg"><span class="sample"><span class="note-pill red">note</span></span><span>Note inférieure à 10/20</span></div>
      <div class="lg"><span class="sample"><span class="note-pill">note<sub>/x</sub></span></span><span>Note sur un barème différent de 20</span></div>
@@ -4825,6 +4825,56 @@ function normDateISO(v){
   return "";
 }
 function isTodayDate(){const t=todayISO(); for(let i=0;i<arguments.length;i++){ if(normDateISO(arguments[i])===t) return true; } return false;}
+/* « Nouvelle note » : évaluation du jour, OU datée dans le futur (date butoire) : soulignée dès sa saisie, jusqu'à sa date incluse */
+function isNewDate(){const t=todayISO(); for(let i=0;i<arguments.length;i++){ const n=normDateISO(arguments[i]); if(n&&n>=t) return true; } return false;}
+
+/* ── Heure de saisie (createdAt, en ms) : sert à ordonner les évaluations individuelles ── */
+const __CTS={};
+function createdTs(o){ const v=o&&o.createdAt; if(v==null||v==="") return 0; const t=/^\d+$/.test(String(v))?Number(v):Date.parse(v); return isFinite(t)?t:0; }
+/* legacy=true : données déjà existantes sans horodatage → "0" (ordre d'origine conservé) ; sinon : horodatage = maintenant */
+function stampCreated(legacy){
+  if(typeof DATA==="undefined"||!DATA) return;
+  let t=Date.now();
+  const empty=o=>o.createdAt===undefined||o.createdAt===null||o.createdAt==="";
+  const give=(o,key)=>{
+    if(!o||typeof o!=="object") return;
+    if(!empty(o)){ if(key&&!(key in __CTS)) __CTS[key]=o.createdAt; return; }
+    if(key&&(key in __CTS)){ o.createdAt=__CTS[key]; return; }   /* évaluation modifiée/recréée : garde son heure de saisie d'origine */
+    o.createdAt=legacy?"0":String(t++);
+    if(key) __CTS[key]=o.createdAt;
+  };
+  const conts=[].concat(DATA.classes||[],DATA.groups||[]);
+  conts.forEach(c=>{ (c.evals||[]).forEach(e=>give(e,"e:"+e.id)); (c.compEvals||[]).forEach(e=>give(e,"e:"+e.id)); });
+  Object.keys(DATA.notes||{}).forEach(sid=>{ (DATA.notes[sid]||[]).forEach(n=>give(n,n&&n.id?"n:"+n.id:null)); });
+  (DATA.competencies||[]).forEach(c=>give(c,"c:"+(c.studentId||"")+"|"+(c.groupId||c.noteId||c.id)));
+}
+function markLegacyCreated(){ try{ stampCreated(true); }catch(e){ console.warn("markLegacyCreated",e); } }
+
+/* Ordre d'affichage des évaluations d'un élève (compte élève) :
+   1) par date ; 2) à date égale : ordre des colonnes du carnet de notes de la classe / du groupe (notes, compétences ou les deux associées) ;
+   3) évaluations individuelles : heure de saisie. */
+function orderStudentItems(items,studentId){
+  const stu=(DATA.students||[]).find(x=>x.id===studentId);
+  const srcs=[]; const c0=stu&&stu.classId?classLike(stu.classId):null; if(c0) srcs.push(c0);
+  (DATA.groups||[]).forEach(g=>{ if((g.memberIds||[]).includes(studentId)){ const gl=classLike(g.id); if(gl&&!srcs.includes(gl)) srcs.push(gl); } });
+  const colOf=(cont,evId)=>{ if(!cont||!evId) return null; const list=[].concat(cont.evals||[],cont.compEvals||[]); const r=list.findIndex(e=>e.id===evId); return r>=0?{c:cont.id,r,ev:list[r]}:null; };
+  const infoOf=it=>{
+    if(it.type==='competency_group'){ for(const c of srcs){ const i=colOf(c,it.id); if(i) return i; } return null; }
+    if(it.classCommon&&it.classId) return colOf(classLike(it.classId),it.classNoteId);
+    return null;
+  };
+  const dec=items.map((it,i)=>{
+    const info=infoOf(it);
+    const t=(info&&createdTs(info.ev))||createdTs(it)||(it.items&&it.items[0]?createdTs(it.items[0]):0);
+    return {it,i,d:dateKey(it),t,info};
+  });
+  dec.sort((a,b)=>(a.d-b.d)||(a.t-b.t)||(a.i-b.i));
+  /* à date égale, les évaluations d'une même classe/d'un même groupe suivent l'ordre exact des colonnes du tableau */
+  const buckets=new Map();
+  dec.forEach((x,p)=>{ if(x.info){ const k=x.d+"|"+x.info.c; if(!buckets.has(k)) buckets.set(k,[]); buckets.get(k).push(p); } });
+  buckets.forEach(pos=>{ const its=pos.map(p=>dec[p]).sort((a,b)=>a.info.r-b.info.r); pos.forEach((p,j)=>{ dec[p]=its[j]; }); });
+  const out=dec.map(x=>x.it); items.length=0; out.forEach(x=>items.push(x)); return items;
+}
 function getSkillHierarchy(c) {
   let cycle = c.cycle;
   let domain = c.domain;
@@ -4905,7 +4955,8 @@ function fmtCoef(x){
 function escHtml(s){return String(s||"").replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
 function specialMeaning(txt){return {Abs:"Absent(e)",Disp:"Dispensé(e)",NE:"Non évalué(e)",NR:"Non rendu",EA:"En attente",X:"Pas de note pour cet élève"}[txt]||"";}
 function isSpecial(n){return n&&typeof n.noteText==="string"&&(SPECIAL_VALUES.has(n.noteText)||n.noteText==="X");}
-function dateKey(n){if(n.isoDate) return new Date(n.isoDate).getTime();const d=parseDateJJMMAA(n.dateJJMMAA||"");return d?d.getTime():0;}
+/* Clé de jour unique (midi local) : une éval de compétences (date JJ/MM/AA) et une éval chiffrée (isoDate) du même jour ont exactement la même clé */
+function dateKey(n){ const iso=normDateISO(n.isoDate)||normDateISO(n.dateJJMMAA)||normDateISO(n.date); if(iso) return new Date(iso+"T12:00:00").getTime(); const d=parseDateJJMMAA(n.dateJJMMAA||"");return d?d.getTime():0;}
 function getSubjectCoef(subjectName){const sub=SUBJECT_REGISTRY.find(s=>(typeof s==='object'?s.name:s)===subjectName);return(typeof sub==='object'&&sub.coef!==undefined)?sub.coef:1;}
 
 // ── EXPORT / IMPORT ──────────────────────────────────────────────────────────
@@ -4944,6 +4995,7 @@ function parseCsvLine(line){
 }
 
 function buildCSVText(){
+ try{ if(AUTH.role==="prof") stampCreated(); }catch(e){}
  const rows=[];
  rows.push(["type","id","field1","field2","field3","field4","field5","field6","field7","field8","field9","field10","field11","field12","field13","field14","field15","field16","field17","field18","field19","field20","field21","field22","field23","field24","field25","field26"].join(";"));
  ["T1","T2","T3","T4"].forEach(k=>rows.push(["lock",k,LOCKED_PERIODS[k]?1:0].join(";")));
@@ -4961,8 +5013,8 @@ function buildCSVText(){
  });
  grpForCsv().forEach(g=>rows.push(["group",g.id,escapeCsv(g.name),escapeCsv(JSON.stringify(g.memberIds||[])),Array.isArray(g.subjectsSel)?escapeCsv(JSON.stringify(g.subjectsSel)):""].join(";")));
  grpForCsv().forEach(g=>{
-  (g.evals||[]).forEach(ev=>rows.push(["classEval",ev.id,g.id,escapeCsv(ev.subject),escapeCsv(ev.label),ev.dateJJMMAA,ev.isoDate,ev.outof,ev.coef,ev.period||"",ev.defaultImportant?1:0,escapeCsv(ev.generalComment||""),ev.hideFromStudent?1:0,escapeCsv(JSON.stringify(ev.bareme||null)),escapeCsv(ev.hwKey||""),ev.hwDirect?1:0,ev.hwRevealed?1:0,ev.hideUntil||"",(Array.isArray(ev.hwEdited)?ev.hwEdited.join(","):"")].join(";")));
-  (g.compEvals||[]).forEach(ev=>rows.push(["classCompEval",ev.id,g.id,escapeCsv(ev.subject),escapeCsv(ev.label),ev.dateJJMMAA,ev.period||"",escapeCsv(JSON.stringify(ev.template||[])),ev.hideFromStudent?1:0,ev.hideUntil||""].join(";")));
+  (g.evals||[]).forEach(ev=>rows.push(["classEval",ev.id,g.id,escapeCsv(ev.subject),escapeCsv(ev.label),ev.dateJJMMAA,ev.isoDate,ev.outof,ev.coef,ev.period||"",ev.defaultImportant?1:0,escapeCsv(ev.generalComment||""),ev.hideFromStudent?1:0,escapeCsv(JSON.stringify(ev.bareme||null)),escapeCsv(ev.hwKey||""),ev.hwDirect?1:0,ev.hwRevealed?1:0,ev.hideUntil||"",(Array.isArray(ev.hwEdited)?ev.hwEdited.join(","):""),ev.createdAt||""].join(";")));
+  (g.compEvals||[]).forEach(ev=>rows.push(["classCompEval",ev.id,g.id,escapeCsv(ev.subject),escapeCsv(ev.label),ev.dateJJMMAA,ev.period||"",escapeCsv(JSON.stringify(ev.template||[])),ev.hideFromStudent?1:0,ev.hideUntil||"",ev.createdAt||""].join(";")));
  });
  DATA.classes.forEach(c=>{
   rows.push(["class",c.id,escapeCsv(c.name)].join(";"));
@@ -4972,18 +5024,18 @@ function buildCSVText(){
    else rows.push(["classSubject", c.id, escapeCsv(subName)].join(";"));
   });
   (c.memberIds||[]).forEach(mid=>rows.push(["classMember",c.id,mid].join(";")));
-  (c.evals||[]).forEach(ev=>rows.push(["classEval",ev.id,c.id,escapeCsv(ev.subject),escapeCsv(ev.label),ev.dateJJMMAA,ev.isoDate,ev.outof,ev.coef,ev.period||"",ev.defaultImportant?1:0,escapeCsv(ev.generalComment||""),ev.hideFromStudent?1:0,escapeCsv(JSON.stringify(ev.bareme||null)),escapeCsv(ev.hwKey||""),ev.hwDirect?1:0,ev.hwRevealed?1:0,ev.hideUntil||"",(Array.isArray(ev.hwEdited)?ev.hwEdited.join(","):"")].join(";")));
-  (c.compEvals||[]).forEach(ev=>rows.push(["classCompEval",ev.id,c.id,escapeCsv(ev.subject),escapeCsv(ev.label),ev.dateJJMMAA,ev.period||"",escapeCsv(JSON.stringify(ev.template||[])),ev.hideFromStudent?1:0,ev.hideUntil||""].join(";")));
+  (c.evals||[]).forEach(ev=>rows.push(["classEval",ev.id,c.id,escapeCsv(ev.subject),escapeCsv(ev.label),ev.dateJJMMAA,ev.isoDate,ev.outof,ev.coef,ev.period||"",ev.defaultImportant?1:0,escapeCsv(ev.generalComment||""),ev.hideFromStudent?1:0,escapeCsv(JSON.stringify(ev.bareme||null)),escapeCsv(ev.hwKey||""),ev.hwDirect?1:0,ev.hwRevealed?1:0,ev.hideUntil||"",(Array.isArray(ev.hwEdited)?ev.hwEdited.join(","):""),ev.createdAt||""].join(";")));
+  (c.compEvals||[]).forEach(ev=>rows.push(["classCompEval",ev.id,c.id,escapeCsv(ev.subject),escapeCsv(ev.label),ev.dateJJMMAA,ev.period||"",escapeCsv(JSON.stringify(ev.template||[])),ev.hideFromStudent?1:0,ev.hideUntil||"",ev.createdAt||""].join(";")));
  });
  Object.entries(DATA.notes).forEach(([sid,arr])=>{
   const stu=STU_BY_ID[sid];
   const stuClsName=escapeCsv((stu&&CLS_BY_ID[stu.classId]?.name)||"");
   arr.forEach(n=>{
-   rows.push(["note",sid,escapeCsv(stu?.first||""),escapeCsv(stu?.last||""),stu?.classId||"",stuClsName,escapeCsv(n.subject),escapeCsv(n.label||""),n.dateJJMMAA||"",n.isoDate||"",(isSpecial(n)?"":(typeof n.note==='number'?n.note:"")),n.outof,n.coef,n.classCommon?1:0,n.classId||"",n.classNoteId||"",escapeCsv(n.noteText||""),n.period||"",n.important?1:0,n.id||"",escapeCsv(n.comment||""),n.hideFromStudent?1:0,escapeCsv(JSON.stringify(n.bareme||null)),n.hwAuto?1:0,n.hideUntil||""].join(";"));
+   rows.push(["note",sid,escapeCsv(stu?.first||""),escapeCsv(stu?.last||""),stu?.classId||"",stuClsName,escapeCsv(n.subject),escapeCsv(n.label||""),n.dateJJMMAA||"",n.isoDate||"",(isSpecial(n)?"":(typeof n.note==='number'?n.note:"")),n.outof,n.coef,n.classCommon?1:0,n.classId||"",n.classNoteId||"",escapeCsv(n.noteText||""),n.period||"",n.important?1:0,n.id||"",escapeCsv(n.comment||""),n.hideFromStudent?1:0,escapeCsv(JSON.stringify(n.bareme||null)),n.hwAuto?1:0,n.hideUntil||"",n.createdAt||""].join(";"));
   });
  });
  (DATA.competencies||[]).forEach(c=>{
-  rows.push(["competency",c.id||"",c.studentId||"",escapeCsv(c.domain||""),escapeCsv(c.level||""),escapeCsv(c.name||""),c.color||"",c.dateJJMMAA||"",c.date||"",escapeCsv(c.label||""),c.groupId||"",escapeCsv(c.subject||""),c.period||"",c.noteId||"",escapeCsv(c.comment||""),c.hideFromStudent?1:0,escapeCsv(c.cycle||""),escapeCsv(c.subDomain||""),c.hideUntil||""].join(";"));
+  rows.push(["competency",c.id||"",c.studentId||"",escapeCsv(c.domain||""),escapeCsv(c.level||""),escapeCsv(c.name||""),c.color||"",c.dateJJMMAA||"",c.date||"",escapeCsv(c.label||""),c.groupId||"",escapeCsv(c.subject||""),c.period||"",c.noteId||"",escapeCsv(c.comment||""),c.hideFromStudent?1:0,escapeCsv(c.cycle||""),escapeCsv(c.subDomain||""),c.hideUntil||"",c.createdAt||""].join(";"));
  });
  (DATA.appreciations||[]).forEach(a=>{rows.push(["appreciation",a.id||"",a.studentId||"",a.period||"",escapeCsv(a.subject||""),escapeCsv(a.text||"")].join(";"));});
  if (DATA.generalAppreciations) {
@@ -5071,7 +5123,7 @@ function importCSV(text){
      const baremeStr = unescapeCsv(cols[13]||"");
      let bareme = undefined;
      try { bareme = baremeStr ? JSON.parse(baremeStr) : undefined; } catch(e) {}
-     (cls.evals||(cls.evals=[])).push({id:cols[1],subject:unescapeCsv(cols[3]||""),label:unescapeCsv(cols[4]||""),dateJJMMAA:cols[5],isoDate:cols[6],outof:parseFloat(cols[7])||20,coef:cols[8].length?parseFloat(cols[8]):1,period:cols[9]||"",defaultImportant:cols[10]==="1",generalComment:unescapeCsv(cols[11]||"")||undefined,hideFromStudent:cols[12]==="1", bareme, ...(cols[14]?{hwKey:cols[14],hwId:String(cols[14]).split("::")[0],hwTestId:String(cols[14]).split("::")[1]||"",hwDirect:cols[15]==="1",hwRevealed:cols[16]==="1"}:{}), ...(cols[17]?{hideUntil:cols[17]}:{}), ...(cols[18]?{hwEdited:String(cols[18]).split(",").filter(Boolean)}:{})});
+     (cls.evals||(cls.evals=[])).push({id:cols[1],subject:unescapeCsv(cols[3]||""),label:unescapeCsv(cols[4]||""),dateJJMMAA:cols[5],isoDate:cols[6],outof:parseFloat(cols[7])||20,coef:cols[8].length?parseFloat(cols[8]):1,period:cols[9]||"",defaultImportant:cols[10]==="1",generalComment:unescapeCsv(cols[11]||"")||undefined,hideFromStudent:cols[12]==="1", bareme, ...(cols[14]?{hwKey:cols[14],hwId:String(cols[14]).split("::")[0],hwTestId:String(cols[14]).split("::")[1]||"",hwDirect:cols[15]==="1",hwRevealed:cols[16]==="1"}:{}), ...(cols[17]?{hideUntil:cols[17]}:{}), ...(cols[18]?{hwEdited:String(cols[18]).split(",").filter(Boolean)}:{}), ...(cols[19]?{createdAt:cols[19]}:{})});
    }
   }
   else if(type==="note"){
@@ -5080,14 +5132,14 @@ function importCSV(text){
    const baremeStr = unescapeCsv(cols[22]||"");
    let bareme = undefined;
    try { bareme = baremeStr ? JSON.parse(baremeStr) : undefined; } catch(e) {}
-   DATA.notes[sid].push({subject:unescapeCsv(cols[6]||""),label:unescapeCsv(cols[7]||""),dateJJMMAA:cols[8]||"",isoDate:cols[9]||"",note:note==null?undefined:note,outof:parseFloat(cols[11])||20,coef:cols[12].length?parseFloat(cols[12]):1,noteText:unescapeCsv(cols[16]||"")||undefined,classCommon:cols[13]==="1",classId:cols[14]||"",classNoteId:cols[15]||"",period:cols[17]||undefined,important:cols[18]==="1",id:cols[19]||undefined,comment:unescapeCsv(cols[20]||"")||undefined,hideFromStudent:cols[21]==="1", bareme, ...(cols[23]==="1"?{hwAuto:true}:{}), ...(cols[24]?{hideUntil:cols[24]}:{})});
+   DATA.notes[sid].push({subject:unescapeCsv(cols[6]||""),label:unescapeCsv(cols[7]||""),dateJJMMAA:cols[8]||"",isoDate:cols[9]||"",note:note==null?undefined:note,outof:parseFloat(cols[11])||20,coef:cols[12].length?parseFloat(cols[12]):1,noteText:unescapeCsv(cols[16]||"")||undefined,classCommon:cols[13]==="1",classId:cols[14]||"",classNoteId:cols[15]||"",period:cols[17]||undefined,important:cols[18]==="1",id:cols[19]||undefined,comment:unescapeCsv(cols[20]||"")||undefined,hideFromStudent:cols[21]==="1", bareme, ...(cols[23]==="1"?{hwAuto:true}:{}), ...(cols[24]?{hideUntil:cols[24]}:{}), ...(cols[25]?{createdAt:cols[25]}:{})});
   }
   else if(type==="competency"){
-   (DATA.competencies||(DATA.competencies=[])).push({id:cols[1]||('cp_'+Math.random().toString(36).slice(2)),studentId:cols[2]||"",domain:unescapeCsv(cols[3]||""),level:unescapeCsv(cols[4]||""),name:unescapeCsv(cols[5]||""),color:cols[6]||"",dateJJMMAA:cols[7]||undefined,date:cols[8]||undefined,label:unescapeCsv(cols[9]||"")||undefined,groupId:cols[10]||undefined,subject:unescapeCsv(cols[11]||"")||undefined,period:cols[12]||undefined,noteId:cols[13]||undefined,comment:unescapeCsv(cols[14]||"")||undefined,hideFromStudent:cols[15]==="1",cycle:unescapeCsv(cols[16]||"")||undefined,subDomain:unescapeCsv(cols[17]||"")||undefined,hideUntil:cols[18]||undefined});
+   (DATA.competencies||(DATA.competencies=[])).push({id:cols[1]||('cp_'+Math.random().toString(36).slice(2)),studentId:cols[2]||"",domain:unescapeCsv(cols[3]||""),level:unescapeCsv(cols[4]||""),name:unescapeCsv(cols[5]||""),color:cols[6]||"",dateJJMMAA:cols[7]||undefined,date:cols[8]||undefined,label:unescapeCsv(cols[9]||"")||undefined,groupId:cols[10]||undefined,subject:unescapeCsv(cols[11]||"")||undefined,period:cols[12]||undefined,noteId:cols[13]||undefined,comment:unescapeCsv(cols[14]||"")||undefined,hideFromStudent:cols[15]==="1",cycle:unescapeCsv(cols[16]||"")||undefined,subDomain:unescapeCsv(cols[17]||"")||undefined,hideUntil:cols[18]||undefined,createdAt:cols[19]||undefined});
   }
   else if(type==="classCompEval"){
    const cls=classLike(cols[2]);
-   if(cls){if(!Array.isArray(cls.compEvals)) cls.compEvals=[];let template=[];try{const tplStr=unescapeCsv(cols[7]||"");template=tplStr?JSON.parse(tplStr):[];}catch(e){template=[];}cls.compEvals.push({id:cols[1]||"",subject:unescapeCsv(cols[3]||""),label:unescapeCsv(cols[4]||""),dateJJMMAA:cols[5]||"",period:cols[6]||"",template,hideFromStudent:cols[8]==="1",...(cols[9]?{hideUntil:cols[9]}:{})});}
+   if(cls){if(!Array.isArray(cls.compEvals)) cls.compEvals=[];let template=[];try{const tplStr=unescapeCsv(cols[7]||"");template=tplStr?JSON.parse(tplStr):[];}catch(e){template=[];}cls.compEvals.push({id:cols[1]||"",subject:unescapeCsv(cols[3]||""),label:unescapeCsv(cols[4]||""),dateJJMMAA:cols[5]||"",period:cols[6]||"",template,hideFromStudent:cols[8]==="1",...(cols[9]?{hideUntil:cols[9]}:{}),...(cols[10]?{createdAt:cols[10]}:{})});}
   }
   else if(type==="appreciation"){
    if(!DATA.appreciations) DATA.appreciations=[];
@@ -5152,7 +5204,7 @@ function importCSV(text){
    } catch(e) { console.error("Import compHierarchy error", e); }
   }
  });
- ensureOnlineTestsStore(); ensureSubjectRegistry(); backfillClassSubjectsFromRegistry(); refreshLocksUI(); ensureNoteIds();
+ ensureOnlineTestsStore(); ensureSubjectRegistry(); backfillClassSubjectsFromRegistry(); refreshLocksUI(); ensureNoteIds(); markLegacyCreated();
  IS_MODIFIED = false;
  updateSaveStatusUI(null);
 }
@@ -5465,7 +5517,7 @@ function renderClassPreviewContent(){
       if(empty) btn.classList.add("empty-eval");
       if(note && note.noteText==="EA"){ btn.classList.add("red"); evalHasEA=true; }
       
-      if(note && isTodayDate(note.dateJJMMAA, note.isoDate)) btn.classList.add("today");
+      if(note && isNewDate(note.dateJJMMAA, note.isoDate)) btn.classList.add("today");
       if(note && !!note.important) btn.classList.add("important");
       if(!empty && (note.note/note.outof*20) < 10) btn.classList.add("red");
 
@@ -6280,7 +6332,7 @@ function renderEleveViewForPeriod(studentId,periodKey){
  const allComps=DATA.competencies||[];
  const studentComps=allComps.filter(c=>c.studentId===studentId&&!c.noteId&&(periodKey==="YEAR"||(c.period||"YEAR")===periodKey)&&!c.hideFromStudent);
  const compGroups={};
- studentComps.forEach(c=>{const gid=c.groupId||c.id;if(!compGroups[gid]) compGroups[gid]={type:'competency_group',id:gid,label:c.label||"Évaluation de compétences",dateJJMMAA:c.dateJJMMAA,date:c.date,subject:c.subject||"Compétences",items:[]};compGroups[gid].items.push(c);});
+ studentComps.forEach(c=>{const gid=c.groupId||c.id;if(!compGroups[gid]) compGroups[gid]={type:'competency_group',id:gid,label:c.label||"Évaluation de compétences",dateJJMMAA:c.dateJJMMAA,date:c.date,subject:c.subject||"Compétences",createdAt:c.createdAt,items:[]};compGroups[gid].items.push(c);});
  const allItems=[...notes,...Object.values(compGroups)];
  const bySubject=new Map();
  allItems.forEach(item=>{const subj=item.subject||"Compétences";if(!bySubject.has(subj)) bySubject.set(subj,[]);bySubject.get(subj).push(item);});
@@ -6298,7 +6350,7 @@ function renderEleveViewForPeriod(studentId,periodKey){
  let globalSum=0,globalCoef=0,globalEA=false;
  for(const subject of sortedSubjectNames){
   const items=bySubject.get(subject); if(!items||!items.length) continue;
-  items.sort((a,b)=>dateKey(a)-dateKey(b));
+  orderStudentItems(items,studentId);
   const isCompRub=(subject==="Compétences");
   const line=document.createElement("div"); line.className="matiere-line";
   if(isCompRub) line.style.background="var(--blueBox)";
@@ -6313,7 +6365,8 @@ function renderEleveViewForPeriod(studentId,periodKey){
     const empty=!hasAnyResult(group,null,studentId);
     const pill=document.createElement("div");
     pill.className=(isCompRub?"comp-pill":"note-pill")+(empty?" empty-eval":"");
-     if(isTodayDate(group.dateJJMMAA, group.date, group.isoDate)) pill.classList.add("today");
+     if(isNewDate(group.dateJJMMAA, group.date, group.isoDate)) pill.classList.add("today");
+     try{ pill.dataset.nday=normDateISO(group.date)||normDateISO(group.dateJJMMAA)||""; pill.dataset.nsubj=group.subject||"—"; }catch(x){}
      pill.style.cssText="cursor:pointer;display:flex;align-items:center;background:#fff;";
      if(isCompRub) pill.style.borderRadius="999px";
     pill.innerHTML=`<div style="display:flex;gap:4px;">${group.items.map(c=>{
@@ -6367,7 +6420,7 @@ function renderEleveViewForPeriod(studentId,periodKey){
     const btn=document.createElement("button"); btn.type="button";
     btn.className="note-pill"+(empty?" empty-eval":"");
     try{ btn.dataset.nday=n.isoDate||(typeof normDateISO==="function"?normDateISO(n.dateJJMMAA):"")||""; btn.dataset.nsubj=n.subject||"—"; }catch(x){}
-    const isToday=isTodayDate(n.dateJJMMAA, n.isoDate);
+    const isToday=isNewDate(n.dateJJMMAA, n.isoDate);
     if(!!n.important) btn.classList.add("important");
     if(isToday) btn.classList.add("today");
     btn.style.cssText="background:#fff;";
@@ -11498,6 +11551,7 @@ document.getElementById("refreshSiteBtn")?.addEventListener("click",manualRefres
 
 function saveData(){
  if(AUTH.role!=="prof") return;
+ try{ stampCreated(); }catch(e){}
  IS_MODIFIED=true;
  cloudSchedule();
 }
@@ -17644,8 +17698,19 @@ function tlItems(){
    if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)&&typeof normDateISO==="function") iso=normDateISO(n.dateJJMMAA)||"";
    if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return;
    const ts=new Date(iso+"T12:00:00").getTime();
-   if(ts>Date.now()+864e5) return;
    rows.push({idx:i,iso,ts,subject:n.subject||"—",label:n.label||"",period:n.period||"YEAR"});
+  });
+  /* Évaluations de compétences seules (sans note) : mêmes notifications que les notes */
+  const cg={};
+  (DATA.competencies||[]).forEach(c=>{
+   if(!c||c.studentId!==AUTH.studentId||c.noteId||c.hideFromStudent) return;
+   const gid=c.groupId||c.id; if(!cg[gid]) cg[gid]=c;
+  });
+  Object.keys(cg).forEach((gid,j)=>{
+   const c=cg[gid];
+   let iso=/^\d{4}-\d{2}-\d{2}$/.test(c.date||"")?c.date:(normDateISO(c.date)||normDateISO(c.dateJJMMAA)||"");
+   if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return;
+   rows.push({idx:100000+j,iso,ts:new Date(iso+"T12:00:00").getTime(),subject:c.subject||"Compétences",label:c.label||"Évaluation de compétences",period:c.period||"YEAR"});
   });
   /* Toutes les notes depuis le début : une seule notification par jour et par matière */
   const byKey={};
@@ -17654,7 +17719,7 @@ function tlItems(){
    .sort((a,b)=>(b.last.ts-a.last.ts)||(b.last.idx-a.last.idx))
    .forEach(({l,last})=>{
     const multi=l.length>1;
-    out.push({k:"n"+last.iso+"|"+last.subject,type:"grade",act:"grade",ts:last.ts,iso:last.iso,today:last.iso===today,
+    out.push({k:"n"+last.iso+"|"+last.subject,type:"grade",act:"grade",ts:last.ts,iso:last.iso,today:last.iso>=today,
      subject:last.subject,period:last.period,
      title:(multi?"Nouvelles évaluations de ":"Nouvelle évaluation de ")+last.subject,
      sub:multi?"":l[0].label, lines:multi?l.map(r=>r.label||"Évaluation"):null});
@@ -17757,11 +17822,11 @@ function goTab(target){ document.querySelector('#mainTabs .tab-btn[data-target="
 /* Clignotement des évaluations de la notification : bleu fin qui s'estompe très lentement, 3 fois */
 function flashNotes(day,subj,per){
  let tries=0, switched=false;
- const find=()=>[...document.querySelectorAll(".note-pill[data-nday]")].filter(p=>p.dataset.nday===day&&p.dataset.nsubj===subj&&p.offsetParent!==null);
+ const find=()=>[...document.querySelectorAll(".note-pill[data-nday],.comp-pill[data-nday]")].filter(p=>p.dataset.nday===day&&p.dataset.nsubj===subj&&p.offsetParent!==null);
  const step=()=>{
   const pills=find();
   if(pills.length){
-   document.querySelectorAll(".note-pill.note-flash").forEach(x=>x.classList.remove("note-flash"));
+   document.querySelectorAll(".note-pill.note-flash,.comp-pill.note-flash").forEach(x=>x.classList.remove("note-flash"));
    void document.body.offsetWidth;
    pills.forEach(p=>{
     p.classList.add("note-flash");
