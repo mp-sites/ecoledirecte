@@ -2253,7 +2253,7 @@ header .header-actions{margin-left:auto;align-items:center}
    <div class="pm-lab">Destinataires</div>
    <div id="mmPick"></div>
    <div class="pm-lab" style="margin-top:14px">Objet <small style="font-weight:500;color:var(--muted)">(utile pour une sélection personnalisée ; une classe, un groupe ou « Tous » a sa propre discussion)</small></div>
-   <input id="mmSubject" type="text" maxlength="80" placeholder="Ex. : Sortie du vendredi" autocomplete="off" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:10px;font:inherit">
+   <input id="mmSubject" type="text" maxlength="80" autocomplete="off" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:10px;font:inherit">
    <textarea id="mmText" placeholder="Écris ton message…"></textarea>
   </div>
   <div class="pm-foot">
@@ -2353,7 +2353,7 @@ header .header-actions{margin-left:auto;align-items:center}
  <div class="modal-card" style="width:480px"><div class="modal-header"><h3 id="schEventTitle">Ajouter un cours</h3><button class="modal-close" id="schEventClose">×</button></div>
  <div class="modal-body"><form id="schEventForm" class="modal-form" autocomplete="off">
   <div id="schSubjWrap"><label>Matière</label><select id="schSubject"></select></div>
-  <div id="schNameWrap" style="display:none"><label>Nom de l'événement</label><div style="display:flex;gap:8px;align-items:center"><input type="text" id="schEvName" maxlength="80" placeholder="Ex. Sortie scolaire, Conseil de classe…" style="flex:1;min-width:0"><label class="sch-dot" title="Couleur de l'événement" style="background:#ffffff;border:1px solid #94a3b8;flex:none;margin:0" id="schEvColorDot"><input type="color" id="schEvColor" value="#ffffff"></label></div></div>
+  <div id="schNameWrap" style="display:none"><label>Nom de l'événement</label><div style="display:flex;gap:8px;align-items:center"><input type="text" id="schEvName" maxlength="80" style="flex:1;min-width:0"><label class="sch-dot" title="Couleur de l'événement" style="background:#ffffff;border:1px solid #94a3b8;flex:none;margin:0" id="schEvColorDot"><input type="color" id="schEvColor" value="#ffffff"></label></div></div>
   <label>Classe(s)</label><div id="schClasses" class="sch-classes"></div>
   <label>Professeur</label><select id="schProf"></select>
   <label>Salle</label><select id="schRoom"></select>
@@ -2391,24 +2391,24 @@ header .header-actions{margin-left:auto;align-items:center}
   </div>
   <div class="modal-body">
    <form id="noteForm" class="modal-form">
-    <label>Élève</label><select name="studentid" id="noteStudentSelect"></select>
-    <label>Matière</label><select name="subject" id="noteSubject"></select>
-    <label>Évaluation</label><input name="label" id="noteLabel" placeholder="Ex: Contrôle chapitre 2">
     <div class="frow">
-     <div class="fcol"><label>Date (JJ/MM/AA)</label><input name="date" id="noteDate" placeholder="JJ/MM/AA"></div>
-     <div class="fcol"><label>Trimestre</label>
+     <div class="fcol" style="flex:1 1 200px;"><label>Élève</label><select name="studentid" id="noteStudentSelect"></select></div>
+     <div class="fcol" style="flex:1 1 200px;"><label>Matière</label><select name="subject" id="noteSubject"></select></div>
+    </div>
+    <label>Évaluation</label><input name="label" id="noteLabel">
+    <div class="frow">
+     <div class="fcol" style="flex:1 1 108px;"><label>Date (JJ/MM/AA)</label><input name="date" id="noteDate" placeholder="JJ/MM/AA"></div>
+     <div class="fcol" style="flex:1 1 124px;"><label>Trimestre</label>
       <select name="period" id="notePeriod">
       <option value="T1">Trimestre 1</option><option value="T2">Trimestre 2</option>
       <option value="T3">Trimestre 3</option><option value="T4">Trimestre 4</option>
       <option value="YEAR">Année</option>
       </select>
      </div>
-    </div>
-    <div class="frow">
-     <div class="fcol" style="flex:2 1 150px;"><label>Note</label><input name="note" id="noteValue" placeholder="15.75, Abs, Disp…" title="Nombre ou Abs, Disp, NE, NR, EA"></div>
+     <div class="fcol" style="flex:2 1 92px;"><label>Note</label><input name="note" id="noteValue" title="Nombre ou Abs, Disp, NE, NR, EA"></div>
      <div class="fcol fbtn"><button type="button" class="btn btn-sm" id="noteCreateBaremeBtn" style="font-size:12px;white-space:nowrap;">Créer un barème</button></div>
-     <div class="fcol"><label>Sur</label><input type="number" step="0.01" name="outof" id="noteOutof" value="20"></div>
-     <div class="fcol"><label>Coef</label><input type="number" step="any" name="coef" id="noteCoef" value="1"></div>
+     <div class="fcol" style="flex:1 1 64px;"><label>Sur</label><input type="number" step="0.01" name="outof" id="noteOutof" value="20"></div>
+     <div class="fcol" style="flex:1 1 64px;"><label>Coef</label><input type="number" step="any" name="coef" id="noteCoef" value="1"></div>
     </div>
     <!-- Indicateur barème actif -->
     <div id="baremeActiveIndicator" style="display:none; margin:4px 0 8px 0; padding:8px 12px; background:#eef9ff; border:1px solid #b9e2fc; border-radius:8px; font-size:13px; color:#0075bf;">
@@ -2548,22 +2548,22 @@ header .header-actions{margin-left:auto;align-items:center}
   </div>
   <div class="modal-body">
    <form id="classEvalForm" class="modal-form">
-    <label>Classe</label><select id="classSelect"></select>
-    <label>Matière</label><select id="classSubject"></select>
-    <label>Évaluation</label><input id="classLabel" placeholder="Ex: Interro chapitre 3">
     <div class="frow">
-     <div class="fcol"><label>Date (JJ/MM/AA)</label><input id="classDate" placeholder="JJ/MM/AA"></div>
-     <div class="fcol"><label>Trimestre</label>
+     <div class="fcol" style="flex:1 1 200px;"><label>Classe</label><select id="classSelect"></select></div>
+     <div class="fcol" style="flex:1 1 200px;"><label>Matière</label><select id="classSubject"></select></div>
+    </div>
+    <label>Évaluation</label><input id="classLabel">
+    <div class="frow">
+     <div class="fcol" style="flex:1 1 108px;"><label>Date (JJ/MM/AA)</label><input id="classDate" placeholder="JJ/MM/AA"></div>
+     <div class="fcol" style="flex:1 1 124px;"><label>Trimestre</label>
       <select id="classEvalPeriod">
       <option value="T1">Trimestre 1</option><option value="T2">Trimestre 2</option>
       <option value="T3">Trimestre 3</option><option value="T4">Trimestre 4</option>
       <option value="YEAR">Année</option>
       </select>
      </div>
-    </div>
-    <div class="frow">
-     <div class="fcol"><label>Sur</label><input type="number" step="0.01" id="classOutof" value="20"></div>
-     <div class="fcol"><label>Coef</label><input type="number" step="any" id="classCoef" value="1"></div>
+     <div class="fcol" style="flex:1 1 64px;"><label>Sur</label><input type="number" step="0.01" id="classOutof" value="20"></div>
+     <div class="fcol" style="flex:1 1 64px;"><label>Coef</label><input type="number" step="any" id="classCoef" value="1"></div>
      <div class="fcol fbtn" style="display:flex;gap:6px;"><button type="button" class="btn btn-sm" id="classEvalCreateBaremeBtn" style="font-size:12px;white-space:nowrap;">Créer un barème</button><button type="button" class="btn btn-sm btn-primary" id="classEvalPointsBtn" style="display:none;font-size:12px;white-space:nowrap;">Saisir les points</button></div>
     </div>
     <label class="chk-big"><input type="checkbox" id="classEvalDefaultImportant"> Note importante (par défaut)</label>
@@ -3045,7 +3045,7 @@ header .header-actions{margin-left:auto;align-items:center}
   </div>
   <div class="modal-body">
    <div class="form-row"><label>Matière</label><select id="studentCompSubject" style="width:100%;"></select></div>
-   <div class="form-row"><label>Nom de l'évaluation</label><input id="studentCompLabel" placeholder="Ex: Lecture à voix haute"></div>
+   <div class="form-row"><label>Nom de l'évaluation</label><input id="studentCompLabel"></div>
    <div class="form-row"><label>Date</label><input id="studentCompDate" placeholder="JJ/MM/AA"></div>
    <div class="form-row">
     <label>Trimestre</label>
@@ -3084,7 +3084,7 @@ header .header-actions{margin-left:auto;align-items:center}
   </div>
   <div class="modal-body">
    <div class="form-row"><label>Matière</label><select id="classCompSetupSubject" style="width:100%;"></select></div>
-   <div class="form-row"><label>Nom de l'évaluation</label><input id="classCompSetupLabel" placeholder="Ex: Comportement T1"></div>
+   <div class="form-row"><label>Nom de l'évaluation</label><input id="classCompSetupLabel"></div>
    <div class="form-row"><label>Date</label><input id="classCompSetupDate" placeholder="JJ/MM/AA"></div>
    <div class="form-row"><label class="chk-big"><input type="checkbox" id="classCompSetupHideFromStudent"> Masquer vision élève</label></div>
     <div id="classCompSetupHideUntilWrap" style="display:none;margin:2px 0 8px 24px;font-size:13px;"><label style="font-weight:500;">Visible à partir du : <input type="date" id="classCompSetupHideUntil" style="width:auto;display:inline-block;"></label> <span style="color:#64748b;">(vide = reste masquée tant que tu ne la rends pas visible ; sinon elle apparaît à 00h00 ce jour-là)</span></div>
@@ -3174,7 +3174,7 @@ header .header-actions{margin-left:auto;align-items:center}
     <div class="online-setup-grid">
      <div>
       <label>Nom de l’éval</label>
-      <input id="onlineTestTitleInput" placeholder="Ex : Chapitre 4 - fractions" required>
+      <input id="onlineTestTitleInput" required>
      </div>
      <div>
       <label>Matière</label>
@@ -3252,7 +3252,7 @@ header .header-actions{margin-left:auto;align-items:center}
   <div class="modal-body">
    <form id="onlineBasicForm" class="modal-form obt-form" autocomplete="off">
     <div class="obt-grid">
-     <div class="obt-full"><label for="onlineBasicTitle">Nom du test</label><input id="onlineBasicTitle" placeholder="Ex : Contrôle chapitre 4" required></div>
+     <div class="obt-full"><label for="onlineBasicTitle">Nom du test</label><input id="onlineBasicTitle" required></div>
      <div><label for="onlineBasicSubject">Matière</label><select id="onlineBasicSubject"></select></div>
      <div><label for="onlineBasicCount">Nombre de questions</label><input id="onlineBasicCount" type="number" min="1" max="100" step="1" value="10"></div>
      <div><label for="onlineBasicType">Type par défaut</label><select id="onlineBasicType"><option value="qcu">QCU (une seule bonne réponse)</option><option value="qcm">QCM (plusieurs bonnes réponses)</option><option value="written">Réponse à écrire (saisie par l’élève)</option></select></div>
@@ -7215,7 +7215,7 @@ function renderBaremeCriteriaUI(criteria) {
     const row = document.createElement("div");
     row.className = "bareme-row";
     row.innerHTML = `
-      <input class="bareme-crit-name-input" value="${escHtml(c.name)}" placeholder="Nom du critère (ex: Orthographe)" data-cidx="${i}">
+      <input class="bareme-crit-name-input" value="${escHtml(c.name)}" placeholder="Nom du critère" data-cidx="${i}">
       <input class="bareme-score-input" type="text" value="${c.score !== undefined ? c.score : ''}" placeholder="Note" data-cidx="${i}" data-field="score" title="Note obtenue par l'élève">
       <span style="color:#64748b;font-size:12px;">/</span>
       <input class="bareme-pts-input" type="number" value="${c.points}" min="0" step="0.25" data-cidx="${i}" data-field="points" title="Points max pour ce critère">
@@ -8931,7 +8931,7 @@ function openClass(clsId){
   const prev=isPrev(), names=clsSubjectNames(cls);
   let p=getP(); if(p!==""&&!["T1","T2","T3","T4","YEAR"].includes(p)){ p="T1"; setP(p); }
   let s=getS();
-  if(s!==""&&!(names.includes(s)||s==="__ALL__")){ s=prev?"__ALL__":(names[0]||""); setS(s); }
+  if(s!==""&&!(names.includes(s)||s==="__ALL__")){ s="__ALL__"; setS(s); }
   const pl=[["T1","Trimestre 1"],["T2","Trimestre 2"],["T3","Trimestre 3"],["T4","Trimestre 4"],["YEAR","Année"]];
   pSel.innerHTML=pl.map(([v,l])=>opt(v,l,v==="YEAR"?{}:fl(v,null),v===p)).join("");
   pSel.value=p;
@@ -15393,7 +15393,7 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
     </div>
     <div class="hwc-top-hint" id="hwcGradeHint"></div>
     <label for="hwcGeneralComment">Commentaire général <span class="hwc-opt">(visible par l’élève ; utile pour justifier un bonus ou un malus)</span></label>
-    <textarea id="hwcGeneralComment" rows="2" placeholder="Ex : +1 point pour la présentation soignée."></textarea>
+    <textarea id="hwcGeneralComment" rows="2"></textarea>
    </section>`;
  }
  function hwcRefreshHint(){
@@ -18727,6 +18727,7 @@ label.chk-big>input[type=checkbox]{ width:20px!important; height:20px; min-width
 .frow{ display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap }
 .frow>.fcol{ flex:1 1 110px; min-width:0 }
 .frow>.fcol.fbtn{ flex:0 0 auto; padding-bottom:2px }
+#noteValue,#noteOutof,#noteCoef,#classOutof,#classCoef,#noteDate,#classDate{ padding-left:6px; padding-right:6px }
 /* ── Consultation : marge sous les onglets ── */
 #consultView .cs-wrap{ margin-top:20px }
 /* ── Tests (début / fin) : les encadrés ne se touchent jamais ── */
