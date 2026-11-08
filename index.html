@@ -1645,6 +1645,14 @@ body.student-mode #homeNewPost{display:none}
 .tk{font-size:11px;letter-spacing:-2px;color:#94a3b8}
 .tk.r{color:#0a7fbf}
 .cm-bl{font-size:11.5px;color:#08487f;font-weight:600;margin-bottom:2px}
+.cm-priv{display:flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;color:#7c3aed;margin-bottom:2px}
+.cm.priv{border:1px dashed #a78bfa}
+.ch-reply{display:flex;align-items:center;gap:10px;padding:7px 10px 7px 12px;border-top:1px solid var(--border);background:#f5f3ff;border-left:4px solid #7c3aed}
+.ch-reply .rp-tx{flex:1;min-width:0;display:flex;flex-direction:column}
+.ch-reply .rp-tx b{font-size:12.5px;color:#6d28d9}
+.ch-reply .rp-tx small{font-size:12.5px;color:#475569;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ch-reply .rp-x{border:0;background:transparent;font-size:22px;line-height:1;color:#64748b;cursor:pointer;padding:2px 8px;border-radius:8px}
+.ch-reply .rp-x:hover{background:#e9e5ff}
 .cm-day,.cm-new{align-self:center;margin:8px 0 4px;padding:3px 12px;border-radius:999px;background:rgba(255,255,255,.85);font-size:12px;color:#475569}
 .cm-new{background:#fff1d6;color:#9a5b00;font-weight:700}
 .ch-compose{display:flex;align-items:flex-end;gap:8px;padding:8px 10px;border-top:1px solid var(--border);background:#fff}
@@ -2291,6 +2299,7 @@ header .header-actions{margin-left:auto;align-items:center}
 </div>
 
 <div id="msgCtx" role="menu" aria-label="Actions du message">
+ <button type="button" role="menuitem" data-ctx="reply"><i data-ico="reply"></i>Répondre</button>
  <button type="button" role="menuitem" data-ctx="copy"><i data-ico="copy"></i>Copier</button>
  <button type="button" role="menuitem" data-ctx="edit"><i data-ico="edit"></i>Modifier</button>
  <button type="button" role="menuitem" data-ctx="select"><i data-ico="select"></i>Sélectionner</button>
@@ -5064,7 +5073,7 @@ function buildCSVText(){
   }
  }
  (DATA.posts||[]).forEach(p=>rows.push(["post",p.id,escapeCsv(p.html||""),p.color||"",escapeCsv(JSON.stringify({all:!!p.all,ids:p.ids||[]})),p.createdAt||"",escapeCsv(p.author||""),p.updatedAt||""].join(";")));
- (DATA.messages||[]).forEach(m=>rows.push(["msg",m.id,m.sid,m.dir,escapeCsv(m.text||""),m.at||"",m.read?1:0,m.bid||"",escapeCsv(m.bl||""),escapeCsv(m.bs||"")].join(";")));
+ (DATA.messages||[]).forEach(m=>rows.push(["msg",m.id,m.sid,m.dir,escapeCsv(m.text||""),m.at||"",m.read?1:0,m.bid||"",escapeCsv(m.bl||""),escapeCsv(m.bs||""),m.priv?1:""].join(";")));
  return rows.join("\n");
 }
 
@@ -5182,7 +5191,7 @@ function importCSV(text){
   else if(type==="room"){ const r=unescapeCsv(cols[2]||""); if(r) schEns().rooms.push(r); }
   else if(type==="scheduleEvent"){ let ci=[]; try{ci=JSON.parse(unescapeCsv(cols[3]||"[]"))||[];}catch(e){} schEns().events.push({id:cols[1],subject:unescapeCsv(cols[2]||""),classIds:ci,room:unescapeCsv(cols[4]||""),date:cols[5],start:cols[6],end:cols[7],cancelled:cols[8]==="1",changed:cols[9]==="1",serie:cols[10]||"",hors:cols[11]==="1",holCancel:cols[12]==="1",created:cols[13]||"",evt:cols[14]==="1",color:cols[15]||undefined}); }
   else if(type==="post"){ if(!Array.isArray(DATA.posts)) DATA.posts=[]; let au={}; try{au=JSON.parse(unescapeCsv(cols[4]||"{}"))||{};}catch(e){} DATA.posts.push({id:cols[1],html:unescapeCsv(cols[2]||""),color:cols[3]||"",all:!!au.all,ids:Array.isArray(au.ids)?au.ids:[],createdAt:cols[5]||"",author:unescapeCsv(cols[6]||""),updatedAt:cols[7]||""}); }
-  else if(type==="msg"){ if(!Array.isArray(DATA.messages)) DATA.messages=[]; DATA.messages.push({id:cols[1],sid:cols[2],dir:cols[3],text:unescapeCsv(cols[4]||""),at:cols[5]||"",read:cols[6]==="1",bid:cols[7]||"",bl:unescapeCsv(cols[8]||""),bs:unescapeCsv(cols[9]||"")}); }
+  else if(type==="msg"){ if(!Array.isArray(DATA.messages)) DATA.messages=[]; DATA.messages.push({id:cols[1],sid:cols[2],dir:cols[3],text:unescapeCsv(cols[4]||""),at:cols[5]||"",read:cols[6]==="1",bid:cols[7]||"",bl:unescapeCsv(cols[8]||""),bs:unescapeCsv(cols[9]||""),priv:cols[10]==="1"}); }
   else if(type==="compHierarchy"){
    try {
     const cycle = unescapeCsv(cols[1]||"");
@@ -17619,7 +17628,7 @@ const isoOf=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
 const uid=p=>p+"_"+Math.random().toString(36).slice(2,9)+Date.now().toString(36);
 const isStu=()=>AUTH.role==="eleve";
 const isPrev=()=>document.body.classList.contains("ed-preview");
-const H={thread:null,filter:"",draft:{},read:new Set(),readFor:null,pendingScroll:false,sel:{on:false,kind:"",ids:new Set()}};
+const H={thread:null,reply:null,filter:"",draft:{},read:new Set(),readFor:null,pendingScroll:false,sel:{on:false,kind:"",ids:new Set()}};
 
 function ensure(){
  if(!Array.isArray(DATA.posts)) DATA.posts=[];
@@ -18066,7 +18075,7 @@ const selThrOn=()=>!isStu()&&H.sel.on&&H.sel.kind==="thread";
 function bubble(m){
  const me=!incoming(m);
  const tick=me?(isRead(m)?'<span class="tk r">✓✓</span>':'<span class="tk">✓</span>'):"";
- const bl=(me&&!isStu()&&m.bl)?'<div class="cm-bl">Envoyé à : '+esc(m.bl)+'</div>':"";
+ const bl=(m.priv?'<div class="cm-priv">🔒 Réponse privée</div>':"")+((me&&!isStu()&&m.bl)?'<div class="cm-bl">Envoyé à : '+esc(m.bl)+'</div>':"");
  return '<div class="cm '+(me?"me":"th")+(selMsgOn()&&H.sel.ids.has(m.id)?" picked":"")+'" data-mid="'+esc(m.id)+'">'+(selMsgOn()?'<span class="cm-ck" aria-hidden="true"></span>':"")+bl+'<div>'+esc(m.text).replace(/\n/g,"<br>")+'</div><div class="cm-m">'+(m.editedAt?'<span class="cm-ed">modifié</span>':"")+hhmm(m.at)+tick+'</div></div>';
 }
 function threadHtml(sid){
@@ -18116,10 +18125,11 @@ function grpThreadHtml(bid){
   const iso=isoOf(new Date(m.at));
   if(iso!==day){ html+='<div class="cm-day">'+esc(dayLabel(iso))+'</div>'; day=iso; }
   if(m.dir==="p2s"){
-   const k=m.at+"|"+m.text; if(seen[k]) return;
-   const sib=ms.filter(z=>z.dir==="p2s"&&z.at===m.at&&z.text===m.text); seen[k]=1;
+   const k=(m.priv?"P"+m.sid+"|":"")+m.at+"|"+m.text; if(seen[k]) return;
+   const sib=m.priv?[m]:ms.filter(z=>z.dir==="p2s"&&!z.priv&&z.at===m.at&&z.text===m.text); seen[k]=1;
    const rd=sib.every(isRead_p2s);
-   html+='<div class="cm me'+(selMsgOn()&&H.sel.ids.has(m.id)?" picked":"")+'" data-mid="'+esc(m.id)+'">'+(selMsgOn()?'<span class="cm-ck" aria-hidden="true"></span>':"")
+   html+='<div class="cm me'+(m.priv?" priv":"")+(selMsgOn()&&H.sel.ids.has(m.id)?" picked":"")+'" data-mid="'+esc(m.id)+'">'+(selMsgOn()?'<span class="cm-ck" aria-hidden="true"></span>':"")
+    +(m.priv?'<div class="cm-priv">🔒 Réponse privée à '+esc(stuName(m.sid))+'</div>':"")
     +'<div>'+esc(m.text).replace(/\n/g,"<br>")+'</div><div class="cm-m">'+(m.editedAt?'<span class="cm-ed">modifié</span>':"")+hhmm(m.at)+'<span class="tk'+(rd?" r":"")+'">'+(rd?"✓✓":"✓")+'</span></div></div>';
   }else{
    if(!newDone&&!isRead(m)){ html+='<div class="cm-new">Nouveaux messages</div>'; newDone=true; }
@@ -18155,11 +18165,12 @@ function renderChat(){
   if(keepQ){ const q=host.querySelector(".ch-search"); q.focus(); q.setSelectionRange(q.value.length,q.value.length); }
  }else{
   const G=isGrp(H.thread)?grpInfo(grpId(H.thread)):null;
+  if(H.reply&&(isStu()||!G||H.reply.thread!==H.thread||!findMsg(H.reply.mid))) H.reply=null;
   const who=G?G.subject:(isStu()?profName():stuName(sid)), sub=G?(isStu()?"Discussion de groupe":(G.label||(G.members.length+" élèves"))):(isStu()?"Professeur":className(sid)), av=G?ICON_GRP:(isStu()?"P":initials(sid));
   host.innerHTML='<div class="ch-head">'+((isStu()&&!stuGroups().length)?"":'<button type="button" class="ch-back" data-act="back" aria-label="Retour aux conversations">'+ICON_BACK+'</button>')
    +'<span class="av'+(G?" av-grp":"")+'">'+(G?av:esc(av))+'</span><div class="ti"><b>'+esc(who)+'</b>'+(sub?'<small>'+esc(sub)+'</small>':"")+'</div></div>'
    +'<div class="ch-msgs'+(selMsgOn()?" selecting":"")+'">'+(G?(isStu()?stuGrpThreadHtml(G.bid):grpThreadHtml(G.bid)):threadHtml(sid))+'</div>'
-   +(selMsgOn()?selBarHtml():'<div class="ch-compose"><textarea rows="1" placeholder="Écrire un message…" aria-label="Message"></textarea><button type="button" class="ch-send" data-act="send" aria-label="Envoyer">'+ICON_SEND+'</button></div>');
+   +(selMsgOn()?selBarHtml():replyBarHtml()+'<div class="ch-compose"><textarea rows="1" placeholder="'+(H.reply?"Réponse privée à "+esc(stuName(H.reply.sid))+"…":"Écrire un message…")+'" aria-label="Message"></textarea><button type="button" class="ch-send" data-act="send" aria-label="Envoyer">'+ICON_SEND+'</button></div>');
   const ta=host.querySelector("textarea"); if(ta){ ta.value=H.draft[key]||""; autosize(ta); }
   if(selMsgOn()) selRefresh();
   if(ta&&hadFocus&&sameView) ta.focus();
@@ -18170,9 +18181,21 @@ function renderChat(){
  }
  host.dataset.key=key; host.dataset.view=view+":"+key;
 }
+function replyBarHtml(){
+ if(!H.reply) return "";
+ const m=findMsg(H.reply.mid); if(!m) return "";
+ return '<div class="ch-reply"><div class="rp-tx"><b>Réponse privée à '+esc(stuName(m.sid))+'</b><small>'+esc(String(m.text||"").replace(/\s+/g," ").slice(0,90))+'</small></div>'
+  +'<button type="button" class="rp-x" data-act="replycancel" aria-label="Annuler la réponse privée" title="Annuler">×</button></div>';
+}
+function replyStart(m){
+ if(isStu()||!isGrp(H.thread)||m.dir!=="s2p") return;
+ H.reply={mid:m.id,sid:m.sid,thread:H.thread}; renderChat();
+ setTimeout(()=>{ const t=$("homeChat").querySelector("textarea"); if(t){ t.focus(); try{ t.setSelectionRange(t.value.length,t.value.length); }catch(_){} } },30);
+}
+function replyCancel(){ if(!H.reply) return; H.reply=null; renderChat(); $("homeChat").querySelector("textarea")?.focus(); }
 function autosize(ta){ ta.style.height="auto"; ta.style.height=Math.min(120,ta.scrollHeight)+"px"; }
 function openThread(sid){
- H.thread=sid; H.pendingScroll=false; H.sel.on=false; H.sel.ids.clear();
+ H.thread=sid; H.reply=null; H.pendingScroll=false; H.sel.on=false; H.sel.ids.clear();
  const had=threadList(sid).some(m=>incoming(m)&&!isRead(m));
  markRead(sid); renderChat(); if(had) renderTimeline();
  setTimeout(()=>$("homeChat").querySelector("textarea")?.focus(),30);
@@ -18184,6 +18207,12 @@ async function sendFromThread(){
  if(!isStu()&&isGrp(H.thread)){
   const g=grpInfo(grpId(H.thread)); if(!g) return;
   const at=new Date().toISOString();
+  if(H.reply&&H.reply.thread===H.thread&&stuById(H.reply.sid)){
+   const rsid=H.reply.sid;
+   DATA.messages.push({id:uid("m"),sid:rsid,dir:"p2s",text,at,read:false,bid:g.bid,bl:g.label,bs:g.subject,priv:true});
+   H.reply=null; ta.value=""; H.draft[H.thread]=""; H.pendingScroll=true; saveData(); renderChat();
+   $("homeChat").querySelector("textarea")?.focus(); toast("Réponse privée envoyée à "+stuName(rsid)+"."); return;
+  }
   g.members.filter(stuById).forEach(x=>DATA.messages.push({id:uid("m"),sid:x,dir:"p2s",text,at,read:false,bid:g.bid,bl:g.label,bs:g.subject}));
   ta.value=""; H.draft[H.thread]=""; H.pendingScroll=true; saveData(); renderChat();
   $("homeChat").querySelector("textarea")?.focus(); return;
@@ -18257,6 +18286,7 @@ window.askConfirm=askConfirm;
 /* ───────── Menu contextuel des messages (professeur) : copier / modifier / supprimer ───────── */
 const ICON_COPY='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>';
 $("msgCtx").querySelector('[data-ico="copy"]').innerHTML=ICON_COPY;
+$("msgCtx").querySelector('[data-ico="reply"]').innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 6 6v4"/></svg>';
 $("msgCtx").querySelector('[data-ico="edit"]').innerHTML=ICON_PEN;
 $("msgCtx").querySelectorAll('[data-ico="del"]').forEach(n=>{ n.innerHTML=ICON_BIN; });
 $("msgCtx").querySelector('[data-ico="select"]').innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>';
@@ -18273,11 +18303,11 @@ function ctxOpen(el,x,y){
  if(el.classList.contains("cm")){
   const m=findMsg(el.dataset.mid); if(!m) return;
   CTX.kind="msg"; CTX.id=m.id;
-  show={copy:1,edit:m.dir==="p2s",select:1,unread:0,del:1,delthread:0};   // le professeur peut supprimer (pas modifier) les messages d'élèves
+  show={reply:(isGrp(H.thread)&&m.dir==="s2p")?1:0,copy:1,edit:m.dir==="p2s",select:1,unread:0,del:1,delthread:0};   // le professeur peut supprimer (pas modifier) les messages d'élèves
  }else{
   const sid=el.dataset.sid, ms=threadList(sid); if(!ms.length) return;
   CTX.kind="thread"; CTX.id=sid;
-  show={copy:0,edit:0,select:1,unread:ms.some(incoming)&&!ms.some(z=>incoming(z)&&!isRead(z)),del:0,delthread:1};
+  show={reply:0,copy:0,edit:0,select:1,unread:ms.some(incoming)&&!ms.some(z=>incoming(z)&&!isRead(z)),del:0,delthread:1};
  }
  CTX.t=Date.now();
  c.querySelectorAll("[data-ctx]").forEach(b=>{ b.hidden=!show[b.dataset.ctx]; });
@@ -18334,7 +18364,7 @@ function dropMessages(set){
 }
 async function deleteMessages(ids){
  let list=ids.map(findMsg).filter(Boolean); if(!list.length) return;
- if(isGrp(H.thread)){ const lm={}; list.forEach(m=>{ lm[m.id]=m; if(m.dir==="p2s"&&m.bid) (DATA.messages||[]).forEach(z=>{ if(z.dir==="p2s"&&z.bid===m.bid&&z.at===m.at&&z.text===m.text) lm[z.id]=z; }); }); list=Object.keys(lm).map(k=>lm[k]); }
+ if(isGrp(H.thread)){ const lm={}; list.forEach(m=>{ lm[m.id]=m; if(m.dir==="p2s"&&m.bid&&!m.priv) (DATA.messages||[]).forEach(z=>{ if(z.dir==="p2s"&&!z.priv&&z.bid===m.bid&&z.at===m.at&&z.text===m.text) lm[z.id]=z; }); }); list=Object.keys(lm).map(k=>lm[k]); }
  const n=list.length, m0=list[0];
  let detail;
  if(n===1){
@@ -18381,7 +18411,7 @@ function saveEditMsg(){
  if(!text){ toast("Le message ne peut pas être vide."); return; }
  if(text!==m.text){
   const old=m.text, now=new Date().toISOString();
-  const targets=(isGrp(H.thread)&&m.dir==="p2s"&&m.bid)?(DATA.messages||[]).filter(z=>z.dir==="p2s"&&z.bid===m.bid&&z.at===m.at&&z.text===old):[m];
+  const targets=(isGrp(H.thread)&&m.dir==="p2s"&&m.bid&&!m.priv)?(DATA.messages||[]).filter(z=>z.dir==="p2s"&&z.bid===m.bid&&z.at===m.at&&z.text===old):[m];
   targets.forEach(z=>{ z.text=text; z.editedAt=now; }); saveData();
  }
  closeModal("emModal"); renderChat(); toast("Message modifié.");
@@ -18420,6 +18450,7 @@ function saveEditMsg(){
   if($("cfModal").classList.contains("open")) cfClose(false);
   if(em.classList.contains("open")) closeModal("emModal");
   if(ctx.classList.contains("open")) ctxClose();
+  else if(H.reply&&document.activeElement&&document.activeElement.closest&&document.activeElement.closest("#homeChat")) replyCancel();
   else if(H.sel.on&&!$("cfModal").classList.contains("open")) selCancel();
  });
  /* Actions du menu */
@@ -18433,7 +18464,8 @@ function saveEditMsg(){
    return;
   }
   const m=findMsg(id); if(!m) return;
-  if(act==="copy"){ copyText(m.text||"").then(ok=>toast(ok?"Message copié.":"Copie impossible sur cet appareil.")); }
+  if(act==="reply"){ if(m.dir==="s2p") replyStart(m); }
+  else if(act==="copy"){ copyText(m.text||"").then(ok=>toast(ok?"Message copié.":"Copie impossible sur cet appareil.")); }
   else if(act==="edit"&&m.dir==="p2s"){ openEditMsg(m); }
   else if(act==="del"){ deleteMessages([id]); }
  });
@@ -18502,7 +18534,8 @@ $("homeView").addEventListener("click",e=>{
   else if(k==="msg"){ openThread(b.dataset.sid||"stu"); }
  }
  else if(act==="thread") openThread(b.dataset.sid);
- else if(act==="back"){ H.thread=null; renderChat(); }
+ else if(act==="back"){ H.thread=null; H.reply=null; renderChat(); }
+ else if(act==="replycancel") replyCancel();
  else if(act==="newmsg") openNewMsg();
  else if(act==="send") sendFromThread();
 });
