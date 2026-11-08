@@ -1805,6 +1805,25 @@ header .lock-btn{ background:rgba(255,255,255,.15); border:1px solid rgba(255,25
 }
 .dr-item .dr-bdg.dr-pas-warn{ background:#dc2626!important }
 /* ── Test basique ── */
+#onlineBasicTestModal label.online-check-item{ display:flex; margin:0; font-weight:400 }
+#onlineBasicTestModal .online-check-item input[type=checkbox]{ width:18px; height:18px; padding:0; margin-top:4px; flex:none }
+#onlineBasicTestModal .online-checklist{ margin-top:2px }
+#onlineBasicTestModal textarea{ width:100%; padding:9px 11px; border:1px solid var(--border); border-radius:10px; font:inherit; background:#fff; box-sizing:border-box }
+#onlineBasicTestModal .online-inline-field input{ width:86px }
+#onlineBasicTestModal .modal-header{ gap:10px }
+.obt-badge{ background:#eef9ff; border:1px solid #8dd0fb; color:#0471b5; font-weight:700; font-size:12px; padding:3px 10px; border-radius:999px; margin-left:auto; margin-right:8px }
+.obt-section{ font-weight:800; color:#007ac6; font-size:14px; border-bottom:2px solid #d7effe; padding-bottom:4px; margin-top:6px }
+#importTestModal label{ display:block; font-weight:600; font-size:13px; color:#334155; margin:0 0 4px }
+#importTestModal :is(input,select){ width:100%; padding:9px 11px; border:1px solid var(--border); border-radius:10px; font:inherit; background:#fff; box-sizing:border-box }
+.imt-list{ display:flex; flex-direction:column; gap:8px; max-height:44vh; overflow:auto; margin:10px 0 }
+.imt-q{ border:1px solid #d7effe; border-radius:12px; padding:9px 12px; background:#fff }
+.imt-q.err{ border-color:#fca5a5; background:#fef2f2 }
+.imt-q h5{ margin:0 0 6px; font-size:13.5px; color:#007ac6 }
+.imt-q .tag{ display:inline-block; font-size:11.5px; font-weight:700; padding:1px 8px; border-radius:999px; background:#eef9ff; color:#0471b5; margin-left:6px }
+.imt-opt{ font-size:13.5px; padding:2px 0 } .imt-opt.ok{ color:#15803d; font-weight:700 }
+.imt-blank{ display:inline-block; min-width:70px; border-bottom:2px solid #048de2; padding:0 6px; color:#15803d; font-weight:700; text-align:center }
+.imt-issue{ font-size:13px; padding:6px 10px; border-radius:8px; margin-bottom:4px } .imt-issue.w{ background:#fffbeb; color:#92400e } .imt-issue.e{ background:#fef2f2; color:#b91c1c }
+
 #onlineBasicTestModal label{ display:block; font-weight:600; font-size:13px; color:#334155; margin:0 0 4px }
 #onlineBasicTestModal :is(input:not([type=checkbox]),select){ width:100%; padding:9px 11px; border:1px solid var(--border); border-radius:10px; font:inherit; background:#fff; box-sizing:border-box }
 #onlineBasicTestModal :is(input,select):focus{ outline:none; border-color:#048de2; box-shadow:0 0 0 3px rgba(4,141,226,.15) }
@@ -2146,6 +2165,9 @@ header .header-actions{margin-left:auto;align-items:center}
       <select id="onlineTestsSubjectFilter" class="modern-select" aria-label="Filtrer par matière"><option value="">Toutes les matières</option></select>
       <button class="btn btn-primary" id="openCreateOnlineTestBtn" type="button" style="font-size:16px;padding:12px 18px;">+ Créer un test</button>
       <button class="btn" id="openBasicOnlineTestBtn" type="button" style="font-size:16px;padding:12px 18px;background:#fff;color:#048de2;border:2px solid #048de2;">Créer test basique</button>
+      <button class="btn" id="importOnlineTestBtn" type="button" style="font-size:16px;padding:12px 18px;">Importer un test</button>
+      <button class="btn" id="downloadOnlineTestTemplateBtn" type="button" style="font-size:16px;padding:12px 18px;">Télécharger modèle</button>
+      <input type="file" id="importOnlineTestFile" accept=".xlsx,.xls,.ods,.csv" style="display:none">
      </div>
      <div id="onlineTestsList" class="online-tests-grid"></div>
     </div>
@@ -2882,6 +2904,7 @@ header .header-actions{margin-left:auto;align-items:center}
    </div>
    <div id="paramPane_imp" hidden>
     <button class="btn btn-primary" id="importParamBtn" type="button" title="Importer des classes et des élèves (tableur)" aria-label="Importer des classes et des élèves depuis un tableur" style="display:inline-flex;align-items:center;gap:8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="M7 11l5 5 5-5"/><path d="M5 20h14"/></svg>Importer</button>
+    <button class="btn" id="downloadStudentTemplateBtn" type="button" title="Télécharger un tableur modèle pour l’import des élèves" style="display:inline-flex;align-items:center;gap:8px">Télécharger modèle</button>
    </div>
    <div id="paramPane_lock" hidden>
     <p class="lock-intro">Verrouille un trimestre pour empêcher l'ajout de notes et d'évaluations. Clique de nouveau sur le cadenas pour le déverrouiller.</p>
@@ -3246,14 +3269,64 @@ header .header-actions{margin-left:auto;align-items:center}
 <div id="onlineBasicTestModal" class="modal" aria-hidden="true" style="z-index:140;">
  <div class="modal-card online-modal-medium" role="dialog" aria-modal="true">
   <div class="modal-header">
-   <h3>Créer un test basique</h3>
+   <h3 id="onlineBasicHeading">Créer un test basique</h3>
+   <span class="obt-badge">Basique</span>
    <button class="modal-close" id="onlineBasicClose" type="button">×</button>
   </div>
   <div class="modal-body">
    <form id="onlineBasicForm" class="modal-form obt-form" autocomplete="off">
     <div class="obt-grid">
      <div class="obt-full"><label for="onlineBasicTitle">Nom du test</label><input id="onlineBasicTitle" required></div>
-     <div><label for="onlineBasicSubject">Matière</label><select id="onlineBasicSubject"></select></div>
+     <div class="obt-full"><label for="onlineBasicSubject">Matière</label><select id="onlineBasicSubject"></select></div>
+     <div class="obt-full obt-section">Paramètres du test</div>
+     <div class="obt-full">
+      <div class="online-checklist">
+       <label class="online-check-item">
+        <input type="checkbox" id="obtShuffle">
+        <span><strong>Questions dans un ordre aléatoire</strong><small>L’ordre des questions change à chaque lancement du test.</small></span>
+       </label>
+       <div class="online-check-item">
+        <input type="checkbox" id="obtTimed">
+        <span style="flex:1;">
+         <strong>Temps limité</strong>
+         <small>Si activé, le test est soumis automatiquement à la fin du temps imparti. Les messages d’introduction et de conclusion restent hors chronomètre.</small>
+         <div class="online-inline-field online-time-fields">
+          <label for="obtMin" style="margin:0;">Temps imparti</label>
+          <input id="obtMin" type="number" min="0" step="1" placeholder="Min">
+          <span>min</span>
+          <input id="obtSec" type="number" min="0" max="59" step="1" placeholder="Sec">
+          <span>s</span>
+         </div>
+        </span>
+       </div>
+       <label class="online-check-item">
+        <input type="checkbox" id="obtTraining">
+        <span><strong>Mode entraînement</strong><small>Le résultat n’est pas transmis au professeur et le test est refaisable plusieurs fois. L’option « ne pas afficher la correction » est cochée automatiquement.</small></span>
+       </label>
+       <label class="online-check-item" id="obtFocusWrap">
+        <input type="checkbox" id="obtFocus">
+        <span><strong>Mode Focus</strong><small>Si l’élève quitte la page ou ouvre une autre application, le test est immédiatement arrêté et soumis. Disponible uniquement hors mode entraînement.</small></span>
+       </label>
+       <label class="online-check-item" id="obtHideGradeWrap" style="display:none">
+        <input type="checkbox" id="obtHideGrade">
+        <span><strong>Ne pas afficher la note</strong><small>Le résultat ne s’affiche pas à l’élève en fin de test. Cette option est désactivée en mode entraînement, sauf correction obligatoire par le professeur.</small></span>
+       </label>
+       <label class="online-check-item" id="obtHideCorrectionWrap">
+        <input type="checkbox" id="obtHideCorrection">
+        <span><strong>Ne pas afficher la correction à la fin du test</strong><small>Si cochée, le bouton « Afficher le correctif » n’est pas proposé à l’élève une fois sa note publiée. Cochée automatiquement en mode entraînement (modifiable).</small></span>
+       </label>
+      </div>
+      <div id="obtHint" class="online-modal-note">Certaines options se désactivent automatiquement selon le mode choisi.</div>
+     </div>
+     <div class="obt-full">
+      <label>Message d’introduction</label>
+      <textarea id="obtIntro" rows="4" placeholder="Message affiché à l’élève avant le début du test."></textarea>
+     </div>
+     <div class="obt-full">
+      <label>Message de conclusion</label>
+      <textarea id="obtConclusion"></textarea>
+     </div>
+     <div class="obt-full obt-section">Questions</div>
      <div><label for="onlineBasicCount">Nombre de questions</label><input id="onlineBasicCount" type="number" min="1" max="100" step="1" value="10"></div>
      <div><label for="onlineBasicType">Type par défaut</label><select id="onlineBasicType"><option value="qcu">QCU (une seule bonne réponse)</option><option value="qcm">QCM (plusieurs bonnes réponses)</option><option value="written">Réponse à écrire (saisie par l’élève)</option></select></div>
      <div><label for="onlineBasicLabels">Propositions</label><select id="onlineBasicLabels"><option value="abc">Lettres : A, B, C, D…</option><option value="num">Chiffres : 1, 2, 3, 4…</option></select></div>
@@ -3265,9 +3338,30 @@ header .header-actions{margin-left:auto;align-items:center}
     <button type="button" class="btn" id="onlineBasicAddRow">+ Ajouter une question</button>
     <div class="modal-actions">
      <button type="button" class="btn" id="onlineBasicCancel">Annuler</button>
-     <button type="submit" class="btn btn-primary">Créer le test</button>
+     <button type="submit" class="btn btn-primary">Enregistrer</button>
     </div>
    </form>
+  </div>
+ </div>
+</div>
+
+
+<div id="importTestModal" class="modal" aria-hidden="true" style="z-index:160;">
+ <div class="modal-card online-modal-medium" role="dialog" aria-modal="true" style="max-width:820px">
+  <div class="modal-header"><h3 style="margin:0">Aperçu de l’import du test</h3><button class="modal-close" id="importTestClose" type="button">×</button></div>
+  <div class="modal-body">
+   <div class="obt-grid">
+    <div><label for="importTestTitle">Nom du test</label><input id="importTestTitle"></div>
+    <div><label for="importTestSubject">Matière</label><select id="importTestSubject"></select></div>
+   </div>
+   <div id="importTestMeta" class="obt-hint"></div>
+   <div id="importTestIssues"></div>
+   <div id="importTestList" class="imt-list"></div>
+   <div class="modal-actions">
+    <button type="button" class="btn" id="importTestCancel">Annuler</button>
+    <button type="button" class="btn" id="importTestPreviewBtn">Visionner (vue élève)</button>
+    <button type="button" class="btn btn-primary" id="importTestValidate">Valider l’import</button>
+   </div>
   </div>
  </div>
 </div>
@@ -11917,6 +12011,7 @@ function sanitizeOnlineTest(test){
   : "";
  return {
   id: meta.id || makeUid("ot"),
+  basic: !!meta.basic,
   title: String(meta.title||"").trim(),
   subject: String(meta.subject||"").trim(),
   options:{
@@ -12026,6 +12121,7 @@ function renderOnlineTestsView(){
      <h4>${escHtml(test.title||"Sans titre")}</h4>
      <div class="online-test-meta">
       <span${test.subject?` style="background:${subjColor(test.subject)};border-color:${subjColor(test.subject)};color:${inkFor(subjColor(test.subject))}"`:""}>${escHtml(test.subject||"Matière non précisée")}</span>
+      ${test.basic?'<span style="background:#eef9ff;border-color:#8dd0fb;color:#0471b5;font-weight:700">Basique</span>':""}
       <span>${questionCount} question${questionCount>1?"s":""}</span>
      </div>
     </div>
@@ -12049,7 +12145,7 @@ function renderOnlineTestsView(){
  list.querySelectorAll(".btn-edit-online-test").forEach(btn=>{
   btn.addEventListener("click",()=>{
    const test=DATA.onlineTests.find(item=>item.id===btn.dataset.testid);
-   if(test) startOnlineTestFlow(test);
+   if(test){ if(test.basic) openBasicOnlineTest(test); else startOnlineTestFlow(test); }
   });
  });
  list.querySelectorAll(".btn-delete-online-test").forEach(btn=>{
@@ -12267,20 +12363,70 @@ function renderBasicRows(){
   </div>`).join("");
  document.getElementById("onlineBasicCount").value=BASIC_TEST.rows.length||"";
 }
-function openBasicOnlineTest(){
- const sel=document.getElementById("onlineBasicSubject");
+const $obt=id=>document.getElementById(id);
+function obtSync(){
+ const training=$obt("obtTraining").checked, timed=$obt("obtTimed").checked;
+ $obt("obtMin").disabled=!timed; $obt("obtSec").disabled=!timed;
+ if(!timed){ $obt("obtMin").value=""; $obt("obtSec").value=""; }
+ const focus=$obt("obtFocus"), hg=$obt("obtHideGrade");
+ focus.disabled=training; if(training) focus.checked=false;
+ hg.disabled=true; hg.checked=!training;
+ $obt("obtFocusWrap")?.classList.toggle("is-disabled",focus.disabled);
+ $obt("obtHideGradeWrap")?.classList.toggle("is-disabled",true);
+ const hint=$obt("obtHint");
+ if(!training) hint.textContent="Le test rendu est toujours corrigé par le professeur : l’élève voit sa note une fois la correction validée et les notes saisies.";
+ else hint.textContent="Le mode entraînement désactive automatiquement le mode Focus et coche « ne pas afficher la correction » (modifiable).";
+}
+["obtTraining","obtTimed"].forEach(id=>$obt(id)?.addEventListener("change",obtSync));
+$obt("obtTraining")?.addEventListener("change",e=>{ if(e.target.checked) $obt("obtHideCorrection").checked=true; });
+function obtApplyMeta(m){
+ const o=m?.options||{}; const d=splitOnlineTestDuration(o.timeLimitSeconds||0);
+ $obt("obtShuffle").checked=!!o.shuffleQuestions;
+ $obt("obtTimed").checked=!!o.timed;
+ $obt("obtMin").value=o.timed?d.minutes:""; $obt("obtSec").value=o.timed?d.seconds:"";
+ $obt("obtTraining").checked=!!o.trainingMode;
+ $obt("obtFocus").checked=!!o.focusMode;
+ $obt("obtHideCorrection").checked=!!o.hideCorrection;
+ $obt("obtIntro").value=m?.intro||""; $obt("obtConclusion").value=m?.conclusion||"";
+ obtSync();
+}
+function openBasicOnlineTest(existing){
+ existing=(existing&&existing.id&&Array.isArray(existing.questions))?existing:null;
+ const sel=$obt("onlineBasicSubject");
  const choices=getOnlineTestSubjectChoices();
  sel.innerHTML='<option value="">Matière (facultatif)</option>'+choices.map(n=>`<option value="${escHtml(n)}">${escHtml(n)}</option>`).join("");
- document.getElementById("onlineBasicTitle").value="";
- document.getElementById("onlineBasicCount").value="10";
- document.getElementById("onlineBasicType").value="qcu";
- document.getElementById("onlineBasicLabels").value="abc";
- document.getElementById("onlineBasicProps").value="4";
- document.getElementById("onlineBasicPoints").value="1";
- BASIC_TEST.rows=Array.from({length:10},()=>basicNewRow());
+ BASIC_TEST.editId=existing?existing.id:null;
+ BASIC_TEST.createdAt=existing?existing.createdAt:null;
+ $obt("onlineBasicHeading").textContent=existing?"Modifier un test basique":"Créer un test basique";
+ $obt("onlineBasicForm").querySelector('button[type="submit"]').textContent=existing?"Enregistrer les modifications":"Créer le test";
+ if(existing){
+  $obt("onlineBasicTitle").value=existing.title||"";
+  if(existing.subject && !choices.includes(existing.subject)) sel.insertAdjacentHTML("beforeend",`<option value="${escHtml(existing.subject)}">${escHtml(existing.subject)}</option>`);
+  sel.value=existing.subject||"";
+  const firstCh=(existing.questions.find(q=>q.choices&&q.choices.length)?.choices||[])[0];
+  $obt("onlineBasicLabels").value=(firstCh&&String(firstCh.text).trim()==="1")?"num":"abc";
+  $obt("onlineBasicPoints").value=existing.defaultPoints||1;
+  BASIC_TEST.rows=existing.questions.map(q=>({
+   id:q.id, type:q.type==="fillblank"?"written":q.type, points:q.points||1,
+   n:q.choices?basicClampN(q.choices.length):4,
+   correct:q.choices?q.choices.map((c,k)=>c.correct?k:-1).filter(k=>k>=0&&k<10):[],
+   choiceIds:q.choices?q.choices.map(c=>c.id):[]
+  }));
+  const f=BASIC_TEST.rows[0];
+  $obt("onlineBasicType").value=f?f.type:"qcu"; $obt("onlineBasicProps").value=f?f.n:4;
+  obtApplyMeta(existing);
+ }else{
+  $obt("onlineBasicTitle").value="";
+  $obt("onlineBasicLabels").value="abc";
+  $obt("onlineBasicType").value="qcu";
+  $obt("onlineBasicProps").value="4";
+  $obt("onlineBasicPoints").value="1";
+  obtApplyMeta(null);
+  BASIC_TEST.rows=Array.from({length:10},()=>basicNewRow());
+ }
  renderBasicRows();
  setModalOpen(onlineBasicModal,true);
- setTimeout(()=>document.getElementById("onlineBasicTitle")?.focus(),50);
+ setTimeout(()=>$obt("onlineBasicTitle")?.focus(),50);
 }
 function closeBasicOnlineTest(){ setModalOpen(onlineBasicModal,false); }
 document.getElementById("openBasicOnlineTestBtn")?.addEventListener("click",()=>{ if(AUTH.role!=="prof") return; openBasicOnlineTest(); });
@@ -12327,30 +12473,201 @@ document.getElementById("onlineBasicRows")?.addEventListener("change",e=>{
 document.getElementById("onlineBasicForm")?.addEventListener("submit",e=>{
  e.preventDefault();
  if(AUTH.role!=="prof") return;
- const title=document.getElementById("onlineBasicTitle").value.trim();
+ const title=$obt("onlineBasicTitle").value.trim();
  if(!title){ alert("Le nom du test est requis."); return; }
  if(!BASIC_TEST.rows.length){ alert("Ajoute au moins une question."); return; }
+ const timed=$obt("obtTimed").checked;
+ const dur=parseOnlineTestDurationToSeconds($obt("obtMin").value,$obt("obtSec").value);
+ if(timed && !(dur>0)){ alert("Précise un temps imparti valide en minutes et/ou secondes."); return; }
  const anyCorrect=BASIC_TEST.rows.some(r=>r.correct.length);
+ const training=$obt("obtTraining").checked;
  const meta=defaultOnlineTestMeta();
+ meta.id=BASIC_TEST.editId||undefined;
+ meta.createdAt=BASIC_TEST.createdAt||undefined;
+ meta.basic=true;
  meta.title=title;
- meta.subject=document.getElementById("onlineBasicSubject").value.trim();
- meta.defaultPoints=basicPoints(document.getElementById("onlineBasicPoints").value);
- /* sans bonne réponse définie, afficher un « correctif » n'aurait aucun sens pour l'élève */
- meta.options.hideCorrection=!anyCorrect;
+ meta.subject=$obt("onlineBasicSubject").value.trim();
+ meta.defaultPoints=basicPoints($obt("onlineBasicPoints").value);
+ meta.intro=$obt("obtIntro").value; meta.conclusion=$obt("obtConclusion").value;
+ meta.options={
+  showGradeDirect:false, shuffleQuestions:$obt("obtShuffle").checked, timed, timeLimitSeconds:timed?dur:"",
+  trainingMode:training, manualReviewRequired:!training, focusMode:$obt("obtFocus").checked&&!training,
+  hideGrade:!training, hideCorrection:$obt("obtHideCorrection").checked || !anyCorrect
+ };
  meta.questions=BASIC_TEST.rows.map((r,i)=>({
-  id:makeUid("otq"), type:r.type, prompt:`Question n°${i+1}`, points:r.points,
+  id:r.id||makeUid("otq"), type:r.type, prompt:`Question n°${i+1}`, points:r.points,
   ...(r.type==="written"
    ? { expectedAnswers:[] }
-   : { choices:Array.from({length:r.n},(_,k)=>({ id:makeUid("choice"), text:basicLabel(k), correct:r.correct.includes(k) })) })
+   : { choices:Array.from({length:r.n},(_,k)=>({ id:(r.choiceIds&&r.choiceIds[k])||makeUid("choice"), text:basicLabel(k), correct:r.correct.includes(k) })) })
  }));
  const finalTest=sanitizeOnlineTest(meta);
  ensureOnlineTestsStore();
- DATA.onlineTests.unshift(finalTest);
+ const idx=BASIC_TEST.editId?DATA.onlineTests.findIndex(t=>t.id===BASIC_TEST.editId):-1;
+ if(idx>=0) DATA.onlineTests[idx]=finalTest; else DATA.onlineTests.unshift(finalTest);
  saveData();
  closeBasicOnlineTest();
  renderOnlineTestsView();
  activateMainView("onlineTestsView");
 });
+
+/* ── Import d'un test depuis un tableur + modèles à télécharger ── */
+(function(){
+ const fileIn=document.getElementById("importOnlineTestFile");
+ const modal=document.getElementById("importTestModal");
+ let IMP=null;
+ const needX=()=>{ if(typeof XLSX==="undefined"){ alert("Le module de tableur n’a pas pu être chargé. Vérifie ta connexion internet puis recharge la page."); return false; } return true; };
+ const norm=s=>String(s||"").trim().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^A-Z]/g,"");
+ function typeOf(raw){
+  const t=norm(raw);
+  if(t==="QCM") return "qcm"; if(t==="QCU") return "qcu";
+  if(t.startsWith("SAIS")||t.startsWith("ECRI")||t==="REPONSE") return "written";
+  if(t.startsWith("TROU")||t.startsWith("TEXTEATROU")||t==="TEXTETROU") return "fillblank";
+  return null;
+ }
+ function parse(rows,fallbackTitle){
+  const title=String((rows[0]||[])[0]??"").trim()||fallbackTitle;
+  const questions=[], issues=[];
+  for(let r=2;r<rows.length;r++){
+   const row=rows[r]||[]; const cells=row.map(c=>String(c??"").replace(/\r/g,""));
+   if(!cells.some(c=>c.trim())) continue;
+   const num=String(questions.length+1);
+   const lbl=`Ligne ${r+1} (question ${num})`;
+   const prompt=cells[0].trim();
+   const type=typeOf(cells[2]);
+   const q={ num, prompt, error:null, warns:[] };
+   if(!prompt) q.warns.push("énoncé vide (colonne 1) : « Question n°"+num+" » sera utilisé");
+   const pts=Number(String(cells[1]).replace(",","."));
+   if(pts>0) q.points=pts; else { q.points=1; q.warns.push("points absents ou invalides : 1 point par défaut"); }
+   if(!type){ q.error=`type « ${cells[2].trim()||"vide"} » non reconnu (QCM, QCU, SAISIE ou TROU attendu)`; q.type="qcu"; }
+   else q.type=type;
+   const rest=cells.slice(3);
+   if(!q.error){
+    if(type==="qcm"||type==="qcu"){
+     const ch=rest.map(c=>c.trim()).filter(Boolean).map(c=>c.startsWith("*")?{text:c.slice(1).trim(),correct:true}:{text:c,correct:false}).filter(c=>c.text);
+     q.choices=ch;
+     if(ch.length<2) q.error="il faut au moins 2 propositions";
+     else if(type==="qcu"&&ch.filter(c=>c.correct).length>1){ let seen=false; ch.forEach(c=>{ if(c.correct){ if(seen) c.correct=false; seen=true; } }); q.warns.push("QCU avec plusieurs bonnes réponses : seule la première est conservée"); }
+     if(!q.error&&!ch.some(c=>c.correct)) q.warns.push("aucune bonne réponse indiquée (correction manuelle)");
+    }else if(type==="written"){
+     q.answers=rest.map(c=>c.trim()).filter(Boolean).map(c=>c.replace(/^\*\s*/,"")).filter(Boolean);
+     if(!q.answers.length) q.warns.push("aucune réponse attendue (correction manuelle)");
+    }else{
+     const segs=[];
+     rest.forEach(c=>{
+      const t=c.trim();
+      if(t===""){ segs.push({type:"blank",answers:[]}); }
+      else if(t.startsWith("*")){ const a=t.slice(1).trim(); segs.push({type:"blank",answers:a?[a]:[]}); }
+      else segs.push({type:"text",text:t});
+     });
+     while(segs.length&&segs[segs.length-1].type==="blank"&&!segs[segs.length-1].answers.length) segs.pop();
+     q.segments=segs;
+     const nb=segs.filter(s=>s.type==="blank").length;
+     if(!nb) q.error="aucun trou (case vide ou *réponse) détecté";
+     else if(segs.some(s=>s.type==="blank"&&!s.answers.length)) q.warns.push("trou sans réponse attendue (correction manuelle)");
+    }
+   }
+   if(q.error) issues.push({e:true,msg:`${lbl} : ${q.error} — question ignorée.`});
+   q.warns.forEach(w=>issues.push({e:false,msg:`${lbl} : ${w}.`}));
+   questions.push(q);
+  }
+  return { title, questions, issues };
+ }
+ function toTest(){
+  const good=IMP.questions.filter(q=>!q.error);
+  const meta=defaultOnlineTestMeta();
+  meta.title=document.getElementById("importTestTitle").value.trim()||IMP.title;
+  meta.subject=document.getElementById("importTestSubject").value;
+  const anyCorrect=good.some(q=>(q.choices||[]).some(c=>c.correct)||(q.answers||[]).length||(q.segments||[]).some(s=>s.type==="blank"&&s.answers.length));
+  meta.options.hideCorrection=!anyCorrect;
+  meta.questions=good.map(q=>{
+   const base={ id:makeUid("otq"), type:q.type, prompt:q.prompt||`Question n°${q.num}`, points:q.points };
+   if(q.type==="written") base.expectedAnswers=q.answers;
+   else if(q.type==="fillblank") base.segments=q.segments.map(s=>s.type==="blank"?{type:"blank",id:makeUid("blank"),answers:s.answers}:{type:"text",text:s.text});
+   else base.choices=q.choices.map(c=>({id:makeUid("choice"),text:c.text,correct:c.correct}));
+   return base;
+  });
+  return sanitizeOnlineTest(meta);
+ }
+ function render(){
+  const good=IMP.questions.filter(q=>!q.error);
+  const pts=good.reduce((s,q)=>s+q.points,0);
+  document.getElementById("importTestMeta").textContent=`${good.length} question${good.length>1?"s":""} importable${good.length>1?"s":""} sur ${IMP.questions.length} · ${String(Math.round(pts*100)/100).replace(".",",")} point${pts>1?"s":""} au total. Vérifie le rendu ci-dessous (ou « Visionner ») avant de valider.`;
+  document.getElementById("importTestIssues").innerHTML=IMP.issues.map(i=>`<div class="imt-issue ${i.e?"e":"w"}">${escHtml(i.msg)}</div>`).join("");
+  document.getElementById("importTestList").innerHTML=IMP.questions.map(q=>{
+   let body="";
+   if(q.error) body=`<div class="imt-issue e">${escHtml(q.error)}</div>`;
+   else if(q.choices) body=q.choices.map(c=>`<div class="imt-opt${c.correct?" ok":""}">${q.type==="qcm"?"☐":"○"} ${escHtml(c.text)}${c.correct?" ✓":""}</div>`).join("");
+   else if(q.type==="written") body=`<div class="imt-opt">Réponse saisie par l’élève${q.answers.length?" · attendu : <b class=\"ok\" style=\"color:#15803d\">"+q.answers.map(escHtml).join(" / ")+"</b>":" · correction manuelle"}</div>`;
+   else body=`<div style="line-height:2">${q.segments.map(s=>s.type==="blank"?`<span class="imt-blank">${s.answers.length?escHtml(s.answers[0]):"&nbsp;&nbsp;&nbsp;"}</span>`:escHtml(s.text)).join(" ")}</div>`;
+   const tl={qcm:"QCM",qcu:"QCU",written:"Saisie",fillblank:"Texte à trou"}[q.type];
+   const stmt=q.prompt?`<div style="font-weight:600;margin-bottom:4px">${escHtml(q.prompt)}</div>`:"";
+   return `<div class="imt-q${q.error?" err":""}"><h5>Question n°${escHtml(q.num)}<span class="tag">${tl}</span><span class="tag">${String(q.points).replace(".",",")} pt</span></h5>${stmt}${body}</div>`;
+  }).join("");
+  document.getElementById("importTestValidate").disabled=!good.length;
+ }
+ function close(){ modal.classList.remove("open"); modal.setAttribute("aria-hidden","true"); IMP=null; }
+ document.getElementById("importOnlineTestBtn")?.addEventListener("click",()=>{
+  if(AUTH.role!=="prof") return; if(!needX()) return;
+  fileIn.value=""; fileIn.click();
+ });
+ fileIn?.addEventListener("change",async()=>{
+  const f=fileIn.files[0]; if(!f) return;
+  try{
+   const wb=XLSX.read(await f.arrayBuffer(),{type:"array"});
+   const ws=wb.Sheets[wb.SheetNames[0]];
+   const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:"",raw:false});
+   IMP=parse(rows,f.name.replace(/\.[^.]+$/,""));
+   if(!IMP.questions.length){ alert("Aucune question trouvée.\n\nFormat attendu : ligne 1 = titre ; ligne 2 = en-têtes ; à partir de la ligne 3, une question par ligne : énoncé, points, type (QCM/QCU/SAISIE/TROU), puis les propositions."); IMP=null; return; }
+   const sel=document.getElementById("importTestSubject");
+   sel.innerHTML='<option value="">Matière (facultatif)</option>'+getOnlineTestSubjectChoices().map(n=>`<option value="${escHtml(n)}">${escHtml(n)}</option>`).join("");
+   document.getElementById("importTestTitle").value=IMP.title;
+   render();
+   modal.classList.add("open"); modal.setAttribute("aria-hidden","false");
+  }catch(err){ console.error(err); alert("Impossible de lire ce fichier ("+err.message+")."); }
+ });
+ document.getElementById("importTestClose")?.addEventListener("click",close);
+ document.getElementById("importTestCancel")?.addEventListener("click",close);
+ document.getElementById("importTestPreviewBtn")?.addEventListener("click",()=>{ if(IMP) openOnlineTestPreview(toTest()); });
+ document.getElementById("importTestValidate")?.addEventListener("click",()=>{
+  if(!IMP||AUTH.role!=="prof") return;
+  const t=toTest(); if(!t.questions.length) return;
+  ensureOnlineTestsStore(); DATA.onlineTests.unshift(t); saveData();
+  close(); renderOnlineTestsView(); activateMainView("onlineTestsView");
+ });
+ function save(wb,name){ XLSX.writeFile(wb,name); }
+ document.getElementById("downloadOnlineTestTemplateBtn")?.addEventListener("click",()=>{
+  if(!needX()) return;
+  const aoa=[
+   ["Titre du test (à remplacer)"],
+   ["Question","Points","Type (QCM / QCU / SAISIE / TROU)","Propositions →"],
+   ["Quelle est la capitale de la France ?",1,"QCU","*Paris","Lyon","Marseille","Toulouse"],
+   ["Quels nombres sont pairs ?",2,"QCM","*2","*4","5","7"],
+   ["Écris la capitale de l'Italie.",1,"SAISIE","*Rome","*rome"],
+   ["Complète la phrase.",2,"TROU","La capitale de la France est","*Paris","et celle de l'Italie est","*Rome","."]
+  ];
+  const ws=XLSX.utils.aoa_to_sheet(aoa);
+  ws["!cols"]=[{wch:14},{wch:8},{wch:32},{wch:26},{wch:26},{wch:26},{wch:26}];
+  const info=[["Mode d'emploi"],
+   ["Feuille « Test » : ligne 1 = titre ; ligne 2 = en-têtes (ignorée) ; dès la ligne 3, une question par ligne (le numéro est automatique : 1re ligne = question 1, etc.). Supprime les lignes d'exemple avant d'importer."],
+   ["Colonne A : énoncé de la question — Colonne B : points — Colonne C : type (QCM, QCU, SAISIE ou TROU) — Colonnes D et suivantes : propositions."],
+   ["QCM / QCU : une proposition par case ; mets une * au début de la case pour une bonne réponse (l'étoile n'apparaît pas dans le test)."],
+   ["SAISIE : laisse les cases vides ou mets une réponse attendue par case, chacune commençant par * (ex. *Rome)."],
+   ["TROU : l'énoncé (colonne A) sert de consigne ; la phrase est dans les cases D et suivantes : laisse une case VIDE pour chaque trou, ou écris *réponse dans la case du trou (l'étoile n'est pas comptée dans la réponse)."],
+   ["Un trou placé à la toute fin de la ligne doit contenir une réponse (*réponse) pour être détecté."]];
+  const wi=XLSX.utils.aoa_to_sheet(info); wi["!cols"]=[{wch:140}];
+  const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,"Test"); XLSX.utils.book_append_sheet(wb,wi,"Mode d'emploi");
+  save(wb,"modele_import_test.xlsx");
+ });
+ document.getElementById("downloadStudentTemplateBtn")?.addEventListener("click",()=>{
+  if(!needX()) return;
+  const aoa=[["Nom","Prénom","Identifiant","Mot de passe","Sexe (F ou G)"],
+   ["Dupont","Marie","mdupont","motdepasse1","F"],
+   ["Martin","Lucas","lmartin","motdepasse2","G"]];
+  const ws=XLSX.utils.aoa_to_sheet(aoa); ws["!cols"]=[{wch:18},{wch:18},{wch:18},{wch:18},{wch:14}];
+  const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,"Nom de la classe");
+  save(wb,"modele_import_eleves.xlsx");
+ });
+})();
 
 onlineTestSetupForm?.addEventListener("submit",e=>{
  e.preventDefault();
