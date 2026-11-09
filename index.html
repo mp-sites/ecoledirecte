@@ -18138,6 +18138,7 @@ function tlItems(){
   const rows=[];
   ((DATA.notes&&DATA.notes[AUTH.studentId])||[]).forEach((n,i)=>{
    if(!n||n.hideFromStudent) return;
+   if(n.noteText==="X") return;   /* « X » = pas de note pour cet élève : aucune notification dans sa timeline */
    let iso=n.isoDate||"";
    if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)&&typeof normDateISO==="function") iso=normDateISO(n.dateJJMMAA)||"";
    if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return;
