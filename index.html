@@ -1980,6 +1980,33 @@ header .header-actions{margin-left:auto;align-items:center}
  #classesView #classPreviewContent .matiere-line > .notes-list{ column-gap:24px; row-gap:13px }
 }
 </style>
+<style id="patch-hw-checks">
+/* ── Devoirs : cases à cocher (élève) + couleurs du calendrier ── */
+.homework-calendar-day.hw-past{ background:#e5e7eb; border-color:#d1d5db; color:#6b7280 }
+.homework-calendar-day.hw-past:hover{ background:#dcdfe4; border-color:#c4c9d1 }
+.homework-calendar-day.hw-todo{ background:#fee2e2; border-color:#f87171; color:#b91c1c }
+.homework-calendar-day.hw-todo:hover{ background:#fecaca; border-color:#ef4444 }
+.homework-calendar-day.hw-done{ background:#dcfce7; border-color:#4ade80; color:#15803d }
+.homework-calendar-day.hw-done:hover{ background:#bbf7d0; border-color:#22c55e }
+.homework-calendar-day.teacher-past-homework{ background:#d7effe; border-color:#8dd0fb; color:#0471b5 }
+.homework-calendar-day.teacher-past-homework:hover{ background:#c5e8fd; border-color:#4db5f5 }
+.homework-calendar-day.is-selected.hw-past,.homework-calendar-day.is-selected.hw-todo,.homework-calendar-day.is-selected.hw-done,.homework-calendar-day.is-selected.teacher-past-homework{
+ background:#0080d0; border-color:#007ac6; color:#fff
+}
+.hw-done-row{ display:inline-flex; align-items:center; gap:8px; cursor:pointer; font-weight:700; font-size:14px; color:#334155; user-select:none; -webkit-user-select:none; flex:none }
+.hw-done-row input{ width:22px; height:22px; margin:0; cursor:pointer; accent-color:#16a34a }
+.homework-entry-card.is-done{ border-color:#86efac; box-shadow:0 10px 24px rgba(22,163,74,.08) }
+.homework-entry-card.is-done.is-exam{ border-color:#dc2626 }
+.homework-entry-card.is-done .hw-done-row{ color:#15803d }
+/* Pastille : nombre de devoirs non cochés à venir (onglet Devoirs de l'élève) */
+.tab-btn[data-hw-todo]::after{
+ content:attr(data-hw-todo); position:absolute; top:-8px; right:-8px; z-index:10;
+ display:inline-flex; align-items:center; justify-content:center; text-align:center;
+ min-width:20px; height:20px; padding:0 6px; border-radius:999px; box-sizing:border-box;
+ background:#ef4444; color:#fff; font-size:12px; font-weight:700; line-height:1; border:0; box-shadow:none; pointer-events:none;
+}
+body:not(.student-mode) .tab-btn[data-hw-todo]::after{ display:none!important }
+</style>
 </head>
 <body class="auth-pending">
 <header>
@@ -2178,6 +2205,7 @@ header .header-actions{margin-left:auto;align-items:center}
  <div class="card"><div class="card-body" style="padding:14px">
   <div class="sch-bar sch-prof-only"><button class="btn btn-primary" id="schAdd">Ajouter un cours</button><button class="btn btn-primary" id="schAddEvt">Ajouter un événement</button><button class="btn" id="schHol">Ajouter congés</button><button class="btn" id="schRooms">Salles</button><button class="btn" id="schGroups">Groupes</button></div>
   <div class="sch-nav"><button class="btn" id="schToday">Aujourd'hui</button><button class="btn" id="schPrev">‹</button><button class="btn" id="schNext">›</button><span class="sch-title" id="schTitle"></span>
+   <label id="schMineWrap" style="display:none;align-items:center;gap:6px;margin-left:10px;font-size:0.9em;cursor:pointer"><input type="checkbox" id="schMine"> Mon emploi du temps uniquement</label>
    <div class="sch-views"><button class="btn" data-v="day">Jour</button><button class="btn" data-v="week">Semaine</button><button class="btn" data-v="month">Mois</button></div></div>
   <div class="sch-wrap" id="scheduleBody"></div>
  </div></div>
@@ -5158,7 +5186,7 @@ function buildCSVText(){
   V.sanctions.forEach(x=>rows.push(["sanction",x.id,x.sid,x.level,x.date,x.time||"",escapeCsv(x.motif||""),escapeCsv(JSON.stringify(x.d||{})),escapeCsv(x.prof||""),x.createdAt||""].join(";")));}
  holEns().forEach(x=>rows.push(["holiday",x.id,escapeCsv(x.name),x.from,x.to].join(";")));
  schEns().rooms.forEach(r=>rows.push(["room","",escapeCsv(r)].join(";")));
- schEns().events.forEach(e=>rows.push(["scheduleEvent",e.id,escapeCsv(e.subject),escapeCsv(JSON.stringify(e.classIds||[])),escapeCsv(e.room||""),e.date,e.start,e.end,e.cancelled?1:0,e.changed?1:0,e.serie||"",e.hors?1:0,e.holCancel?1:0,e.created||"",e.evt?1:0,e.evt?(e.color||""):""].join(";")));
+ schEns().events.forEach(e=>rows.push(["scheduleEvent",e.id,escapeCsv(e.subject),escapeCsv(JSON.stringify(e.classIds||[])),escapeCsv(e.room||""),e.date,e.start,e.end,e.cancelled?1:0,e.changed?1:0,e.serie||"",e.hors?1:0,e.holCancel?1:0,e.created||"",e.evt?1:0,e.evt?(e.color||""):"",escapeCsv(e.profId||"")].join(";")));
  const h = DATA.competenciesHierarchy || COMPETENCIES_HIERARCHY;
  for(const cycle in h){
   for(const domain in h[cycle]){
@@ -5284,7 +5312,7 @@ function importCSV(text){
   else if(type==="holiday"){ holEns().push({id:cols[1],name:unescapeCsv(cols[2]||""),from:cols[3],to:cols[4]}); }
   else if(type==="group"){ let mi=[]; try{mi=JSON.parse(unescapeCsv(cols[3]||"[]"))||[];}catch(e){} let ss; try{ const raw=unescapeCsv(cols[4]||""); ss=raw?JSON.parse(raw):undefined; }catch(e){ ss=undefined; } if(cols[1]) grpEns().push({id:cols[1],name:unescapeCsv(cols[2]||""),memberIds:mi,subjectsSel:Array.isArray(ss)?ss:undefined}); }
   else if(type==="room"){ const r=unescapeCsv(cols[2]||""); if(r) schEns().rooms.push(r); }
-  else if(type==="scheduleEvent"){ let ci=[]; try{ci=JSON.parse(unescapeCsv(cols[3]||"[]"))||[];}catch(e){} schEns().events.push({id:cols[1],subject:unescapeCsv(cols[2]||""),classIds:ci,room:unescapeCsv(cols[4]||""),date:cols[5],start:cols[6],end:cols[7],cancelled:cols[8]==="1",changed:cols[9]==="1",serie:cols[10]||"",hors:cols[11]==="1",holCancel:cols[12]==="1",created:cols[13]||"",evt:cols[14]==="1",color:cols[15]||undefined}); }
+  else if(type==="scheduleEvent"){ let ci=[]; try{ci=JSON.parse(unescapeCsv(cols[3]||"[]"))||[];}catch(e){} schEns().events.push({id:cols[1],subject:unescapeCsv(cols[2]||""),classIds:ci,room:unescapeCsv(cols[4]||""),date:cols[5],start:cols[6],end:cols[7],cancelled:cols[8]==="1",changed:cols[9]==="1",serie:cols[10]||"",hors:cols[11]==="1",holCancel:cols[12]==="1",created:cols[13]||"",evt:cols[14]==="1",color:cols[15]||undefined,profId:unescapeCsv(cols[16]||"")}); }
   else if(type==="post"){ if(!Array.isArray(DATA.posts)) DATA.posts=[]; let au={}; try{au=JSON.parse(unescapeCsv(cols[4]||"{}"))||{};}catch(e){} DATA.posts.push({id:cols[1],html:unescapeCsv(cols[2]||""),color:cols[3]||"",all:!!au.all,ids:Array.isArray(au.ids)?au.ids:[],createdAt:cols[5]||"",author:unescapeCsv(cols[6]||""),updatedAt:cols[7]||""}); }
   else if(type==="msg"){ if(!Array.isArray(DATA.messages)) DATA.messages=[]; DATA.messages.push({id:cols[1],sid:cols[2],dir:cols[3],text:unescapeCsv(cols[4]||""),at:cols[5]||"",read:cols[6]==="1",bid:cols[7]||"",bl:unescapeCsv(cols[8]||""),bs:unescapeCsv(cols[9]||""),priv:cols[10]==="1"}); }
   else if(type==="compHierarchy"){
@@ -11390,7 +11418,7 @@ async function cloudPull(){
  if(!j.ok) throw new Error(j.error||"erreur");
  if(j.role==="admin"){ AUTH.role="admin"; window.edAdminBoot&&edAdminBoot(j); return j; }
  if(window.edSetEtab) edSetEtab(j.etabName);
- CLOUD.rev=j.rev; CLOUD.srev=(j.srev!=null?j.srev:null); CLOUD.stale=false; if(j.profInfo) Object.assign(PROF_INFO,j.profInfo); if(j.role==="eleve") PROF_INFO.first=""; AUTH.role=j.role; AUTH.studentId=j.studentId||"";
+ CLOUD.rev=j.rev; CLOUD.srev=(j.srev!=null?j.srev:null); CLOUD.stale=false; if(j.profInfo) Object.assign(PROF_INFO,j.profInfo); if(j.role==="eleve") PROF_INFO.first=""; AUTH.role=j.role; AUTH.studentId=j.studentId||""; try{ window.edRoleInit&&edRoleInit(j); }catch(x){ console.error("rôle:",x); }
  ACCOUNTS={}; (j.accounts||[]).forEach(a=>{ACCOUNTS[a.id]={login:a.login,pwd:a.pwd};});
  if(j.lines && j.lines.length>1){
   importCSV(j.lines.join("\n"));
@@ -11825,6 +11853,7 @@ function ensureNoteIds(){
 }
 function updateTabWarningIndicators(){
   try{ window.refreshOnlineCorrectionBadge && window.refreshOnlineCorrectionBadge(); }catch(e){}
+  try{ window.refreshHomeworkTodoBadge && window.refreshHomeworkTodoBadge(); }catch(e){}
   let hasMissingC = false;
   let hasHiddenC = false;
   [...(DATA.classes || []), ...grpEns()].forEach(cls => {
@@ -14109,6 +14138,32 @@ function initApp(){
  }
  window.countPendingOnlineCorrections=countPendingOnlineCorrections;
  window.refreshOnlineCorrectionBadge=refreshOnlineCorrectionBadge;
+ /* ── Cases « Fait » des devoirs (élève) : mémorisées sur l'appareil de l'élève ── */
+ function hwDoneKey(){ return "hwdone:"+homeworkStudentId(); }
+ function hwDoneMap(){
+  if(AUTH.role!=="eleve") return {};
+  try{ const m=JSON.parse(localStorage.getItem(hwDoneKey())||"{}"); return (m&&typeof m==="object")?m:{}; }catch(e){ return {}; }
+ }
+ function hwSetDone(homeworkId,on){
+  if(AUTH.role!=="eleve") return;
+  const m=hwDoneMap();
+  if(on) m[homeworkId]=1; else delete m[homeworkId];
+  try{ localStorage.setItem(hwDoneKey(),JSON.stringify(m)); }catch(e){}
+ }
+ /* Nombre de devoirs non cochés dont la date est aujourd'hui ou à venir */
+ function countStudentHomeworkTodo(){
+  if(AUTH.role!=="eleve" || !homeworkStudentClassId()) return 0;
+  ensureHomeworkStore();
+  const today=todayISO(), done=hwDoneMap();
+  return (DATA.homework||[]).filter(item=>item.dateISO>=today && homeworkMatchesStudentClass(item) && !done[item.id]).length;
+ }
+ function refreshHomeworkTodoBadge(){
+  const btn=document.querySelector('.tab-btn[data-target="homeworkView"]'); if(!btn) return;
+  const n=countStudentHomeworkTodo();
+  if(n>0){ btn.dataset.hwTodo=n>99?"99+":String(n); btn.title=n+" devoir"+(n>1?"s":"")+" à faire"; }
+  else { delete btn.dataset.hwTodo; btn.removeAttribute("title"); }
+ }
+ window.refreshHomeworkTodoBadge=refreshHomeworkTodoBadge;
  function getHomeworkOnDate(dateISO){
   ensureHomeworkStore();
   const list=DATA.homework.filter(item=>item.dateISO===dateISO);
@@ -14344,6 +14399,16 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
   const tInfo=isStudentCal ? null : homeworkTeacherCalendarInfo();
   const teacherDates=isStudentCal ? new Set() : tInfo.hwDates;
   const studentDates=new Set((DATA.homework||[]).filter(item=>homeworkMatchesStudentClass(item)).map(item=>item.dateISO));
+  const todayStr=todayISO();
+  const doneMap=isStudentCal ? hwDoneMap() : {};
+  const studentTodoDates=new Set(), studentAnyDates=new Set();
+  if(isStudentCal){
+   (DATA.homework||[]).forEach(item=>{
+    if(!item.dateISO || !homeworkMatchesStudentClass(item)) return;
+    studentAnyDates.add(item.dateISO);
+    if(!doneMap[item.id]) studentTodoDates.add(item.dateISO);
+   });
+  }
   const cells=[];
   days.forEach(day=>cells.push(`<div class="homework-calendar-weekday">${day}</div>`));
   for(let i=0;i<offset;i++) cells.push('<div class="homework-calendar-day is-empty"></div>');
@@ -14353,10 +14418,20 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
    const studentHas=studentDates.has(dateISO);
    const disabled=!isStudentCal && !homeworkDateAllowed(tInfo,dateISO);
    const isSelected=HOMEWORK_STATE.selectedDate===dateISO && !disabled;
-   const isToday=todayISO()===dateISO;
+   const isToday=todayStr===dateISO;
+   const isPast=dateISO<todayStr;
+   /* Prof : devoir passé = case bleutée sans cadre ; aujourd'hui / à venir = case encadrée en bleu */
+   const teacherFrame=teacherHas && !isPast;
+   const teacherPastBlue=teacherHas && isPast;
+   /* Élève : passé = grisé (coché ou non) ; aujourd'hui / à venir = rouge s'il reste un devoir non fait, vert si tout est fait */
+   let stuCls="";
+   if(isStudentCal && studentHas){
+    if(isPast) stuCls="hw-past";
+    else stuCls=studentTodoDates.has(dateISO) ? "hw-todo" : "hw-done";
+   }
    cells.push(`
     <button type="button" ${disabled ? "disabled aria-disabled=\"true\"" : ""}
-      class="homework-calendar-day ${teacherHas ? "has-homework" : ""} ${studentHas ? "student-homework" : ""} ${isSelected ? "is-selected" : ""} ${isToday ? "is-today" : ""} ${disabled ? "is-disabled" : ""}"
+      class="homework-calendar-day ${teacherFrame ? "has-homework" : ""} ${teacherPastBlue ? "teacher-past-homework" : ""} ${stuCls} ${isSelected ? "is-selected" : ""} ${isToday ? "is-today" : ""} ${disabled ? "is-disabled" : ""}"
       data-hw-action="select-date"
       data-date="${dateISO}">
       ${day}
@@ -14535,13 +14610,18 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
   return { submission, label:"À faire", status:"todo" };
  }
  function renderStudentHomeworkCard(homework){
+  const isDone=!!hwDoneMap()[homework.id];
   return `
-   <article class="homework-entry-card ${homework.isExam ? "is-exam" : ""}">
+   <article class="homework-entry-card ${homework.isExam ? "is-exam" : ""} ${isDone ? "is-done" : ""}">
     <div class="homework-entry-title">
      <div>
       <h5>${escHtml(homework.subject)}</h5>
       <div class="homework-entry-date">${escHtml(homeworkFormatLong(homework.dateISO))}</div>
      </div>
+     <label class="hw-done-row" title="Cocher quand le devoir est fait">
+      <input type="checkbox" class="hw-done-cb" data-hw-action="toggle-done" data-homework-id="${escHtml(homework.id)}" ${isDone ? "checked" : ""}>
+      <span>Fait</span>
+     </label>
     </div>
     ${homework.isExam ? '<div class="homework-entry-badge">Contrôle</div>' : ""}
     <div class="homework-entry-body" contenteditable="false">${homework.contentHtml || '<span style="color:#94a3b8;">Aucun contenu.</span>'}</div>
@@ -14572,6 +14652,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
   const isStudent=AUTH.role==="eleve";
  if(isStudent) syncStudentHomeworkDate(); else syncTeacherHomeworkDate();
  renderHomeworkCalendar();
+  try{ refreshHomeworkTodoBadge(); }catch(e){}
   const dayItems=isStudent ? getHomeworkForStudentDate(HOMEWORK_STATE.selectedDate) : getHomeworkOnDate(HOMEWORK_STATE.selectedDate).filter(item=>homeworkFilterMatches(item) || item.id===HOMEWORK_STATE.draft?.id);
   const cards=isStudent
    ? dayItems.map(renderStudentHomeworkCard).join("")
@@ -16206,6 +16287,11 @@ function handleHomeworkActionClick(btn){
    renderHomeworkView();
    return;
   }
+  if(action==="toggle-done"){
+   hwSetDone(btn.dataset.homeworkId, !!btn.checked);
+   renderHomeworkView();
+   return;
+  }
   if(action==="add-homework"){ startHomeworkDraft(); return; }
   if(action==="cancel-homework"){ cancelHomeworkDraft(); return; }
   if(action==="delete-homework"){
@@ -16662,14 +16748,37 @@ const isoD=d=>d.getFullYear()+"-"+p2(d.getMonth()+1)+"-"+p2(d.getDate());
 const hmF=t=>{const a=String(t).split(":");return (+a[0])+"h"+a[1];};
 const tmin=t=>{const a=String(t).split(":");return +a[0]*60+ +a[1];};
 const frD=(d,o)=>d.toLocaleDateString("fr-FR",o);
+/* ── Professeur concerné par un cours (peut différer du responsable qui l'a saisi) ── */
+function evIsMine(e){
+ if(AUTH.role!=="prof") return true;
+ const pid=String((e&&e.profId)||"").trim();
+ if(!pid) return AUTH.resp!==false;      /* cours sans prof désigné : celui du responsable */
+ return pid===String(AUTH.pid||"").trim();
+}
+/* Visibilité dans l'emploi du temps : un professeur non responsable voit TOUJOURS les cours que le responsable
+   a saisis pour lui (profId = son identifiant) ; les événements de l'établissement (sorties, réunions…) restent visibles de tous. */
+function evVisible(e){
+ if(AUTH.role!=="prof") return true;
+ if(e&&e.evt) return true;
+ return evIsMine(e);
+}
+function evProfShort(e){
+ const pid=(e&&e.profId)||"";
+ const p=pid?(AUTH.etabProfs||[]).find(x=>String(x.pid)===String(pid)):null;
+ if(p){ const t=((p.civ==="Madame"?"Mme":p.civ==="Monsieur"?"M.":"")+" "+(p.last||"")).trim(); if(t) return t; }
+ return profShort();
+}
+const SCH_MINE={v:null,get on(){ if(AUTH.resp===false) return true; return this.v===null?false:this.v; },set on(b){ this.v=!!b; }};
+try{ const q=localStorage.getItem("edSchMine"); if(q==="1"||q==="0") SCH_MINE.v=(q==="1"); }catch(x){}
 function schEvents(){
  const ev=schEns().events;
  if(AUTH.role==="eleve"){ const st=DATA.students.find(s=>s.id===AUTH.studentId); return ev.filter(e=>st&&studentInTargets(st,e.classIds||[])); }
+ if(AUTH.role==="prof"&&SCH_MINE.on) return ev.filter(evVisible);
  return ev;
 }
 function schBlock(e,pos,chip){
  const bg=e.cancelled?"#fff":evColor(e), ink=e.cancelled?"#000":inkFor(bg);
- const who=AUTH.role==="eleve"?profShort():(e.classIds||[]).map(id=>targetName(id)).filter(Boolean).join(", ");
+ const who=AUTH.role==="eleve"?evProfShort(e):((e.classIds||[]).map(id=>targetName(id)).filter(Boolean).join(", ")+((AUTH.role==="prof"&&!e.evt&&!evIsMine(e))?" · "+evProfShort(e):""));
  const warn=(e.changed||e.cancelled)?`<svg class="sch-warn" viewBox="0 0 24 24" width="${chip?15:17}" height="${chip?15:17}" aria-label="${e.cancelled?'Cours annulé':'Cours modifié'}"><path fill="currentColor" fill-rule="evenodd" d="M11.29 3.71Q12 2.5 12.71 3.71L21.79 19.29Q22.5 20.5 21.1 20.5L2.9 20.5Q1.5 20.5 2.21 19.29ZM12 9.3a1.2 1.2 0 0 1 1.2 1.2v3.4a1.2 1.2 0 0 1-2.4 0v-3.4A1.2 1.2 0 0 1 12 9.3ZM12 16.2a1.6 1.6 0 1 1 0 3.2a1.6 1.6 0 1 1 0-3.2Z"/></svg>`:"";
  const subj=`<b${e.cancelled?' style="text-decoration:line-through"':""}>${escHtml(String(e.subject).toUpperCase())}</b>`;
  const edit=" edit";
@@ -16702,6 +16811,9 @@ function schLay(list){
 }
 function renderSchedule(){
  const root=document.getElementById("scheduleBody"); if(!root) return;
+ { const w=document.getElementById("schMineWrap"), c=document.getElementById("schMine");
+   if(w&&c){ w.style.display=(AUTH.role==="prof"&&AUTH.resp!==false)?"inline-flex":"none"; c.checked=SCH_MINE.on;
+    if(!c._b){ c._b=1; c.addEventListener("change",()=>{ SCH_MINE.on=c.checked; try{ localStorage.setItem("edSchMine",c.checked?"1":"0"); }catch(x){} renderSchedule(); }); } } }
  const ev=schEvents(), cur=new Date(SCH.cur), v=SCH.view, todayS=isoD(new Date());
  document.querySelectorAll(".sch-views .btn").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
  const mon=new Date(cur); mon.setDate(cur.getDate()-((cur.getDay()+6)%7));
@@ -16758,7 +16870,7 @@ function schDetFill(){
  document.getElementById("schDetailBody").innerHTML=
   `<div style="background:${bg};color:${ink};border:1px solid ${e.cancelled?"#cbd5e1":"rgba(0,0,0,.15)"};border-radius:8px;padding:10px 12px;margin-bottom:8px"><b style="font-size:16px${e.cancelled?";text-decoration:line-through":""}">${escHtml(String(e.subject).toUpperCase())}</b>${e.cancelled?'<div><b>Annulé</b></div>':""}</div>`
   +row("Jour",escHtml(dt))+row("Horaire",hmF(e.start)+" - "+hmF(e.end))+row("Salle",e.room?escHtml(e.room):"—")
-  +row("Professeur",escHtml(profShort()))+row("Classe(s)",escHtml(cl||"—"))
+  +row("Professeur",escHtml(evProfShort(e)))+row("Classe(s)",escHtml(cl||"—"))
   +(e.changed?row("Info",'<b>⚠ Ce cours a été modifié.</b>'):"");
 }
 function schDetail(id){ schDetId=id; schDetFill(); if(!schDetId) return; schDet.classList.add("open"); schDet.setAttribute("aria-hidden","false"); }
@@ -16812,7 +16924,7 @@ document.getElementById("schEventForm").addEventListener("submit",ev=>{
  const v={subject:SCH.evt?document.getElementById("schEvName").value.trim():document.getElementById("schSubject").value, evt:!!SCH.evt, color:SCH.evt?document.getElementById("schEvColor").value:undefined,
   classIds:[...document.querySelectorAll("#schClasses input:checked")].map(i=>i.value),
   room:document.getElementById("schRoom").value, date:document.getElementById("schDate").value,
-  start:document.getElementById("schStart").value, end:document.getElementById("schEnd").value};
+  start:document.getElementById("schStart").value, end:document.getElementById("schEnd").value, profId:(document.getElementById("schProf").value||"")};
  const msg=t=>{const m=document.getElementById("schMsg");m.textContent=t;m.style.display="block";};
  if(!v.subject) return msg(SCH.evt?"Donnez un nom à l'événement.":"Choisissez une matière.");
  if(!v.classIds.length) return msg("Choisissez au moins une classe ou un groupe.");
@@ -16821,7 +16933,7 @@ document.getElementById("schEventForm").addEventListener("submit",ev=>{
  const s=schEns();
  if(!SCH.editId){ if(schCreate(v,msg)) schCommit(); return; }
  const e=s.events.find(x=>x.id===SCH.editId); if(!e) return schClose();
- const diff=["subject","room","date","start","end"].some(k=>e[k]!==v[k])||(!!e.evt&&(e.color||"#ffffff")!==(v.color||"#ffffff"))||[...(e.classIds||[])].sort().join()!==[...v.classIds].sort().join();
+ const diff=["subject","room","date","start","end"].some(k=>e[k]!==v[k])||(!!e.evt&&(e.color||"#ffffff")!==(v.color||"#ffffff"))||[...(e.classIds||[])].sort().join()!==[...v.classIds].sort().join()||(e.profId||"")!==(v.profId||"");
  if(!diff){ schClose(); return; }
  SCH.pending=v; const openSig=()=>{ const sg=document.getElementById("schSignalModal"); sg.classList.add("open"); sg.setAttribute("aria-hidden","false"); };
  if(schSerieCount(e)>1) schScopeOpen("edit",e,sc=>{ SCH.scope=sc; openSig(); }); else { SCH.scope="one"; openSig(); }
@@ -17032,7 +17144,7 @@ const vsRow=(k,v)=>'<div style="display:flex;gap:10px;margin:6px 0"><span style=
 /* ---------- Feuille d'appel (prof) ---------- */
 const AP={evId:"",absent:new Set(),late:{},sent:false,mode:"call",peek:null};
 const AP_EYE='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
-function apEvents(){ const t=isoD(new Date()); return schEns().events.filter(e=>e.date===t&&!e.cancelled).sort((a,b)=>tmin(a.start)-tmin(b.start)); }
+function apEvents(){ const t=isoD(new Date()); return schEns().events.filter(e=>e.date===t&&!e.cancelled&&evIsMine(e)).sort((a,b)=>tmin(a.start)-tmin(b.start)); }
 function apFind(ev){ return vsEns().appels.find(a=>a.eventId===ev.id&&a.date===ev.date); }
 function apLoad(ev){ const r=apFind(ev); AP.evId=ev.id;
  AP.absent=new Set(r?r.absent:[]); AP.late=Object.assign({},r?r.late:{}); AP.sent=!!r; AP.mode=r?"idle":"call"; }
@@ -17318,7 +17430,7 @@ function hBlock(e,pos,chip){
 }
 function histHtml(){
  HMISS=new Set(vsMissing().past.map(e=>e.id));
- const ev=schEns().events, cur=new Date(HIST.cur), v=HIST.view, todayS=isoD(new Date());
+ const ev=schEns().events.filter(evIsMine), cur=new Date(HIST.cur), v=HIST.view, todayS=isoD(new Date());
  const mon=new Date(cur); mon.setDate(cur.getDate()-((cur.getDay()+6)%7));
  let title="", html="";
  if(v==="month"){
@@ -17559,7 +17671,7 @@ function vsMissing(){
  const out={now:[],past:[]};
  if(AUTH.role!=="prof") return out;
  const today=isoD(new Date()), nm=tmin(nowHM());
- schEns().events.filter(e=>!e.cancelled&&e.date<=today&&!apFind(e)&&DATA.students.some(s=>studentInTargets(s,e.classIds||[])))
+ schEns().events.filter(e=>!e.cancelled&&evIsMine(e)&&e.date<=today&&!apFind(e)&&DATA.students.some(s=>studentInTargets(s,e.classIds||[])))
   .sort((a,b)=>(a.date+a.start)<(b.date+b.start)?-1:1).forEach(e=>{
    if(e.date===today&&nm>=tmin(e.start)+5) out.now.push(e);
    if(e.date<today||nm>=tmin(e.end)) out.past.push(e);
@@ -17610,7 +17722,7 @@ function schScopeOpen(kind,e,cb){
   [{label:"Annuler"},{label:del?"Supprimer":"Valider",cls:del?"btn-danger":"btn-primary",fn:m=>{ cb(m.querySelector('input[name="scp"]:checked').value); }}]);
 }
 function schApplyEdit(e,v,flag,scope){
- const old={subject:e.subject,room:e.room,start:e.start,end:e.end,date:e.date,cls:[...(e.classIds||[])].sort().join()};
+ const old={profId:e.profId||"",subject:e.subject,room:e.room,start:e.start,end:e.end,date:e.date,cls:[...(e.classIds||[])].sort().join()};
  const delta=Math.round((new Date(v.date+"T12:00:00")-new Date(old.date+"T12:00:00"))/864e5);
  schScopeSet(e,scope).forEach(t=>{
   if(v.subject!==old.subject) t.subject=v.subject;
@@ -17620,6 +17732,7 @@ function schApplyEdit(e,v,flag,scope){
   if(v.end!==old.end) t.end=v.end;
   if([...v.classIds].sort().join()!==old.cls) t.classIds=[...v.classIds];
   if(delta){ const d=new Date(t.date+"T12:00:00"); d.setDate(d.getDate()+delta); t.date=isoD(d); }
+  if(v.profId!==undefined&&(v.profId||"")!==old.profId) t.profId=v.profId||"";
   if(flag) t.changed=true;
  });
 }
@@ -17672,7 +17785,7 @@ document.getElementById("schDelete").onclick=()=>{
    it.className="dr-item"+(b.classList.contains("active")?" active":"");
    const warn=b.classList.contains("has-miss-call")||b.classList.contains("has-empty-eval");
    const hid=b.classList.contains("has-hidden-eval")&&!document.body.classList.contains("student-mode");
-   it.innerHTML='<span class="dr-ico">'+((document.body.classList.contains("student-mode")&&STU_ICONS[key])||(isCarnet?STU_ICONS.elevesView:ICONS[key])||"•")+'</span><span class="dr-lbl"></span>'+(warn?'<span class="dr-bdg dr-pas dr-pas-warn" title="À traiter"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 2.8 1.6 20.6c-.4.8.1 1.6 1 1.6h18.8c.9 0 1.4-.8 1-1.6L12 2.8z" fill="#fff" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/><path d="M12 9.4v5.3" stroke="#dc2626" stroke-width="2.7" stroke-linecap="round"/><circle cx="12" cy="18" r="1.55" fill="#dc2626"/></svg></span>':"")+(hid?'<span class="dr-bdg dr-pas dr-pas-eye" title="Évaluations masquées"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#048de2" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 12S5.5 5 12 5s10.5 7 10.5 7-4 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg></span>':"")+(b.dataset.pendingCount?'<span class="dr-bdg dr-cnt" title="Copies à corriger">'+b.dataset.pendingCount+'</span>':"");
+   it.innerHTML='<span class="dr-ico">'+((document.body.classList.contains("student-mode")&&STU_ICONS[key])||(isCarnet?STU_ICONS.elevesView:ICONS[key])||"•")+'</span><span class="dr-lbl"></span>'+(warn?'<span class="dr-bdg dr-pas dr-pas-warn" title="À traiter"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 2.8 1.6 20.6c-.4.8.1 1.6 1 1.6h18.8c.9 0 1.4-.8 1-1.6L12 2.8z" fill="#fff" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/><path d="M12 9.4v5.3" stroke="#dc2626" stroke-width="2.7" stroke-linecap="round"/><circle cx="12" cy="18" r="1.55" fill="#dc2626"/></svg></span>':"")+(hid?'<span class="dr-bdg dr-pas dr-pas-eye" title="Évaluations masquées"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#048de2" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 12S5.5 5 12 5s10.5 7 10.5 7-4 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg></span>':"")+(b.dataset.pendingCount?'<span class="dr-bdg dr-cnt" title="Copies à corriger">'+b.dataset.pendingCount+'</span>':"")+(b.dataset.hwTodo?'<span class="dr-bdg dr-cnt" title="Devoirs à faire">'+b.dataset.hwTodo+'</span>':"");
    it.querySelector(".dr-lbl").textContent=labelOf(b);
    if(isCarnet){
     const eB=tabsEl.querySelector('.tab-btn[data-target="elevesView"]'), cB=tabsEl.querySelector('.tab-btn[data-target="classesView"]');
@@ -19057,6 +19170,27 @@ label.chk-big>input[type=checkbox]{ width:20px!important; height:20px; min-width
 #classListUI .pl-item + .pl-item,#groupListUI .pl-item + .pl-item{ margin-top:2px }
 #classListUI .pl-item:hover,#groupListUI .pl-item:hover{ background:transparent; border-color:#109ef5 }
 #classListUI .pl-item.sel:hover,#groupListUI .pl-item.sel:hover{ background:#dbf0fd }
+/* ── Admin : liste des professeurs (étoile Responsable + engrenage discret) ── */
+.ad-t input[type=checkbox]{ width:auto; min-width:0 }
+.ad-pl{ display:flex; flex-direction:column; gap:4px; max-width:760px }
+.ad-pr{ display:flex; align-items:center; gap:8px; padding:5px 8px; border:1px solid var(--border); border-radius:10px; background:#fff }
+.ad-pr .sp{ flex:1 }
+.ad-pn{ font-weight:600 }
+.ad-pu{ color:var(--muted); font-size:12.5px }
+.ad-resp{ background:#fef3c7; color:#92400e; border-radius:999px; padding:1px 9px; font-size:11.5px; font-weight:700 }
+.ad-star,.ad-gear{ border:0; background:transparent; cursor:pointer; padding:4px; border-radius:6px; display:inline-flex; line-height:0 }
+.ad-star{ color:#cbd5e1 }
+.ad-star:hover{ color:#f59e0b; background:#fffbeb }
+.ad-star.on{ color:#f59e0b }
+.ad-star.on svg{ fill:currentColor }
+.ad-gear{ color:#94a3b8 }
+.ad-gear:hover{ color:#475569; background:#f1f5f9 }
+/* ── Professeur non responsable : lecture seule sur la structure ── */
+body.prof-limited .sch-bar,
+body.prof-limited #addClassBtn, body.prof-limited #editClassBtn, body.prof-limited #deleteClassBtn,
+body.prof-limited #addGroupBtn, body.prof-limited #editGroupBtn,
+body.prof-limited #openAddStudentBtn, body.prof-limited #editStudentBtn, body.prof-limited #deleteStudentBtn,
+body.prof-limited #paramBtn, body.prof-limited .import-btn, body.prof-limited #schDetailEdit{ display:none!important }
 </style>
 <script id="ed-admin">
 (function(){
@@ -19107,12 +19241,58 @@ function ask(title,label,def,ok){ return new Promise(res=>{
 
 /* ── éditeur de professeurs (commun : onglet, création) ── */
 function profTable(arr){
- return '<div style="overflow-x:auto"><table class="ad-t"><thead><tr><th>Civilité</th><th>Nom</th><th>Prénom</th><th>Identifiant</th><th>Mot de passe</th><th></th></tr></thead><tbody>'+
+ return '<div style="overflow-x:auto"><table class="ad-t"><thead><tr><th>Civilité</th><th>Nom</th><th>Prénom</th><th>Identifiant</th><th>Mot de passe</th><th title="Responsable">Resp.</th><th></th></tr></thead><tbody>'+
  arr.map((p,i)=>'<tr><td><select data-f="civ" data-i="'+i+'"><option'+(p.civ==="Monsieur"?" selected":"")+'>Monsieur</option><option'+(p.civ==="Madame"?" selected":"")+'>Madame</option></select></td>'+
  ["last","first","user","pass"].map(f=>'<td><input data-f="'+f+'" data-i="'+i+'" value="'+E(p[f])+'" autocomplete="off"></td>').join("")+
+ '<td><input type="checkbox" data-f="resp" data-i="'+i+'"'+(p.resp?" checked":"")+' title="Responsable"></td>'+
  '<td><button type="button" class="btn btn-danger" data-a="delprof" data-i="'+i+'" title="Retirer ce professeur (et ses données)">✕</button></td></tr>').join("")+'</tbody></table></div>';
 }
-const blank=()=>({civ:"Monsieur",first:"",last:"",user:"",pass:""});
+const blank=()=>({civ:"Monsieur",first:"",last:"",user:"",pass:"",resp:false});
+/* Responsable : un seul par établissement. Donner l'étoile à un autre professeur = transfert (confirmation). Retourne false si annulé. */
+function setResp(arr,i,val){
+ const p=arr[i]; if(!p) return false;
+ if(!val){ p.resp=false; return true; }
+ const k=arr.findIndex((x,j)=>j!==i&&x.resp);
+ if(k>=0){
+  const nm=x=>(x.civ==="Madame"?"Mme ":"M. ")+(x.first?x.first+" ":"")+(x.last||"(nouveau)");
+  if(!confirm("Transférer la responsabilité de "+nm(arr[k])+" à "+nm(p)+" ?\n\n"+nm(arr[k])+" ne sera plus responsable (plus de gestion des emplois du temps, classes, groupes, salles, congés ni élèves).\nLe changement sera effectif après « Enregistrer ».")) return false;
+  arr.forEach(x=>{ x.resp=false; });
+ }
+ p.resp=true; return true;
+}
+const STAR_SVG='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>';
+const GEAR_SVG='<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
+/* liste des professeurs d'un établissement : étoile (Responsable) à gauche, engrenage (paramètres) à droite */
+function profList(arr){
+ return '<div class="ad-pl">'+arr.map((p,i)=>'<div class="ad-pr"><button type="button" class="ad-star'+(p.resp?" on":"")+'" data-a="star" data-i="'+i+'" aria-pressed="'+(!!p.resp)+'" title="'+(p.resp?"Retirer le statut de responsable":"Définir comme responsable")+'">'+STAR_SVG+'</button>'+
+  '<span class="ad-pn">'+E((p.civ==="Madame"?"Mme ":"M. ")+(p.first?p.first+" ":"")+(p.last||"(nouveau)"))+'</span>'+(p.resp?'<span class="ad-resp">Responsable</span>':"")+
+  '<span class="sp"></span><span class="ad-pu">'+E(p.user)+'</span><button type="button" class="ad-gear" data-a="gear" data-i="'+i+'" title="Paramètres du professeur" aria-label="Paramètres du professeur">'+GEAR_SVG+'</button></div>').join("")+'</div>';
+}
+/* pop-up « paramètres du professeur » */
+function profPopup(e,i,isNew){
+ const d=dr(e), p=d.profs[i]; if(!p) return; let done=false;
+ const f=(k,l,t)=>'<label class="ad-lab">'+l+'</label><input class="ad-in" data-pp="'+k+'" type="'+(t||"text")+'" value="'+E(p[k])+'" autocomplete="off" style="width:100%">';
+ const body='<label class="ad-lab">Civilité</label><select class="ad-in" data-pp="civ" style="width:100%"><option'+(p.civ!=="Madame"?" selected":"")+'>Monsieur</option><option'+(p.civ==="Madame"?" selected":"")+'>Madame</option></select>'+
+  f("last","Nom")+f("first","Prénom")+f("user","Identifiant")+f("pass","Mot de passe")+
+  '<label class="ad-chk" style="margin-top:14px"><input type="checkbox" data-pp="resp"'+(p.resp?" checked":"")+'><span><strong>Responsable</strong><br><small>Gère emplois du temps, classes, groupes, salles, congés et élèves.</small></span></label>'+
+  (isNew?"":'<div class="ad-row"><button type="button" class="btn btn-danger" data-del>Retirer ce professeur</button></div>');
+ const m=modal(isNew?"Nouveau professeur":"Paramètres du professeur",body,"Valider",mm=>{
+  const g=k=>{ const el=mm.querySelector('[data-pp="'+k+'"]'); return el.type==="checkbox"?el.checked:el.value.trim(); };
+  const v={civ:g("civ"),last:g("last"),first:g("first"),user:g("user"),pass:mm.querySelector('[data-pp="pass"]').value,resp:g("resp")};
+  if(!v.last||!v.user||!v.pass) return "Le nom, l'identifiant et le mot de passe sont obligatoires.";
+  if(d.profs.some((x,k)=>k!==i&&String(x.user).trim()===v.user)) return "Cet identifiant est déjà utilisé dans cet établissement.";
+  if(v.resp&&!p.resp){ if(!setResp(d.profs,i,true)) return "Transfert de responsabilité annulé."; }
+  else if(!v.resp) p.resp=false;
+  delete v.resp; Object.assign(p,v); done=true; render(); return "";
+ },460);
+ m.addEventListener("click",ev=>{
+  if(ev.target.closest("[data-del]")){
+   if(d.profs.length<2){ alert("Un établissement doit garder au moins un professeur."); return; }
+   if(confirm("Retirer ce professeur ? Son carnet sera supprimé à l'enregistrement.")){ d.profs.splice(i,1); done=true; m.remove(); render(); }
+   return; }
+  if(isNew&&!done&&(ev.target.closest("[data-x]")||ev.target===m)){ d.profs.splice(i,1); done=true; render(); }
+ });
+}
 
 /* ── console administrateur ── */
 const S={reg:null,snaps:[],tab:"",sub:"profs",draft:{}};
@@ -19145,7 +19325,7 @@ function etabView(e){
  if(!e) return "<p>Aucun établissement. Créez-en un avec « + Nouvel établissement ».</p>";
  const d=dr(e);
  const st='<div class="subtabs">'+[["profs","Professeurs"],["etab","Établissement"],["sauv","Sauvegardes"]].map(([k,l])=>'<button type="button" class="subtab-btn'+(S.sub===k?" active":"")+'" data-a="sub" data-k="'+k+'">'+l+'</button>').join("")+"</div>";
- if(S.sub==="profs") return st+'<h3 class="ad-h">Professeurs de '+E(e.name)+'</h3>'+profTable(d.profs)+'<div class="ad-row"><button type="button" class="btn" data-a="addprof">+ Ajouter un professeur</button><button type="button" class="btn btn-primary" data-a="save">Enregistrer</button></div><p class="ad-note">Retirer un professeur supprime définitivement son carnet (une sauvegarde préalable est conseillée).</p>';
+ if(S.sub==="profs") return st+'<h3 class="ad-h">Professeurs de '+E(e.name)+'</h3>'+profList(d.profs)+'<div class="ad-row"><button type="button" class="btn" data-a="addprof">+ Ajouter un professeur</button><button type="button" class="btn btn-primary" data-a="save">Enregistrer</button></div><p class="ad-note">★ = professeur responsable (un seul : cliquer sur l\'étoile d\'un autre professeur transfère la responsabilité) · ⚙ = paramètres du professeur. Retirer un professeur supprime définitivement son carnet (une sauvegarde préalable est conseillée).</p>';
  if(S.sub==="etab") return st+'<h3 class="ad-h">Nom de l\'établissement</h3><div class="ad-row"><input class="ad-in" data-f="name" value="'+E(d.name)+'" style="min-width:320px"><button type="button" class="btn btn-primary" data-a="save">Enregistrer</button></div><h3 class="ad-h" style="margin-top:28px;color:#b91c1c">Zone dangereuse</h3><p class="ad-note">Supprime l\'établissement, tous ses professeurs, élèves, données et sauvegardes. Action irréversible.</p><button type="button" class="btn btn-danger" data-a="delEtab">Supprimer cet établissement</button>';
  const sn=S.snaps.filter(s=>s.etabId===e.id);
  return st+'<h3 class="ad-h">Sauvegardes de '+E(e.name)+'</h3><div class="ad-row"><input class="ad-in" id="adSnapName" placeholder="Nom de la sauvegarde" style="min-width:280px"><button type="button" class="btn btn-primary" data-a="snapSave">Sauvegarder toutes les données maintenant</button></div>'+
@@ -19177,7 +19357,7 @@ async function loadPeople(force){
  if(P.loading||!S.reg) return; if(P.list&&!force) return;
  P.loading=true; P.list=[]; const jobs=[];
  S.reg.etabs.forEach(e=>e.profs.forEach(p=>{
-  P.list.push({kind:"prof",first:p.first,last:p.last,sub:"Professeur · "+e.name,user:p.user,pass:p.pass});
+  P.list.push({kind:"prof",first:p.first,last:p.last,sub:"Professeur"+(p.resp?" responsable":"")+" · "+e.name,user:p.user,pass:p.pass});
   jobs.push({e,p});
  }));
  P.total=jobs.length; P.done=0; cStatus();
@@ -19237,7 +19417,7 @@ function overlay(p,snap,title){
  document.body.appendChild(o); mountFrame(o.querySelector(".ad-ovbox"),p,snap);
 }
 function newEtab(){
- const nw={name:"",profs:[blank()]};
+ const nw={name:"",profs:[Object.assign(blank(),{resp:true})]};
  const m=modal("Nouvel établissement",'<label class="ad-lab">Nom de l\'établissement</label><input class="ad-in" id="adNName" style="width:100%"><label class="ad-lab" style="margin-top:14px">Professeurs (au moins un)</label><div id="adNProfs"></div><div class="ad-row"><button type="button" class="btn" id="adNAdd">+ Ajouter un professeur</button></div>',"Créer l'établissement",async()=>{
   nw.name=m.querySelector("#adNName").value.trim();
   if(!nw.name) return "Le nom de l'établissement est obligatoire.";
@@ -19245,21 +19425,25 @@ function newEtab(){
   const j=await call("adminAddEtab",{name:nw.name,profs:nw.profs}); if(!j) return "Création impossible (voir le message ci-dessus).";
   S.tab=S.reg.etabs[S.reg.etabs.length-1].id; S.sub="profs"; render(); return ""; },900);
  const draw=()=>{ m.querySelector("#adNProfs").innerHTML=profTable(nw.profs); };
- m.addEventListener("input",e=>{ const t=e.target; if(t.dataset.f&&t.closest("#adNProfs")) nw.profs[t.dataset.i][t.dataset.f]=t.value; });
- m.addEventListener("change",e=>{ const t=e.target; if(t.dataset.f&&t.closest("#adNProfs")) nw.profs[t.dataset.i][t.dataset.f]=t.value; });
- m.addEventListener("click",e=>{ if(e.target.id==="adNAdd"){ nw.profs.push(blank()); draw(); } const d=e.target.closest('[data-a="delprof"]'); if(d&&nw.profs.length>1){ nw.profs.splice(+d.dataset.i,1); draw(); } });
+ m.addEventListener("input",e=>{ const t=e.target; if(t.dataset.f&&t.dataset.f!=="resp"&&t.closest("#adNProfs")) nw.profs[t.dataset.i][t.dataset.f]=t.value; });
+ m.addEventListener("change",e=>{ const t=e.target; if(!t.dataset.f||!t.closest("#adNProfs")) return;
+  if(t.dataset.f==="resp"){ setResp(nw.profs,+t.dataset.i,t.checked); draw(); }
+  else nw.profs[t.dataset.i][t.dataset.f]=t.value; });
+ m.addEventListener("click",e=>{ if(e.target.id==="adNAdd"){ nw.profs.push(blank()); draw(); } const d=e.target.closest('[data-a="delprof"]'); if(d&&nw.profs.length>1){ nw.profs.splice(+d.dataset.i,1); if(!nw.profs.some(x=>x.resp)) nw.profs[0].resp=true; draw(); } });
  draw();
 }
-document.addEventListener("input",e=>{ const t=e.target; if(!t.dataset||!t.dataset.f||!t.closest("#adBody")) return; const e0=S.reg.etabs.find(x=>x.id===S.tab); if(!e0) return; const d=dr(e0); if(t.dataset.i!=null) d.profs[t.dataset.i][t.dataset.f]=t.value; else d[t.dataset.f]=t.value; });
+document.addEventListener("input",e=>{ const t=e.target; if(!t.dataset||!t.dataset.f||!t.closest("#adBody")) return; const e0=S.reg.etabs.find(x=>x.id===S.tab); if(!e0) return; const d=dr(e0); if(t.dataset.i!=null) d.profs[t.dataset.i][t.dataset.f]=(t.type==="checkbox"?t.checked:t.value); else d[t.dataset.f]=t.value; });
 document.addEventListener("click",async ev=>{
  const b=ev.target.closest("#adminRoot [data-a]"); if(!b) return;
  const a=b.dataset.a, e=S.reg.etabs.find(x=>x.id===S.tab);
  if(a==="tab"){ S.tab=b.dataset.id; render(); }
  else if(a==="sub"){ S.sub=b.dataset.k; render(); }
  else if(a==="new") newEtab();
- else if(a==="addprof"){ dr(e).profs.push(blank()); render(); }
+ else if(a==="addprof"){ const d=dr(e); d.profs.push(blank()); render(); profPopup(e,d.profs.length-1,true); }
+ else if(a==="star"){ const arr=dr(e).profs, i=+b.dataset.i; if(arr[i]){ setResp(arr,i,!arr[i].resp); render(); } }
+ else if(a==="gear"){ profPopup(e,+b.dataset.i,false); }
  else if(a==="delprof"){ const d=dr(e); if(d.profs.length<2){ alert("Un établissement doit garder au moins un professeur."); return; } if(confirm("Retirer ce professeur ? Son carnet sera supprimé à l'enregistrement.")){ d.profs.splice(+b.dataset.i,1); render(); } }
- else if(a==="save"){ const d=dr(e); const j=await call("adminSaveEtab",{id:e.id,name:d.name,profs:d.profs}); if(j){ delete S.draft[e.id]; render(); } }
+ else if(a==="save"){ const d=dr(e); d.profs.forEach(p=>{ p.resp=!!p.resp; }); if(!d.profs.some(p=>p.resp)&&!confirm("Aucun professeur n'est responsable : personne ne pourra gérer les emplois du temps, classes, groupes, salles, congés ni élèves. Enregistrer quand même ?")) return; const j=await call("adminSaveEtab",{id:e.id,name:d.name,profs:d.profs}); if(j){ delete S.draft[e.id]; render(); } }
  else if(a==="delEtab"){ if(confirm("Supprimer « "+e.name+" » et TOUTES ses données (professeurs, élèves, sauvegardes) ? Irréversible.")&&confirm("Dernière confirmation : supprimer définitivement « "+e.name+" » ?")){ const j=await call("adminDelEtab",{id:e.id}); if(j){ delete S.draft[e.id]; S.tab=""; render(); } } }
  else if(a==="snapSave"){ const n=($("adSnapName").value||"").trim(); if(!n){ alert("Donnez un nom à la sauvegarde."); return; } if(await call("adminSnapSave",{etabId:e.id,name:n})) render(); }
  else if(a==="snapDel"){ if(confirm("Supprimer cette sauvegarde ?")&&await call("adminSnapDel",{id:b.dataset.id})) render(); }
@@ -19294,6 +19478,44 @@ document.addEventListener("click",async ev=>{
 })();
 })();
 
+</script>
+
+<script id="ed-roles">
+/* ═══ Statut « Responsable » / professeur non responsable ═══
+   - Le serveur renvoie au chargement : resp (booléen), pid, etabProfs (liste des profs de l'établissement).
+   - pas d'étoile = non responsable (le serveur renvoie toujours resp ; M. Pommé est coché par défaut côté serveur).
+   - Non responsable : aucune création/modification de cours, événements, congés, salles, classes, groupes, élèves ;
+     pas d'onglet Paramétrage ; emploi du temps limité à ses cours ; notes seulement pour ses classes/groupes + matières. */
+(function(){
+ const $=id=>document.getElementById(id);
+ const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+ const lim=()=>AUTH.role==="prof"&&AUTH.resp===false;
+ window.edRoleInit=function(j){
+  const pi=j.profInfo||{}; const rv=(j.resp!==undefined)?j.resp:pi.resp;
+  AUTH.resp=(rv===undefined||rv===null)?true:(rv===true||rv==="true"||rv===1||rv==="1");
+  AUTH.pid=String(j.pid||pi.pid||""); AUTH.etabProfs=Array.isArray(j.etabProfs)?j.etabProfs:[];
+  document.body.classList.toggle("prof-limited",lim());
+ };
+ /* garde-fous : toute action de gestion est bloquée avant même son gestionnaire */
+ const BLOCK="#schAdd,#schAddEvt,#schHol,#schRooms,#schGroups,#addClassBtn,#editClassBtn,#deleteClassBtn,#addGroupBtn,#editGroupBtn,#openAddStudentBtn,#editStudentBtn,#deleteStudentBtn,#paramBtn,#schDetailEdit,#schDelete,#schCancelEv";
+ document.addEventListener("click",e=>{ if(lim()&&e.target.closest&&e.target.closest(BLOCK)){ e.preventDefault(); e.stopImmediatePropagation(); } },true);
+ /* emploi du temps : un non-responsable ne voit que ses cours */
+ const _ev=schEvents; schEvents=function(){ const l=_ev.apply(this,arguments); return l; };
+ const _open=schOpen; schOpen=function(){ if(lim()) return; _open.apply(this,arguments);
+  const sel=$("schProf"); if(!sel) return;
+  const l=AUTH.etabProfs.length?AUTH.etabProfs:[{pid:AUTH.pid,civ:PROF_INFO.civ,last:PROF_INFO.last}];
+  sel.innerHTML=l.map(p=>'<option value="'+esc(p.pid)+'">'+esc((p.civ==="Madame"?"Mme ":"M. ")+(p.last||""))+'</option>').join("");
+  const ev=SCH.editId?schEns().events.find(x=>x.id===SCH.editId):null;
+  sel.value=(ev&&ev.profId)||AUTH.pid||sel.value; };
+ /* notes : seulement pour les classes/groupes où le prof a cours, dans la matière demandée */
+ const own=()=>(schEns().events||[]).filter(e=>!e.evt&&e.profId&&e.profId===AUTH.pid);
+ const okClass=(t,sub)=>own().some(e=>e.subject===sub&&(e.classIds||[]).includes(t));
+ const okStu=(sid,sub)=>{ const st=(DATA.students||[]).find(s=>s.id===sid); return !!st&&own().some(e=>e.subject===sub&&studentInTargets(st,e.classIds)); };
+ const deny=sub=>alert("Vous ne pouvez saisir de note que pour une classe ou un groupe avec lequel vous avez au moins un cours de la matière « "+sub+" » dans votre emploi du temps.");
+ const nf=$("noteForm"), cf=$("classEvalForm");
+ nf&&nf.addEventListener("submit",e=>{ if(!lim()) return; const sub=$("noteSubject").value; if(!okStu(NOTE_FORM_STATE.studentId,sub)){ e.preventDefault(); e.stopImmediatePropagation(); deny(sub); } },true);
+ cf&&cf.addEventListener("submit",e=>{ if(!lim()) return; const sub=$("classSubject").value; if(!okClass($("classSelect").value,sub)){ e.preventDefault(); e.stopImmediatePropagation(); deny(sub); } },true);
+})();
 </script>
 </body>
 </html>
