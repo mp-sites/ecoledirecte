@@ -268,7 +268,7 @@ body.student-mode #onlineTestsView{ display:none !important }
   margin-top:8px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;
 }
 .online-inline-field input{ width:120px !important }
-.online-builder-layout{ display:grid; grid-template-columns:minmax(0,1.3fr) minmax(290px,.7fr); gap:16px }
+.online-builder-layout{ display:grid; grid-template-columns:minmax(0,1fr); gap:16px }
 .online-builder-card{
   border:1px solid #d5ecfb; border-radius:16px; background:#fff; overflow:hidden;
 }
@@ -331,6 +331,34 @@ body.student-mode #onlineTestsView{ display:none !important }
 }
 .online-question-item-actions{ display:flex; gap:8px; flex-wrap:wrap }
 .online-question-item p{ margin:0; color:#475569; font-size:13px; line-height:1.45 }
+/* ── Constructeur de test : liste dépliante des questions ── */
+.oq-list{ display:flex; flex-direction:column; gap:8px }
+.oq-row{ position:relative; border:1px solid #d5ecfb; border-radius:12px; background:#fff; overflow:hidden }
+.oq-row.is-open{ border-color:#4db5f5; box-shadow:0 0 0 3px rgba(4,141,226,.10) }
+.oq-head{ display:flex; align-items:center; gap:10px; padding:8px 12px 8px 6px; min-height:48px; box-sizing:border-box; cursor:pointer; user-select:none; -webkit-user-select:none }
+.oq-row.is-open .oq-head{ background:#f4fbff; border-bottom:1px solid #d5ecfb }
+.oq-grip{ flex:none; display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:8px; color:#94a3b8; cursor:grab; touch-action:none }
+.oq-grip:hover{ background:#e6f5fe; color:#0471b5 }
+.oq-grip:active{ cursor:grabbing }
+.oq-num{ flex:none; min-width:26px; height:26px; padding:0 4px; box-sizing:border-box; border-radius:999px; background:#0080d0; color:#fff; font-weight:800; font-size:13px; display:inline-flex; align-items:center; justify-content:center }
+.oq-prompt{ flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#0f172a; font-weight:600; font-size:14px }
+.oq-prompt.is-empty{ color:#94a3b8; font-style:italic; font-weight:500 }
+.oq-type,.oq-pts{ flex:none; font-size:12px; border-radius:999px; padding:3px 9px; white-space:nowrap; border:1px solid #e2e8f0; background:#f1f5f9; color:#475569 }
+.oq-type{ background:#eef9ff; border-color:#c3e9ff; color:#0471b5; font-weight:700 }
+.oq-chev{ flex:none; color:#64748b }
+.oq-row.is-open .oq-chev{ transform:rotate(180deg) }
+.oq-body{ padding:14px 14px 16px; display:flex; flex-direction:column; gap:10px }
+.oq-body-actions{ display:flex; justify-content:flex-end; margin-top:6px }
+.oq-row.oq-dragging{ opacity:.55 }
+.oq-row.oq-drop-before::before,.oq-row.oq-drop-after::after{ content:""; position:absolute; left:0; right:0; height:4px; background:#0080d0; border-radius:2px; z-index:3 }
+.oq-row.oq-drop-before::before{ top:0 }
+.oq-row.oq-drop-after::after{ bottom:0 }
+.oq-empty{ padding:22px 14px; text-align:center; color:#64748b }
+@media (max-width:640px){
+  .oq-head{ flex-wrap:wrap; row-gap:2px; padding-right:10px }
+  .oq-prompt{ order:9; flex:1 1 100%; padding:0 4px 6px 4px }
+  .oq-chev{ margin-left:auto }
+}
 .online-answer-list{ display:flex; flex-direction:column; gap:10px }
 .online-answer-row{ display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:center }
 .online-time-fields input{ width:86px !important }
@@ -986,13 +1014,14 @@ body.student-mode .tab-btn{ flex:1 1 0; min-width:0; text-align:center; padding-
 .homework-review-assignment.is-orange{ border:3px solid #f97316; background:#fff7ed; padding:10px }
 .homework-review-assignment.is-red{ border:3px solid #dc2626; background:#fff1f2; padding:10px }
 .homework-review-assignment.is-green{ border:3px solid #16a34a; background:#f0fdf4; padding:10px }
-.homework-review-assignment.active{ box-shadow:0 0 0 3px rgba(0,128,208,.45) }
+.homework-review-assignment.active{ box-shadow:none }
+.homework-review-assignment:focus,.homework-review-assignment:focus-visible{ outline:none }
 .homework-grade-input{ -webkit-touch-callout:none }
 .hw-spec-pop{ position:fixed; z-index:400; display:flex; gap:6px; padding:8px; background:#fff; border:1px solid #cbd5e1; border-radius:14px; box-shadow:0 8px 24px rgba(15,23,42,.22) }
 .hw-spec-pop button{ min-width:46px; height:38px; padding:0 10px; border:1px solid #cbd5e1; border-radius:10px; background:#f9fbfc; color:#0f172a; font-weight:700; cursor:pointer }
 .hw-spec-pop button:hover{ background:#e3f4ff; border-color:#0080d0 }
 .hw-spec-pop button.clr{ font-weight:600; color:#64748b }
-.homework-review-assignment .hw-assign-badge{ margin:0; position:absolute; top:8px; right:8px; min-width:24px; height:24px; padding:0 7px; border-radius:999px; box-sizing:border-box; background:#ef4444; color:#fff; font:700 13px/1 Arial,Helvetica,sans-serif; display:inline-flex; align-items:center; justify-content:center; pointer-events:none }
+.homework-review-assignment .hw-assign-badge{ margin:0; position:absolute; top:-9px; right:-9px; z-index:5; min-width:24px; height:24px; padding:0 7px; border-radius:999px; box-sizing:border-box; background:#048de2; color:#fff; font:700 13px/1 Arial,Helvetica,sans-serif; display:inline-flex; align-items:center; justify-content:center; pointer-events:none }
 body.student-mode #homeworkView .card-header strong::after{ content:""; }
 @media (max-width:980px){
  .homework-shell,.homework-review-layout{ grid-template-columns:1fr }
@@ -1477,6 +1506,8 @@ body.auth-pending #saveActions{display:none!important}
 body.ed-preview #edPreviewBar{display:none!important}
 body.ed-preview #logoutBtn{display:none!important}
 body.ed-preview #edPreviewExitTop{display:inline-flex!important;background:#fff;color:#0471b5;border-color:#fff}
+/* Consultation depuis l'admin (compte ouvert en pleine page) : « Quitter l'aperçu » à la place de Déconnexion */
+body.consult-mode #edPreviewExitTop{display:inline-flex!important;background:#fff;color:#0471b5;border-color:#fff}
 #edPreviewExitTop{white-space:nowrap}
 #consultStage{height:auto!important;min-height:0!important;padding:28px 18px;text-align:center;color:var(--muted);font-size:15px}
 </style>
@@ -1765,7 +1796,7 @@ header .lock-btn{ background:rgba(255,255,255,.15); border:1px solid rgba(255,25
 <style id="patch-2026-10d">
 /* ── Pastilles de notification : sans contour blanc ── */
 #homeTabBtn .hb{ border:0!important; box-shadow:none!important }
-.online-test-badge{ background:#ef4444!important; border:0!important; box-shadow:none!important }
+.online-test-badge{ background:#048de2!important; border:0!important; box-shadow:none!important }
 .tab-btn[data-pending-count]::after{ border:0!important; box-shadow:none!important }
 /* œil : icône bleue sur fond blanc */
 .tab-btn.has-hidden-eval::before,.subtab-btn.has-hidden-eval::before,.period-btn.has-hidden-eval::before{
@@ -2007,6 +2038,98 @@ header .header-actions{margin-left:auto;align-items:center}
 }
 body:not(.student-mode) .tab-btn[data-hw-todo]::after{ display:none!important }
 </style>
+<style id="ux-patch-tests">
+/* Titre / matière / coef sur une même ligne (le coef rogne la matière, pas le titre) */
+.sc-wrap{ display:flex; gap:10px; align-items:flex-start; min-width:0 }
+.sc-wrap > div{ min-width:0 }
+.sc-wrap .sc-subj{ flex:1 1 0 }
+.sc-wrap .sc-title{ flex:2 1 0 }
+.sc-wrap .sc-coef{ flex:0 0 74px }
+.sc-wrap.sc-3 .sc-subj{ flex:1.2 1 0 }
+.sc-wrap .sc-coef input{ text-align:center; padding-left:6px !important; padding-right:6px !important }
+.sc-wrap.sc-3 label, .sc-wrap .sc-coef label{ white-space:nowrap }
+#onlineBasicTestModal .sc-wrap input, #onlineBasicTestModal .sc-wrap select{ width:100%; box-sizing:border-box }
+#importTestModal .sc-wrap input, #importTestModal .sc-wrap select{ width:100%; box-sizing:border-box }
+@media (max-width:520px){ .sc-wrap.sc-3{ flex-wrap:wrap } .sc-wrap.sc-3 .sc-title{ flex:1 1 100% } }
+/* Paramètres du test : deux cases par ligne, case collée au titre, sans explications */
+#onlineTestSetupModal .online-checklist, #onlineBasicTestModal .online-checklist{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px }
+#onlineTestSetupModal .online-check-item, #onlineBasicTestModal .online-check-item{ align-items:center; gap:8px; padding:7px 10px; flex-wrap:wrap }
+#onlineTestSetupModal .online-check-item input[type="checkbox"], #onlineBasicTestModal .online-check-item input[type="checkbox"]{ margin:0; flex:none; width:18px; height:18px }
+#onlineTestSetupModal .online-check-item strong, #onlineBasicTestModal .online-check-item strong{ display:inline; margin:0; font-size:13.5px; font-weight:600 }
+#onlineTestSetupModal .online-check-item .online-inline-field, #onlineBasicTestModal .online-check-item .online-inline-field{ margin:0 0 0 auto; gap:5px; flex-wrap:nowrap; font-size:13px; color:#475569 }
+#onlineTestSetupModal .online-check-item .online-inline-field input, #onlineBasicTestModal .online-check-item .online-inline-field input{ width:58px !important; padding:5px 6px !important; text-align:center }
+/* centrage vertical case / titre + petite marge */
+#onlineTestSetupModal .online-check-item, #onlineBasicTestModal .online-check-item{ align-items:center !important; flex-wrap:nowrap !important; gap:10px !important; padding:8px 14px !important; min-height:42px; box-sizing:border-box }
+#onlineTestSetupModal .online-check-item input[type="checkbox"], #onlineBasicTestModal .online-check-item input[type="checkbox"]{ margin:0 !important; align-self:center !important; position:static !important; vertical-align:middle }
+#onlineTestSetupModal .online-check-item strong, #onlineBasicTestModal .online-check-item strong{ line-height:1.25 !important; align-self:center }
+#onlineTestSetupModal .online-check-item .online-inline-field, #onlineBasicTestModal .online-check-item .online-inline-field{ align-self:center; margin:0 0 0 auto !important }
+@media (max-width:560px){ #onlineTestSetupModal .online-checklist, #onlineBasicTestModal .online-checklist{ grid-template-columns:1fr } }
+/* Question dépliée : type + points (moitié gauche, l'un au-dessus de l'autre) | intitulé (moitié droite) */
+.oq-top{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; align-items:start }
+.oq-top-left{ display:flex; flex-direction:column; gap:0; min-width:0 }
+.oq-top-right{ min-width:0 }
+.oq-top label{ margin-top:0 !important }
+.oq-top-left > div + div label{ margin-top:10px !important }
+.oq-top-right textarea{ min-height:96px }
+@media (max-width:560px){ .oq-top{ grid-template-columns:1fr } }
+
+/* Devoirs : prof — cadre vert quand tous les devoirs du jour sont faits */
+.homework-calendar-day.has-homework.teacher-all-done{ box-shadow:inset 0 0 0 2px #16a34a }
+/* Tests en ligne : copies rendues non corrigées → cadre rouge complet */
+.online-test-card.has-pending-correction{ border:1px solid #e2e8f0 !important; box-shadow:none !important }
+.btn-homework-review.needs-correction{ border:2px solid #dc2626 !important; box-shadow:0 0 0 2px rgba(220,38,38,.18) }
+.online-test-card .otc-pending{ color:#dc2626; font-weight:700 }
+.hw-note-ico{ display:inline-flex; vertical-align:middle; margin-left:8px }
+.hw-note-ico.is-ok{ color:#334155 }
+.hw-note-ico.is-wait{ color:#64748b }
+.hw-success-toast{ position:fixed; left:50%; top:50%; transform:translate(-50%,-50%); z-index:2000; display:flex; align-items:center; gap:10px; padding:14px 22px; border-radius:14px; background:#16a34a; color:#fff; font:700 15px/1.2 Arial,Helvetica,sans-serif; border:2px solid #15803d; box-shadow:0 10px 30px rgba(22,163,74,.35); pointer-events:none }
+.hwpc-intro{ margin:0 0 10px; color:#334155 }
+.hwpc-empty{ margin:0; color:#64748b }
+.hwpc-list{ max-height:50vh; overflow:auto; border:1px solid #e2e8f0; border-radius:12px }
+.hwpc-row{ display:flex; justify-content:space-between; gap:12px; padding:8px 12px; border-bottom:1px solid #eef2f7 }
+.hwpc-row:last-child{ border-bottom:0 }
+.hwpc-row b{ color:#0471b5 }
+.sd-overlay{ position:fixed; inset:0; z-index:5000; display:flex; align-items:center; justify-content:center; padding:16px; background:rgba(15,23,42,.45) }
+.sd-card{ width:min(440px,100%); background:#fff; border-radius:16px; padding:20px 22px; box-shadow:0 20px 50px rgba(15,23,42,.35) }
+.sd-msg{ white-space:pre-line; color:#0f172a; font-size:15px; line-height:1.5; max-height:60vh; overflow:auto }
+.sd-actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:18px }
+button.hw-note-ico{ border:0; background:transparent; padding:0; cursor:pointer; border-radius:8px }
+button.hw-note-ico:hover{ background:#eef2f7 }
+.hw-score-verdict{ display:inline-flex; align-items:center; margin-left:6px }
+.hw-score-verdict .hw-verdict{ margin:0 }
+.btn-spin{ display:inline-block; width:14px; height:14px; margin-right:8px; vertical-align:-2px; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:50%; animation:btnspin .7s linear infinite; box-sizing:border-box }
+@keyframes btnspin{ to{ transform:rotate(360deg) } }
+/* Paramètres des tests en ligne : case centrée verticalement et décollée du texte */
+#onlineTestSetupModal label.online-check-item,#onlineBasicTestModal label.online-check-item,
+#onlineTestSetupModal div.online-check-item,#onlineBasicTestModal div.online-check-item{ display:flex !important; align-items:center !important; gap:14px !important; margin:0 !important }
+#onlineTestSetupModal .online-check-item input[type="checkbox"],#onlineBasicTestModal .online-check-item input[type="checkbox"]{ margin:0 !important; padding:0 !important; align-self:center !important; flex:none }
+#onlineTestSetupModal .online-check-item strong,#onlineBasicTestModal .online-check-item strong{ display:block !important; margin:0 !important; line-height:1.3 !important }
+</style>
+<script id="site-dialogs">
+(function(){
+ function esc(t){ return String(t==null?"":t); }
+ function build(msg,opts,withCancel){
+  return new Promise(function(res){
+   var ov=document.createElement("div"); ov.className="sd-overlay"; ov.setAttribute("role","dialog"); ov.setAttribute("aria-modal","true");
+   var card=document.createElement("div"); card.className="sd-card";
+   var m=document.createElement("div"); m.className="sd-msg"; m.textContent=esc(msg);
+   var act=document.createElement("div"); act.className="sd-actions";
+   function done(v){ document.removeEventListener("keydown",key,true); ov.remove(); res(v); }
+   function key(e){ if(e.key==="Escape"){ e.preventDefault(); e.stopPropagation(); done(false); } else if(e.key==="Enter"){ e.preventDefault(); e.stopPropagation(); done(true); } }
+   if(withCancel){ var c=document.createElement("button"); c.type="button"; c.className="btn"; c.textContent=(opts&&opts.cancel)||"Annuler"; c.onclick=function(){ done(false); }; act.appendChild(c); }
+   var ok=document.createElement("button"); ok.type="button"; ok.className="btn btn-primary"; ok.textContent=(opts&&opts.ok)||(withCancel?"Valider":"OK"); ok.onclick=function(){ done(true); }; act.appendChild(ok);
+   card.appendChild(m); card.appendChild(act); ov.appendChild(card);
+   ov.addEventListener("mousedown",function(e){ if(e.target===ov && withCancel) done(false); });
+   document.addEventListener("keydown",key,true);
+   (document.body||document.documentElement).appendChild(ov);
+   setTimeout(function(){ try{ ok.focus(); }catch(x){} },20);
+  });
+ }
+ window.siteConfirm=function(msg,opts){ return build(msg,opts,true); };
+ window.siteAlert=function(msg,opts){ return build(msg,opts,false).then(function(){}); };
+ window.alert=function(msg){ window.siteAlert(msg); };
+})();
+</script>
 </head>
 <body class="auth-pending">
 <header>
@@ -3227,49 +3350,32 @@ body:not(.student-mode) .tab-btn[data-hw-todo]::after{ display:none!important }
       <label>Nom de l’éval</label>
       <input id="onlineTestTitleInput" required>
      </div>
-     <div>
-      <label>Matière</label>
-      <select id="onlineTestSubjectInput" required></select>
-      <div class="online-subhint">Choisis une matière déjà enregistrée sur le site.</div>
+     <div class="sc-wrap">
+      <div class="sc-subj">
+       <label>Matière</label>
+       <select id="onlineTestSubjectInput" required></select>
+      </div>
+      <div class="sc-coef">
+       <label for="onlineTestCoefInput">Coef</label>
+       <input id="onlineTestCoefInput" type="number" min="0" step="any" value="1" inputmode="decimal">
+      </div>
      </div>
      <div class="full">
       <div class="online-checklist">
-       <label class="online-check-item">
-        <input type="checkbox" id="onlineTestShuffleQuestions">
-        <span><strong>Questions dans un ordre aléatoire</strong><small>L’ordre des questions change à chaque lancement du test.</small></span>
-       </label>
+       <label class="online-check-item"><input type="checkbox" id="onlineTestShuffleQuestions"><strong>Questions dans un ordre aléatoire</strong></label>
        <div class="online-check-item">
-        <input type="checkbox" id="onlineTestTimed">
-        <span style="flex:1;">
-         <strong>Temps limité</strong>
-         <small>Si activé, le test est soumis automatiquement à la fin du temps imparti. Les messages d’introduction et de conclusion restent hors chronomètre.</small>
-         <div class="online-inline-field online-time-fields">
-          <label for="onlineTestTimeLimitMinutes" style="margin:0;">Temps imparti</label>
-          <input id="onlineTestTimeLimitMinutes" type="number" min="0" step="1" placeholder="Min">
-          <span>min</span>
-          <input id="onlineTestTimeLimitSeconds" type="number" min="0" max="59" step="1" placeholder="Sec">
-          <span>s</span>
-         </div>
+        <input type="checkbox" id="onlineTestTimed"><strong>Temps limité</strong>
+        <span class="online-inline-field online-time-fields">
+         <input id="onlineTestTimeLimitMinutes" type="number" min="0" step="1" placeholder="Min" aria-label="Minutes"><span>min</span>
+         <input id="onlineTestTimeLimitSeconds" type="number" min="0" max="59" step="1" placeholder="Sec" aria-label="Secondes"><span>s</span>
         </span>
        </div>
-       <label class="online-check-item">
-        <input type="checkbox" id="onlineTestTrainingMode">
-        <span><strong>Mode entraînement</strong><small>Le résultat n’est pas transmis au professeur et le test est refaisable plusieurs fois. L’option « ne pas afficher la correction » est cochée automatiquement.</small></span>
-       </label>
-       <label class="online-check-item" id="onlineTestFocusWrap">
-        <input type="checkbox" id="onlineTestFocusMode">
-        <span><strong>Mode Focus</strong><small>Si l’élève quitte la page ou ouvre une autre application, le test est immédiatement arrêté et soumis. Disponible uniquement hors mode entraînement.</small></span>
-       </label>
-       <label class="online-check-item" id="onlineTestHideGradeWrap" style="display:none">
-        <input type="checkbox" id="onlineTestHideGrade">
-        <span><strong>Ne pas afficher la note</strong><small>Le résultat ne s’affiche pas à l’élève en fin de test. Cette option est désactivée en mode entraînement, sauf correction obligatoire par le professeur.</small></span>
-       </label>
-       <label class="online-check-item" id="onlineTestHideCorrectionWrap">
-        <input type="checkbox" id="onlineTestHideCorrection">
-        <span><strong>Ne pas afficher la correction à la fin du test</strong><small>Si cochée, le bouton « Afficher le correctif » n’est pas proposé à l’élève une fois sa note publiée. Cochée automatiquement en mode entraînement (modifiable).</small></span>
-       </label>
+       <label class="online-check-item"><input type="checkbox" id="onlineTestTrainingMode"><strong>Mode entraînement</strong></label>
+       <label class="online-check-item" id="onlineTestFocusWrap"><input type="checkbox" id="onlineTestFocusMode"><strong>Mode Focus</strong></label>
+       <label class="online-check-item" id="onlineTestHideGradeWrap" style="display:none"><input type="checkbox" id="onlineTestHideGrade"><strong>Ne pas afficher la note</strong></label>
+       <label class="online-check-item" id="onlineTestHideCorrectionWrap"><input type="checkbox" id="onlineTestHideCorrection"><strong>Ne pas afficher la correction à la fin du test</strong></label>
       </div>
-      <div id="onlineTestSetupHint" class="online-modal-note">Certaines options se désactivent automatiquement selon le mode choisi.</div>
+      <div id="onlineTestSetupHint" class="online-modal-note" style="display:none"></div>
      </div>
      <div class="full">
       <label>Message d’introduction</label>
@@ -3304,47 +3410,28 @@ body:not(.student-mode) .tab-btn[data-hw-todo]::after{ display:none!important }
   <div class="modal-body">
    <form id="onlineBasicForm" class="modal-form obt-form" autocomplete="off">
     <div class="obt-grid">
-     <div class="obt-full"><label for="onlineBasicTitle">Nom du test</label><input id="onlineBasicTitle" required></div>
-     <div class="obt-full"><label for="onlineBasicSubject">Matière</label><select id="onlineBasicSubject"></select></div>
+     <div class="obt-full sc-wrap sc-3">
+      <div class="sc-title"><label for="onlineBasicTitle">Nom du test</label><input id="onlineBasicTitle" required></div>
+      <div class="sc-subj"><label for="onlineBasicSubject">Matière</label><select id="onlineBasicSubject"></select></div>
+      <div class="sc-coef"><label for="obtCoef">Coef</label><input id="obtCoef" type="number" min="0" step="any" value="1" inputmode="decimal"></div>
+     </div>
      <div class="obt-full obt-section">Paramètres du test</div>
      <div class="obt-full">
       <div class="online-checklist">
-       <label class="online-check-item">
-        <input type="checkbox" id="obtShuffle">
-        <span><strong>Questions dans un ordre aléatoire</strong><small>L’ordre des questions change à chaque lancement du test.</small></span>
-       </label>
+       <label class="online-check-item"><input type="checkbox" id="obtShuffle"><strong>Questions dans un ordre aléatoire</strong></label>
        <div class="online-check-item">
-        <input type="checkbox" id="obtTimed">
-        <span style="flex:1;">
-         <strong>Temps limité</strong>
-         <small>Si activé, le test est soumis automatiquement à la fin du temps imparti. Les messages d’introduction et de conclusion restent hors chronomètre.</small>
-         <div class="online-inline-field online-time-fields">
-          <label for="obtMin" style="margin:0;">Temps imparti</label>
-          <input id="obtMin" type="number" min="0" step="1" placeholder="Min">
-          <span>min</span>
-          <input id="obtSec" type="number" min="0" max="59" step="1" placeholder="Sec">
-          <span>s</span>
-         </div>
+        <input type="checkbox" id="obtTimed"><strong>Temps limité</strong>
+        <span class="online-inline-field online-time-fields">
+         <input id="obtMin" type="number" min="0" step="1" placeholder="Min" aria-label="Minutes"><span>min</span>
+         <input id="obtSec" type="number" min="0" max="59" step="1" placeholder="Sec" aria-label="Secondes"><span>s</span>
         </span>
        </div>
-       <label class="online-check-item">
-        <input type="checkbox" id="obtTraining">
-        <span><strong>Mode entraînement</strong><small>Le résultat n’est pas transmis au professeur et le test est refaisable plusieurs fois. L’option « ne pas afficher la correction » est cochée automatiquement.</small></span>
-       </label>
-       <label class="online-check-item" id="obtFocusWrap">
-        <input type="checkbox" id="obtFocus">
-        <span><strong>Mode Focus</strong><small>Si l’élève quitte la page ou ouvre une autre application, le test est immédiatement arrêté et soumis. Disponible uniquement hors mode entraînement.</small></span>
-       </label>
-       <label class="online-check-item" id="obtHideGradeWrap" style="display:none">
-        <input type="checkbox" id="obtHideGrade">
-        <span><strong>Ne pas afficher la note</strong><small>Le résultat ne s’affiche pas à l’élève en fin de test. Cette option est désactivée en mode entraînement, sauf correction obligatoire par le professeur.</small></span>
-       </label>
-       <label class="online-check-item" id="obtHideCorrectionWrap">
-        <input type="checkbox" id="obtHideCorrection">
-        <span><strong>Ne pas afficher la correction à la fin du test</strong><small>Si cochée, le bouton « Afficher le correctif » n’est pas proposé à l’élève une fois sa note publiée. Cochée automatiquement en mode entraînement (modifiable).</small></span>
-       </label>
+       <label class="online-check-item"><input type="checkbox" id="obtTraining"><strong>Mode entraînement</strong></label>
+       <label class="online-check-item" id="obtFocusWrap"><input type="checkbox" id="obtFocus"><strong>Mode Focus</strong></label>
+       <label class="online-check-item" id="obtHideGradeWrap" style="display:none"><input type="checkbox" id="obtHideGrade"><strong>Ne pas afficher la note</strong></label>
+       <label class="online-check-item" id="obtHideCorrectionWrap"><input type="checkbox" id="obtHideCorrection"><strong>Ne pas afficher la correction à la fin du test</strong></label>
       </div>
-      <div id="obtHint" class="online-modal-note">Certaines options se désactivent automatiquement selon le mode choisi.</div>
+      <div id="obtHint" class="online-modal-note" style="display:none"></div>
      </div>
      <div class="obt-full">
       <label>Message d’introduction</label>
@@ -3380,7 +3467,7 @@ body:not(.student-mode) .tab-btn[data-hw-todo]::after{ display:none!important }
   <div class="modal-body">
    <div class="obt-grid">
     <div><label for="importTestTitle">Nom du test</label><input id="importTestTitle"></div>
-    <div><label for="importTestSubject">Matière</label><select id="importTestSubject"></select></div>
+    <div class="sc-wrap"><div class="sc-subj"><label for="importTestSubject">Matière</label><select id="importTestSubject"></select></div><div class="sc-coef"><label for="importTestCoef">Coef</label><input id="importTestCoef" type="number" min="0" step="any" value="1" inputmode="decimal"></div></div>
    </div>
    <div id="importTestMeta" class="obt-hint"></div>
    <div id="importTestIssues"></div>
@@ -3404,40 +3491,13 @@ body:not(.student-mode) .tab-btn[data-hw-todo]::after{ display:none!important }
    <div class="online-builder-layout">
     <div class="online-builder-card">
      <div class="head">
-      <h4>Question en cours</h4>
+      <h4>Questions</h4>
      </div>
      <div class="body">
-      <div class="online-question-number" id="onlineQuestionNumberLabel">Question n°1</div>
-      <div class="online-type-grid">
-       <div>
-        <label>Type de question</label>
-        <select id="onlineQuestionType">
-         <option value="qcu">QCU</option>
-         <option value="qcm">QCM</option>
-         <option value="written">Réponse à écrire</option>
-         <option value="fillblank">Texte à trou</option>
-        </select>
-       </div>
-       <div>
-        <label>Points</label>
-        <input id="onlineQuestionPoints" type="number" min="0.25" step="0.25" value="1">
-       </div>
+      <div id="onlineQuestionsList" class="online-questions-list oq-list"></div>
+      <div class="modal-actions" style="justify-content:flex-start;margin-top:14px;">
+       <button type="button" class="btn" id="onlineAddQuestionBtn">+ Ajouter une question</button>
       </div>
-      <label>Intitulé de la question</label>
-      <textarea id="onlineQuestionPrompt" rows="3" placeholder="Saisir la consigne de la question..."></textarea>
-      <div id="onlineQuestionTypeFields"></div>
-      <div class="modal-actions" style="justify-content:flex-start;margin-top:16px;">
-       <button type="button" class="btn btn-primary" id="onlineQuestionValidateBtn">Valider la question</button>
-       <button type="button" class="btn" id="onlineQuestionResetBtn">Nouvelle question</button>
-      </div>
-     </div>
-    </div>
-    <div class="online-builder-card">
-     <div class="head">
-      <h4>Questions enregistrées</h4>
-     </div>
-     <div class="body">
-      <div id="onlineQuestionsList" class="online-questions-list"></div>
      </div>
     </div>
    </div>
@@ -3568,6 +3628,12 @@ body:not(.student-mode) .tab-btn[data-hw-todo]::after{ display:none!important }
 </div>
 
 <script>
+/* Filtrage par emploi du temps (surchargé par le module « ed-roles » pour les professeurs non responsables) */
+window.edOkStu=window.edOkStu||function(){return true;};
+window.edOkCls=window.edOkCls||function(){return true;};
+window.edOwnEvt=window.edOwnEvt||function(){return true;};
+window.edHwOk=window.edHwOk||function(){return true;};
+window.edOkSub=function(sid,sub){ return !sub||sub==="Compétences"||window.edOkStu(sid,sub); };
 /* ═══════════════════════════════════════════════════════════════════════════
    CARNET DE NOTES — Version avec barème corrigé
 
@@ -5419,6 +5485,7 @@ document.getElementById("deleteStudentBtn").addEventListener("click",()=>{
   list.innerHTML="";
   DATA.students.slice().sort((a,b)=>a.last.localeCompare(b.last)||a.first.localeCompare(b.first))
    .filter(s=>(`${s.last} ${s.first}`).toLowerCase().includes(term))
+   .filter(s=>window.edOkStu(s.id,null))
    .filter(s=>{
      const groupFilter=document.getElementById("newGroupSelect")?.value||"";
      if(classFilter && s.classId!==classFilter) return false;
@@ -5499,8 +5566,9 @@ function openPreviewClass(classId){
   if(!cls) return;
   
   // Reset subject selection to the first one available
-  if(cls.subjects && cls.subjects.length > 0) {
-    const firstSub = cls.subjects[0];
+  const _okSubs = (cls.subjects || []).filter(x => window.edOkCls(classId, typeof x === 'object' ? x.name : x));
+  if(_okSubs.length > 0) {
+    const firstSub = _okSubs[0];
     CURRENT_PREVIEW_SUBJECT = typeof firstSub === 'object' ? firstSub.name : firstSub;
   } else {
     CURRENT_PREVIEW_SUBJECT = null;
@@ -5541,7 +5609,7 @@ function renderClassPreviewSubjectTabs(){
   const container = document.getElementById("classPreviewSubjectTabs");
   if(!cls || !container) return;
   
-  const subjects = (cls.subjects || []).map(s => typeof s === 'object' ? s.name : s);
+  const subjects = (cls.subjects || []).map(s => typeof s === 'object' ? s.name : s).filter(n => window.edOkCls(CURRENT_PREVIEW_CLASS_ID, n));
   container.innerHTML = "";
   
   // Add "Toutes les matières" button
@@ -5600,7 +5668,7 @@ function renderClassPreviewContent(){
   let evals = (cls.evals || []).filter(ev => {
     const pMatch = CURRENT_PREVIEW_PERIOD === "YEAR" || ev.period === CURRENT_PREVIEW_PERIOD;
     const sMatch = CURRENT_PREVIEW_SUBJECT === "__ALL__" || ev.subject === CURRENT_PREVIEW_SUBJECT;
-    return pMatch && sMatch;
+    return pMatch && sMatch && window.edOkCls(CURRENT_PREVIEW_CLASS_ID, ev.subject);
   });
   
   evals.sort((a, b) => dateKey(a) - dateKey(b));
@@ -5764,7 +5832,7 @@ function openGeneralStatsForClass(classId, period, subject) {
     const notes = DATA.notes[stu.id] || [];
     const filtered = notes.filter(n => {
       const pMatch = period === "YEAR" || n.period === period;
-      const sMatch = subject === "__ALL__" || n.subject === subject;
+      const sMatch = (subject === "__ALL__" || n.subject === subject) && window.edOkSub(stu.id, n.subject);
       return pMatch && sMatch && !isSpecial(n) && typeof n.note === 'number';
     });
     
@@ -6156,6 +6224,7 @@ function renderProfViewForPeriod(studentId,periodKey){
  let notes=DATA.notes[studentId]||[];
  let filteredNotes=periodKey==="YEAR"?notes.slice():notes.filter(n=>(n.period||"YEAR")===periodKey);
  filteredNotes=filteredNotes.filter(n=>n.noteText!=="X");
+ filteredNotes=filteredNotes.filter(n=>window.edOkSub(studentId,n.subject));
  
  if(showHidden) {
    // Si "Evals masquées" est coché, on ne montre QUE les masquées
@@ -6183,6 +6252,7 @@ function renderProfViewForPeriod(studentId,periodKey){
  }
 
  if(subjFilter&&subjFilter!=="__ALL__") standaloneComps=standaloneComps.filter(c=>(c.subject||"Compétences")===subjFilter);
+ standaloneComps=standaloneComps.filter(c=>window.edOkSub(studentId,c.subject));
 
  const compGroups={};
  standaloneComps.forEach(c=>{
@@ -6213,12 +6283,12 @@ function renderProfViewForPeriod(studentId,periodKey){
    const _okFilters=(ev,subj)=>(!showHidden||ev.hideFromStudent)&&(!subjFilter||subjFilter==="__ALL__"||subj===subjFilter);
    _srcs.forEach(c=>{
     (c.evals||[]).forEach(ev=>{
-     if(!_inPeriod(ev)||!_okFilters(ev,ev.subject)) return;
+     if(!_inPeriod(ev)||!_okFilters(ev,ev.subject)||!window.edOkSub(studentId,ev.subject)) return;
      if(notes.some(n=>n.classCommon&&n.classId===c.id&&n.classNoteId===ev.id)) return;
      finalArr.push({type:'virtual_note',id:'v_'+c.id+'_'+ev.id,label:ev.label,subject:ev.subject,dateJJMMAA:ev.dateJJMMAA,isoDate:ev.isoDate,outof:ev.outof,coef:ev.coef,hideFromStudent:ev.hideFromStudent});
     });
     (c.compEvals||[]).forEach(ev=>{
-     if(!_inPeriod(ev)||!_okFilters(ev,ev.subject||"Compétences")) return;
+     if(!_inPeriod(ev)||!_okFilters(ev,ev.subject||"Compétences")||!window.edOkSub(studentId,ev.subject)) return;
      if(_comps.some(x=>x.groupId===ev.id)) return;
      finalArr.push({type:'virtual_comp',id:'v_'+c.id+'_'+ev.id,label:ev.label,subject:ev.subject||"Compétences",dateJJMMAA:ev.dateJJMMAA,isoDate:ev.isoDate,hideFromStudent:ev.hideFromStudent,items:[]});
     });
@@ -8938,7 +9008,7 @@ function renderClassList(){
  const list=document.getElementById("classList");
  const term=(document.getElementById("classSearch").value||"").toLowerCase();
  list.innerHTML="";
- DATA.classes.slice().sort((a,b)=>a.name.localeCompare(b.name)).filter(c=>c.name.toLowerCase().includes(term)).forEach(c=>{
+ DATA.classes.slice().sort((a,b)=>a.name.localeCompare(b.name)).filter(c=>c.name.toLowerCase().includes(term)).filter(c=>window.edOkCls(c.id,null)).forEach(c=>{
   const opt=document.createElement("option"); opt.value=c.id; opt.textContent=c.name;
   
   // Check if class is incomplete or hidden
@@ -8966,7 +9036,7 @@ function renderGroupList(){
  const term=(document.getElementById("groupSearch").value||"").toLowerCase();
  const keep=document.getElementById("groupListUI").dataset.sel||"";
  list.innerHTML="";
- grpUi().slice().sort((a,b)=>a.name.localeCompare(b.name,"fr",{numeric:true,sensitivity:"base"})).filter(g=>g.name.toLowerCase().includes(term)).forEach(g=>{
+ grpUi().slice().sort((a,b)=>a.name.localeCompare(b.name,"fr",{numeric:true,sensitivity:"base"})).filter(g=>g.name.toLowerCase().includes(term)).filter(g=>window.edOkCls(g.id,null)).forEach(g=>{
   const c=classLike(g.id);
   const opt=document.createElement("option"); opt.value=g.id; opt.textContent=g.name;
   let hasMissing=false, hasHidden=false;
@@ -8982,17 +9052,17 @@ function renderGroupList(){
 function renderClassSelects(){
  ensureSubjectRegistry();
  const _ncs=document.getElementById("newClassSelect"), _ncsPrev=_ncs.value;
- _ncs.innerHTML='<option value="">Toutes les classes</option>'+DATA.classes.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(c=>`<option value="${c.id}">${c.name}</option>`).join("");
+ _ncs.innerHTML='<option value="">Toutes les classes</option>'+DATA.classes.filter(c=>window.edOkCls(c.id,null)).slice().sort((a,b)=>a.name.localeCompare(b.name)).map(c=>`<option value="${c.id}">${c.name}</option>`).join("");
  if(_ncsPrev && DATA.classes.some(c=>c.id===_ncsPrev)) _ncs.value=_ncsPrev;
- const _grpOptions=()=>'<option value="">Tous les groupes</option>'+grpUi().slice().sort((a,b)=>a.name.localeCompare(b.name,"fr",{numeric:true,sensitivity:"base"})).map(g=>`<option value="${g.id}">${escHtml(g.name)}</option>`).join("");
+ const _grpOptions=()=>'<option value="">Tous les groupes</option>'+grpUi().filter(g=>window.edOkCls(g.id,null)).slice().sort((a,b)=>a.name.localeCompare(b.name,"fr",{numeric:true,sensitivity:"base"})).map(g=>`<option value="${g.id}">${escHtml(g.name)}</option>`).join("");
  const _ngs=document.getElementById("newGroupSelect");
  if(_ngs){ const _prev=_ngs.value; _ngs.innerHTML=_grpOptions(); if(_prev && grpEns().some(g=>g.id===_prev)) _ngs.value=_prev; }
  const classSelect=document.getElementById("classSelect");
- if(classSelect) classSelect.innerHTML=DATA.classes.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(c=>`<option value="${c.id}">${c.name}</option>`).join("")+(grpUi().length?`<optgroup label="Groupes">${grpUi().slice().sort((a,b)=>a.name.localeCompare(b.name,"fr",{numeric:true,sensitivity:"base"})).map(g=>`<option value="${g.id}">${escHtml(g.name)}</option>`).join("")}</optgroup>`:"");
+ if(classSelect) classSelect.innerHTML=DATA.classes.filter(c=>window.edOkCls(c.id,null)).slice().sort((a,b)=>a.name.localeCompare(b.name)).map(c=>`<option value="${c.id}">${c.name}</option>`).join("")+(grpUi().length?`<optgroup label="Groupes">${grpUi().filter(g=>window.edOkCls(g.id,null)).slice().sort((a,b)=>a.name.localeCompare(b.name,"fr",{numeric:true,sensitivity:"base"})).map(g=>`<option value="${g.id}">${escHtml(g.name)}</option>`).join("")}</optgroup>`:"");
  const classSubject=document.getElementById("classSubject");
  if(classSubject) classSubject.innerHTML=SUBJECT_REGISTRY.map(s=>`<option>${typeof s==='object'?s.name:s}</option>`).join("");
  const appFilter=document.getElementById("appreciationClassFilter");
- if(appFilter){ const _p=appFilter.value; appFilter.innerHTML='<option value="">Toutes les classes</option>'+DATA.classes.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(c=>`<option value="${c.id}">${c.name}</option>`).join(""); if(_p && DATA.classes.some(c=>c.id===_p)) appFilter.value=_p; }
+ if(appFilter){ const _p=appFilter.value; appFilter.innerHTML='<option value="">Toutes les classes</option>'+DATA.classes.filter(c=>window.edOkCls(c.id,null)).slice().sort((a,b)=>a.name.localeCompare(b.name)).map(c=>`<option value="${c.id}">${c.name}</option>`).join(""); if(_p && DATA.classes.some(c=>c.id===_p)) appFilter.value=_p; }
  const appGroupFilter=document.getElementById("appreciationGroupFilter");
  if(appGroupFilter){ const _p=appGroupFilter.value; appGroupFilter.innerHTML=_grpOptions(); if(_p && grpEns().some(g=>g.id===_p)) appGroupFilter.value=_p; }
 }
@@ -9004,7 +9074,7 @@ function clsToast(msg){
  const t=document.createElement("div"); t.className="cls-toast"; t.textContent=msg; document.body.appendChild(t);
  setTimeout(()=>t.remove(),2800);
 }
-function clsSubjectNames(cls){ return (cls.subjects||[]).map(x=>typeof x==="object"?x.name:x).filter(x=>x!=="Compétences"); }
+function clsSubjectNames(cls){ return (cls.subjects||[]).map(x=>typeof x==="object"?x.name:x).filter(x=>x!=="Compétences").filter(x=>window.edOkCls(cls.id,x)); }
 
 let CLS_PERIOD_INIT=false;
 function openClass(clsId){
@@ -9191,7 +9261,8 @@ function renderClassBySubject(classId){
   if(isSpecial(n)) return n.noteText;
   return typeof n.note==="number"?fmtGrade2(n.note):"";
  };
- const isLockedEv=ev=>ev.period!=="YEAR"&&!!LOCKED_PERIODS[ev.period];
+ const isDeniedEv=ev=>!!(window.edNoteDenied&&window.edNoteDenied(classId,ev.subject));
+ const isLockedEv=ev=>(ev.period!=="YEAR"&&!!LOCKED_PERIODS[ev.period])||isDeniedEv(ev);
  const compIds=new Set((DATA.competencies||[]).map(c=>c.groupId));
  const anyComp=evals.some(ev=>compIds.has(ev.id)||isCE(ev));
 
@@ -9229,7 +9300,7 @@ function renderClassBySubject(classId){
    const hasBar=ev.bareme?.criteria?.length>0;
    const ro=hasBar||isLockedEv(ev);
    const cm=findNote(stu.id,ev)?.comment||"";
-   const roTitle=hasBar?"Évaluation avec barème : cliquer sur l'en-tête de la colonne, puis « Saisir les points »":"Période verrouillée";
+   const roTitle=isDeniedEv(ev)?"Vous n'enseignez pas cette matière à cette classe (d'après votre emploi du temps)":(hasBar?"Évaluation avec barème : cliquer sur l'en-tête de la colonne, puis « Saisir les points »":"Période verrouillée");
    return `<td class="bys-cell${ro?" bys-ro":""}${cm?" bys-cm":""}"${cm?` title="${escHtml(cm)}"`:(ro?` title="${escHtml(roTitle)}"`:"")}><input type="text" class="bys-input${cellValue(stu.id,ev)==="X"?" bys-x":""}" inputmode="decimal" autocomplete="off" data-stu="${stu.id}" data-ev="${ev.id}" data-r="${ri}" data-c="${ci}" value="${escHtml(cellValue(stu.id,ev))}" ${ro?"readonly":""}></td>`;
   }).join("");
   return `<tr><td class="bys-stu bys-stu-click" data-stu-id="${stu.id}" title="Statistiques et classement de l'élève" style="width:${NAME_W}px">${escHtml(stu.last)} ${escHtml(stu.first)}</td><td class="bys-avg" data-avg-stu="${stu.id}" style="left:${NAME_W}px;width:${AVG_W}px">${fmtAvg(avgOf(stu.id))}</td>${cells}</tr>`;
@@ -9352,7 +9423,7 @@ function renderClassPeriod(classId,periodKey){
  const host=document.querySelector(`#class-period-${periodKey}`); if(!host) return;
  const cls=classLike(classId); if(!cls) return;
  const locked=periodKey!=="YEAR"&&LOCKED_PERIODS[periodKey];
-  let subjectList=cls.subjects||[];
+  let subjectList=(cls.subjects||[]).filter(x=>window.edOkCls(classId,typeof x==="object"?x.name:x));
   if(!subjectList.includes("Compétences")) subjectList=[...subjectList,"Compétences"];
   const subjectsHTML=subjectList.map(s=>{
   const evals=(cls.evals||[]).filter(ev=>ev.subject===s&&(ev.period||"YEAR")===periodKey).sort((a,b)=>dateKey(a)-dateKey(b));
@@ -9996,6 +10067,7 @@ classEvalTableModal.addEventListener("click",e=>{});
  */
 function autosaveClassNote(stuId,classId,ev,rawVal,importantFlag,baremeData=null){
  if(ev.period!=="YEAR"&&LOCKED_PERIODS[ev.period]) return;
+ if(window.edNoteDenied&&window.edNoteDenied(classId,ev.subject)) return;   /* prof non responsable : matière non enseignée à cette classe */
  const trimmed=normSpecialInput(rawVal);
  if(!DATA.notes[stuId]) DATA.notes[stuId]=[];
  const base={subject:ev.subject,label:ev.label,dateJJMMAA:ev.dateJJMMAA,isoDate:ev.isoDate,outof:ev.outof,coef:ev.coef,classCommon:true,classId,classNoteId:ev.id,period:ev.period||"YEAR",important:!!importantFlag,hideFromStudent:!!ev.hideFromStudent,hideUntil:ev.hideUntil||undefined};
@@ -10395,7 +10467,7 @@ function renderAppreciationStudentList(){
  if(!appreciationStudentList) return;
  const term=(appreciationSearch.value||"").toLowerCase(),classFilter=appreciationClassFilter.value;
  appreciationStudentList.innerHTML="";
- let students=DATA.students.slice();
+ let students=DATA.students.filter(s=>window.edOkStu(s.id,null));
  if(classFilter) students=students.filter(s=>s.classId===classFilter);
  const _gfId=appreciationGroupFilter?appreciationGroupFilter.value:"";
  if(_gfId){ const _g=grpById(_gfId); students=students.filter(s=>_g && (_g.memberIds||[]).includes(s.id)); }
@@ -10480,7 +10552,7 @@ function renderAppreciationUI(){
  const periodLabels={T1:"Trimestre 1",T2:"Trimestre 2",T3:"Trimestre 3",T4:"Trimestre 4",YEAR:"Année"};
  const cls=DATA.classes.find(c=>c.id===stu.classId);
  let html=`<div class="period-tabs">${periods.map(p=>{
-   const sNotes = (DATA.notes[stu.id]||[]).filter(n=>(n.period||"YEAR")===p);
+   const sNotes = (DATA.notes[stu.id]||[]).filter(n=>(n.period||"YEAR")===p&&window.edOkSub(stu.id,n.subject));
    const sComps = (DATA.competencies||[]).filter(c=>c.studentId===stu.id && (c.period||"YEAR")===p);
    const hasMissing = p !== "YEAR" && (sNotes.some(n=>(n.note===undefined||n.note===null)&&(n.noteText===""||!n.noteText)) ||
                       sComps.some(c=>!c.color));
@@ -11499,14 +11571,14 @@ async function bootAuth(){
 document.getElementById("loginForm")?.addEventListener("submit",async(e)=>{
  e.preventDefault();
  const u=document.getElementById("loginUser").value.trim(), p=document.getElementById("loginPass").value;
- const btn=document.getElementById("loginBtn"); btn.disabled=true; btn.textContent="Connexion…"; showLoginError("");
+ const btn=document.getElementById("loginBtn"); btn.disabled=true; btn.innerHTML='<span class="btn-spin" aria-hidden="true"></span>Connexion…'; showLoginError("");
  const err=await tryLogin(u,p,false);
  btn.disabled=false; btn.textContent="Se connecter";
  if(err){ showLoginError(err); document.getElementById("loginPass").value=""; document.getElementById("loginPass").focus(); }
  else document.getElementById("loginPass").value="";
 });
-document.getElementById("logoutBtn")?.addEventListener("click",()=>{
- if(IS_MODIFIED && AUTH.role==="prof" && !confirm("Des modifications sont encore en cours d'enregistrement. Se déconnecter quand même ?")) return;
+document.getElementById("logoutBtn")?.addEventListener("click",async()=>{
+ if(IS_MODIFIED && AUTH.role==="prof" && !(await siteConfirm("Des modifications sont encore en cours d'enregistrement. Se déconnecter quand même ?",{ok:"Se déconnecter"}))) return;
  IS_MODIFIED=false; authClear(); location.reload();
 });
 
@@ -11572,12 +11644,12 @@ async function cloudPush(force){
    cloudStatus("ok","Enregistré dans Google Sheets à "+cloudHour());
   }else if(j.error==="conflict"){
    CLOUD.saving=false; CLOUD.lastTry=null;
-   if(confirm("Ces données ont été modifiées depuis un autre appareil ou onglet.\n\nOK = écraser avec CETTE version\nAnnuler = recharger la dernière version enregistrée (vos dernières modifications ici seront perdues)")){
+   if(await siteConfirm("Ces données ont été modifiées depuis un autre appareil ou onglet.\n\nÉcraser avec CETTE version, ou recharger la dernière version enregistrée (vos dernières modifications ici seront perdues) ?",{ok:"Écraser avec cette version",cancel:"Recharger"})){
     CLOUD.rev=j.rev; return cloudPush(true);
    }else{ IS_MODIFIED=false; location.reload(); return; }
   }else if(/identifiants/.test(j.error||"")){
    CLOUD.saving=false; IS_MODIFIED=false; authClear();
-   alert("Vos identifiants ont changé (autre appareil ?). Reconnectez-vous."); location.reload(); return;
+   await siteAlert("Vos identifiants ont changé (autre appareil ?). Reconnectez-vous."); location.reload(); return;
   }else throw new Error(j.error||"erreur");
  }catch(e){
   console.error("cloudPush:",e);
@@ -11982,6 +12054,7 @@ function defaultOnlineTestMeta(){
  return {
   title:"",
   subject:"",
+  coef:1,
   options:{
    showGradeDirect:false,
    shuffleQuestions:false,
@@ -12043,6 +12116,7 @@ function sanitizeOnlineTest(test){
   basic: !!meta.basic,
   title: String(meta.title||"").trim(),
   subject: String(meta.subject||"").trim(),
+  coef: (meta.coef!==undefined&&meta.coef!==null&&meta.coef!==""&&isFinite(Number(meta.coef))&&Number(meta.coef)>=0)?Number(meta.coef):1,
   options:{
    showGradeDirect: false,
    shuffleQuestions: !!opts.shuffleQuestions,
@@ -12117,6 +12191,22 @@ function formatOnlineTestDate(value){
   return "";
  }
 }
+function countPendingForOnlineTest(testId){
+ if(AUTH.role!=="prof") return 0;
+ ensureHomeworkStore();
+ const test=getHomeworkTest(testId); if(!test || test.options?.trainingMode) return 0;
+ let n=0;
+ (DATA.homework||[]).forEach(hw=>{
+  if(!(hw.testIds||[]).includes(testId)) return;
+  if(!window.edHwOk(hw.classId,hw.subject)) return;
+  const cls=homeworkClassById(hw.classId);
+  (cls?.memberIds||[]).forEach(studentId=>{
+   const sub=getHomeworkSubmission(hw.id,testId,studentId);
+   if(sub && !sub.validatedAt && !sub.manualOverride) n++;
+  });
+ });
+ return n;
+}
 function renderOnlineTestsView(){
  ensureOnlineTestsStore();
  const summary=document.getElementById("onlineTestsSummary");
@@ -12144,8 +12234,9 @@ function renderOnlineTestsView(){
   const questionCount=(test.questions||[]).length;
   const totalPoints=getOnlineTestTotalPoints(test);
   const updated=formatOnlineTestDate(test.updatedAt);
+  let pendingN=0; try{ pendingN=countPendingForOnlineTest(test.id); }catch(e){}
   return `
-   <article class="online-test-card">
+   <article class="online-test-card${pendingN>0?" has-pending-correction":""}"${pendingN>0?` title="${pendingN} copie${pendingN>1?"s":""} à corriger"`:""}>
     <div class="online-test-title-row">
      <h4>${escHtml(test.title||"Sans titre")}</h4>
      <div class="online-test-meta">
@@ -12154,7 +12245,7 @@ function renderOnlineTestsView(){
       <span>${questionCount} question${questionCount>1?"s":""}</span>
      </div>
     </div>
-    <div class="online-test-points">Total : ${fmt(totalPoints,2).replace(/\.00$/,"")} point${totalPoints>1?"s":""}</div>
+    <div class="online-test-points">Total : ${fmt(totalPoints,2).replace(/\.00$/,"")} point${totalPoints>1?"s":""}${pendingN>0?` <span class="otc-pending">· ${pendingN} copie${pendingN>1?"s":""} à corriger</span>`:""}</div>
     <div class="online-test-card-footer">
      <span>${updated ? `Dernière mise à jour : ${updated}` : "Nouveau test"}</span>
      <div class="online-test-card-actions">
@@ -12200,12 +12291,11 @@ const onlineTestBuilderModal=document.getElementById("onlineTestBuilderModal");
 const onlineTestAnswersModal=document.getElementById("onlineTestAnswersModal");
 const onlineTestPreviewModal=document.getElementById("onlineTestPreviewModal");
 const onlineTestSetupForm=document.getElementById("onlineTestSetupForm");
-const onlineQuestionTypeFields=document.getElementById("onlineQuestionTypeFields");
 const ONLINE_TEST_DRAFT = {
  meta: defaultOnlineTestMeta(),
  questions: [],
  editingTestId: null,
- currentQuestionEditIndex: null
+ openId: null
 };
 const ONLINE_TEST_PREVIEW_STATE = {
  test: null,
@@ -12275,6 +12365,7 @@ function applyOnlineTestMetaToForm(meta){
  populateOnlineTestSubjectSuggestions();
  document.getElementById("onlineTestTitleInput").value=data.title||"";
  document.getElementById("onlineTestSubjectInput").value=data.subject||"";
+ { const _ce=document.getElementById("onlineTestCoefInput"); if(_ce) _ce.value=(data.coef===undefined||data.coef===null||data.coef==="")?1:data.coef; }
   document.getElementById("onlineTestShuffleQuestions").checked=!!data.options?.shuffleQuestions;
  document.getElementById("onlineTestTimed").checked=!!data.options?.timed;
  document.getElementById("onlineTestTimeLimitMinutes").value=data.options?.timed ? duration.minutes : "";
@@ -12293,6 +12384,7 @@ function readOnlineTestMetaFromForm(){
   id: ONLINE_TEST_DRAFT.editingTestId || undefined,
   title: document.getElementById("onlineTestTitleInput").value,
   subject: document.getElementById("onlineTestSubjectInput").value,
+  coef: document.getElementById("onlineTestCoefInput")?.value,
   options:{
    showGradeDirect: false,
    shuffleQuestions: document.getElementById("onlineTestShuffleQuestions").checked,
@@ -12357,7 +12449,8 @@ function startOnlineTestFlow(existingTest=null){
  ONLINE_TEST_DRAFT.meta = source;
  ONLINE_TEST_DRAFT.questions = deepClone(source.questions||[]);
  ONLINE_TEST_DRAFT.editingTestId = existingTest?.id || null;
- ONLINE_TEST_DRAFT.currentQuestionEditIndex = null;
+ ONLINE_TEST_DRAFT.openId = null;
+ { const _l=document.getElementById("onlineQuestionsList"); if(_l) _l.innerHTML=""; }
  document.getElementById("onlineTestSetupTitle").textContent = existingTest ? "Modifier un test en ligne" : "Créer un test en ligne";
  applyOnlineTestMetaToForm(source);
  setModalOpen(onlineTestSetupModal,true);
@@ -12453,6 +12546,7 @@ function openBasicOnlineTest(existing){
   obtApplyMeta(null);
   BASIC_TEST.rows=Array.from({length:10},()=>basicNewRow());
  }
+ $obt("obtCoef").value=(existing&&existing.coef!==undefined&&existing.coef!==null&&existing.coef!=="")?existing.coef:1;
  renderBasicRows();
  setModalOpen(onlineBasicModal,true);
  setTimeout(()=>$obt("onlineBasicTitle")?.focus(),50);
@@ -12516,6 +12610,7 @@ document.getElementById("onlineBasicForm")?.addEventListener("submit",e=>{
  meta.basic=true;
  meta.title=title;
  meta.subject=$obt("onlineBasicSubject").value.trim();
+ meta.coef=$obt("obtCoef").value;
  meta.defaultPoints=basicPoints($obt("onlineBasicPoints").value);
  meta.intro=$obt("obtIntro").value; meta.conclusion=$obt("obtConclusion").value;
  meta.options={
@@ -12606,6 +12701,7 @@ document.getElementById("onlineBasicForm")?.addEventListener("submit",e=>{
   const meta=defaultOnlineTestMeta();
   meta.title=document.getElementById("importTestTitle").value.trim()||IMP.title;
   meta.subject=document.getElementById("importTestSubject").value;
+  meta.coef=document.getElementById("importTestCoef")?.value;
   const anyCorrect=good.some(q=>(q.choices||[]).some(c=>c.correct)||(q.answers||[]).length||(q.segments||[]).some(s=>s.type==="blank"&&s.answers.length));
   meta.options.hideCorrection=!anyCorrect;
   meta.questions=good.map(q=>{
@@ -12872,6 +12968,7 @@ function attachOnlineTestPreviewFocusWatchers(){
   }
  };
  ONLINE_TEST_PREVIEW_STATE.blurHandler=()=>{
+  if(window.edRealBlur && !window.edRealBlur()) return;   /* clavier virtuel / mobile : pas une sortie de page */
   if(onlineTestPreviewModal?.classList.contains("open")){
    setTimeout(()=>{
     if(onlineTestPreviewModal?.classList.contains("open")) finishOnlineTestPreview("focus");
@@ -13104,34 +13201,16 @@ function openOnlineTestPreview(test){
 function openOnlineTestBuilderModal(){
  setModalOpen(onlineTestBuilderModal,true);
  document.getElementById("onlineTestBuilderTitle").textContent = `Configurer les questions · ${ONLINE_TEST_DRAFT.meta.title || "Test sans titre"}`;
- resetOnlineQuestionEditor();
+ if(!ONLINE_TEST_DRAFT.questions.length) ONLINE_TEST_DRAFT.questions.push(oqNew());
+ ONLINE_TEST_DRAFT.openId = ONLINE_TEST_DRAFT.questions[0].id;   /* la première question est dépliée à l'ouverture */
  renderOnlineQuestionsList();
 }
 
 document.getElementById("onlineBuilderBackBtn")?.addEventListener("click",()=>{
+ commitOpenQuestion();
  applyOnlineTestMetaToForm(ONLINE_TEST_DRAFT.meta);
  closeOnlineTestBuilderModal();
  setModalOpen(onlineTestSetupModal,true);
-});
-
-function getOnlineCurrentQuestionIndex(){
- return ONLINE_TEST_DRAFT.currentQuestionEditIndex==null ? ONLINE_TEST_DRAFT.questions.length : ONLINE_TEST_DRAFT.currentQuestionEditIndex;
-}
-function resetOnlineQuestionEditor(question=null,index=null){
- ONLINE_TEST_DRAFT.currentQuestionEditIndex = index;
- document.getElementById("onlineQuestionType").value = question?.type || "qcu";
- document.getElementById("onlineQuestionPrompt").value = question?.prompt || "";
- document.getElementById("onlineQuestionPoints").value = question?.points || ONLINE_TEST_DRAFT.meta.defaultPoints || 1;
- document.getElementById("onlineQuestionNumberLabel").textContent = `Question n°${(index==null ? ONLINE_TEST_DRAFT.questions.length : index)+1}`;
- renderOnlineQuestionTypeFields(document.getElementById("onlineQuestionType").value,question||null);
-}
-function updateOnlineQuestionNumberLabel(){
- const idx = ONLINE_TEST_DRAFT.currentQuestionEditIndex==null ? ONLINE_TEST_DRAFT.questions.length : ONLINE_TEST_DRAFT.currentQuestionEditIndex;
- document.getElementById("onlineQuestionNumberLabel").textContent = `Question n°${idx+1}`;
-}
-document.getElementById("onlineQuestionResetBtn")?.addEventListener("click",()=>resetOnlineQuestionEditor());
-document.getElementById("onlineQuestionType")?.addEventListener("change",()=>{
- renderOnlineQuestionTypeFields(document.getElementById("onlineQuestionType").value,null);
 });
 
 /* Appui prolongé (mobile) = clic droit : même action que le menu contextuel du bureau. */
@@ -13243,7 +13322,7 @@ function refreshOnlineBlankPreview(){
 function renderOnlineQuestionTypeFields(type,question){
  if(type==="written"){
   const answers=normalizeOnlineAnswers(question?.expectedAnswers);
-  onlineQuestionTypeFields.innerHTML = `
+  document.getElementById("onlineQuestionTypeFields").innerHTML = `
    <div class="online-modal-note">Double-clic (ou appui long sur mobile) dans la zone ci-dessous pour saisir une ou plusieurs réponses attendues. <b>Facultatif</b> : sans réponse attendue, tu choisiras Correct / Incorrect lors de la correction.</div>
    <div id="onlineWrittenAnswerTarget" class="online-answer-target">
     <div>${answers.length ? answers.map(escHtml).join(" · ") : "Double-clic / appui long ici pour définir la réponse attendue"}<small>${answers.length ? answers.length + " réponse(s) enregistrée(s)" : "Zone de correction"}</small></div>
@@ -13264,7 +13343,7 @@ function renderOnlineQuestionTypeFields(type,question){
   return;
  }
  if(type==="fillblank"){
-  onlineQuestionTypeFields.innerHTML = `
+  document.getElementById("onlineQuestionTypeFields").innerHTML = `
    <div class="online-modal-note">Ajoute des segments de texte et des trous. Double-clic (ou appui prolongé sur mobile) sur un trou pour enregistrer une ou plusieurs réponses attendues. <b>Facultatif</b> : un trou sans réponse attendue sera corrigé manuellement (Correct / Incorrect).</div>
    <div class="online-blank-toolbar">
     <button type="button" class="btn" id="onlineAddTextSegmentBtn">+ Ajouter texte</button>
@@ -13281,8 +13360,7 @@ function renderOnlineQuestionTypeFields(type,question){
   refreshOnlineBlankPreview();
   return;
  }
- onlineQuestionTypeFields.innerHTML = `
-  <div class="online-modal-note">Ajoute les propositions puis fais un clic droit (ou un appui prolongé sur mobile) sur chaque bonne réponse pour l’enregistrer comme acceptable.</div>
+ document.getElementById("onlineQuestionTypeFields").innerHTML = `
   <div class="online-question-choices" id="onlineQuestionChoices"></div>
   <div class="modal-actions" style="justify-content:flex-start;">
    <button type="button" class="btn" id="onlineAddChoiceBtn">+ Ajouter une proposition</button>
@@ -13294,104 +13372,209 @@ function renderOnlineQuestionTypeFields(type,question){
  document.getElementById("onlineAddChoiceBtn")?.addEventListener("click",()=>list.appendChild(createChoiceRow({text:"",correct:false},type)));
 }
 
-function collectOnlineQuestionFromForm(){
- const type=document.getElementById("onlineQuestionType").value;
- const prompt=document.getElementById("onlineQuestionPrompt").value.trim();
- const points=parseFloat(document.getElementById("onlineQuestionPoints").value);
- if(!prompt){ alert("L’intitulé de la question est requis."); return null; }
- if(!(points>0)){ alert("Le nombre de points doit être positif."); return null; }
- const existingId = ONLINE_TEST_DRAFT.currentQuestionEditIndex!=null ? ONLINE_TEST_DRAFT.questions[ONLINE_TEST_DRAFT.currentQuestionEditIndex]?.id : null;
- const question={ id: existingId || makeUid("otq"), type, prompt, points };
+/* ── Liste dépliante des questions (une seule question dépliée à la fois) ── */
+function oqNew(){ return sanitizeOnlineQuestion({ id: makeUid("otq"), type:"qcu", prompt:"", points: ONLINE_TEST_DRAFT.meta.defaultPoints || 1, choices:[] }); }
+const oqPts=p=>`${fmt(p,2).replace(/\.00$/,"")} pt${p>1?"s":""}`;
+function oqIndexOpen(){ return ONLINE_TEST_DRAFT.questions.findIndex(q=>q.id===ONLINE_TEST_DRAFT.openId); }
+
+/* Lit la question dépliée dans le formulaire (sans message d'erreur : la vérification se fait à l'enregistrement du test) */
+function readOpenQuestionFromForm(){
+ const typeEl=document.getElementById("onlineQuestionType");
+ if(!typeEl||!ONLINE_TEST_DRAFT.openId) return null;
+ const type=typeEl.value;
+ const question={ id: ONLINE_TEST_DRAFT.openId, type, prompt: document.getElementById("onlineQuestionPrompt").value, points: parseFloat(document.getElementById("onlineQuestionPoints").value) };
  if(type==="written"){
-  const answers=normalizeOnlineAnswers(JSON.parse(document.getElementById("onlineWrittenAnswerTarget")?.dataset.answers||"[]"));
-  question.expectedAnswers=answers;
+  question.expectedAnswers=normalizeOnlineAnswers(JSON.parse(document.getElementById("onlineWrittenAnswerTarget")?.dataset.answers||"[]"));
  }else if(type==="fillblank"){
-  const rows=[...document.querySelectorAll("#onlineBlankSegmentsList .online-blank-row")];
-  const segments=rows.map(row=>{
+  question.segments=[...document.querySelectorAll("#onlineBlankSegmentsList .online-blank-row")].map(row=>{
    if(row.dataset.segmentType==="blank"){
     return { type:"blank", id: row.dataset.blankId || makeUid("blank"), answers: normalizeOnlineAnswers(JSON.parse(row.dataset.answers||"[]")) };
    }
    return { type:"text", text: row.querySelector("textarea")?.value || "" };
   });
-  const blankCount=segments.filter(seg=>seg.type==="blank").length;
-  if(!blankCount){ alert("Ajoute au moins un trou."); return null; }
-  question.segments=segments;
  }else{
-  const rows=[...document.querySelectorAll("#onlineQuestionChoices .online-choice-row")];
-  const choices=rows.map(row=>({
+  question.choices=[...document.querySelectorAll("#onlineQuestionChoices .online-choice-row")].map(row=>({
    id: row.dataset.choiceId || makeUid("choice"),
    text: row.querySelector(".online-choice-input")?.value || "",
    correct: row.dataset.correct==="1"
-  })).filter(choice=>choice.text.trim());
-  if(choices.length<2){ alert("Ajoute au moins deux propositions."); return null; }
-  if(!choices.some(choice=>choice.correct)){ alert("Définis au moins une proposition correcte avec un clic droit ou un appui prolongé."); return null; }
-  question.choices=choices;
+  }));
  }
  return sanitizeOnlineQuestion(question);
 }
-
-document.getElementById("onlineQuestionValidateBtn")?.addEventListener("click",()=>{
- const question=collectOnlineQuestionFromForm();
- if(!question) return;
- if(ONLINE_TEST_DRAFT.currentQuestionEditIndex==null) ONLINE_TEST_DRAFT.questions.push(question);
- else ONLINE_TEST_DRAFT.questions.splice(ONLINE_TEST_DRAFT.currentQuestionEditIndex,1,question);
- renderOnlineQuestionsList();
- resetOnlineQuestionEditor();
-});
-
-function buildOnlineQuestionSummary(question){
- if(question.type==="written") return question.expectedAnswers?.length ? `${question.expectedAnswers.length} réponse(s) attendue(s)` : "Correction manuelle (Correct / Incorrect)";
- if(question.type==="fillblank"){ const bl=(question.segments||[]).filter(seg=>seg.type==="blank"), man=bl.filter(b=>!(b.answers||[]).length).length; return `${bl.length} trou(s)`+(man?` · ${man} à corriger manuellement`:""); }
- return `${question.choices?.length||0} proposition(s), ${(question.choices||[]).filter(choice=>choice.correct).length} correcte(s)`;
+function commitOpenQuestion(){
+ const i=oqIndexOpen(); if(i<0) return;
+ const q=readOpenQuestionFromForm(); if(q) ONLINE_TEST_DRAFT.questions[i]=q;
+}
+function oqAutosize(ta){ if(!ta) return; ta.style.height="auto"; ta.style.height=ta.scrollHeight+"px"; }
+function oqRefreshResume(){
+ const el=document.getElementById("onlineBuilderResume"); if(!el) return;
+ const qs=ONLINE_TEST_DRAFT.questions.map(q=>q.id===ONLINE_TEST_DRAFT.openId ? (readOpenQuestionFromForm()||q) : q);
+ const total=getOnlineTestTotalPoints({questions:qs});
+ el.textContent = `${qs.length} question${qs.length>1?"s":""} · ${fmt(total,2).replace(/\.00$/,"")} point${total>1?"s":""}`;
+}
+function oqSyncHead(){
+ const row=document.querySelector("#onlineQuestionsList .oq-row.is-open"); if(!row) return;
+ const pr=row.querySelector("#onlineQuestionPrompt"), pe=row.querySelector(".oq-prompt");
+ const text=(pr?.value||"").trim();
+ pe.textContent = text || "Question sans intitulé"; pe.classList.toggle("is-empty",!text);
+ row.querySelector(".oq-type").textContent=getOnlineTestQuestionTypeLabel(row.querySelector("#onlineQuestionType").value);
+ const pts=parseFloat(row.querySelector("#onlineQuestionPoints").value);
+ row.querySelector(".oq-pts").textContent=oqPts(pts>0?pts:1);
+ oqRefreshResume();
 }
 function renderOnlineQuestionsList(){
- const container=document.getElementById("onlineQuestionsList");
- const resume=document.getElementById("onlineBuilderResume");
- if(!container||!resume) return;
+ const container=document.getElementById("onlineQuestionsList"); if(!container) return;
+ const openId=ONLINE_TEST_DRAFT.openId;
  if(!ONLINE_TEST_DRAFT.questions.length){
-  container.innerHTML = '<div class="online-empty" style="padding:22px 14px;">Aucune question validée pour le moment.</div>';
+  container.innerHTML='<div class="oq-empty">Aucune question pour le moment. Utilise « Ajouter une question ».</div>';
  }else{
-  container.innerHTML = ONLINE_TEST_DRAFT.questions.map((question,index)=>`
-   <div class="online-question-item">
-    <div class="online-question-item-top">
-     <div>
-      <h5>Q${index+1} · ${escHtml(getOnlineTestQuestionTypeLabel(question.type))}</h5>
-      <div class="meta">
-       <span>${fmt(question.points,2).replace(/\.00$/,"")} pt${question.points>1?"s":""}</span>
-       <span>${escHtml(buildOnlineQuestionSummary(question))}</span>
+  container.innerHTML=ONLINE_TEST_DRAFT.questions.map((q,i)=>{
+   const open=q.id===openId;
+   return `<div class="oq-row${open?" is-open":""}" data-qid="${escHtml(q.id)}">
+    <div class="oq-head" role="button" tabindex="0" aria-expanded="${open}">
+     <span class="oq-grip" title="Glisser pour déplacer la question" aria-label="Déplacer la question"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 9h14M5 15h14"/></svg></span>
+     <span class="oq-num">${i+1}</span>
+     <span class="oq-prompt${q.prompt?"":" is-empty"}">${q.prompt?escHtml(q.prompt):"Question sans intitulé"}</span>
+     <span class="oq-type">${escHtml(getOnlineTestQuestionTypeLabel(q.type))}</span>
+     <span class="oq-pts">${oqPts(q.points)}</span>
+     <svg class="oq-chev" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    ${open?`<div class="oq-body">
+     <div class="oq-top">
+      <div class="oq-top-left">
+       <div><label>Type de question</label>
+        <select id="onlineQuestionType"><option value="qcu">QCU</option><option value="qcm">QCM</option><option value="written">Réponse à écrire</option><option value="fillblank">Texte à trou</option></select></div>
+       <div><label>Points</label><input id="onlineQuestionPoints" type="number" min="0.25" step="0.25"></div>
+      </div>
+      <div class="oq-top-right">
+       <label>Intitulé de la question</label>
+       <textarea id="onlineQuestionPrompt" rows="3" placeholder="Saisir la consigne de la question..."></textarea>
       </div>
      </div>
-     <div class="online-question-item-actions">
-      <button type="button" class="btn btn-edit-online-question" data-qindex="${index}">Modifier</button>
-      <button type="button" class="btn btn-danger btn-delete-online-question" data-qindex="${index}">Supprimer</button>
-     </div>
-    </div>
-    <p>${escHtml(question.prompt||"").replace(/\n/g,"<br>")}</p>
-   </div>
-  `).join("");
+     <div id="onlineQuestionTypeFields"></div>
+     <div class="oq-body-actions"><button type="button" class="btn btn-danger" data-oq-del>Supprimer la question</button></div>
+    </div>`:""}
+   </div>`;
+  }).join("");
+  const q=ONLINE_TEST_DRAFT.questions[oqIndexOpen()];
+  if(q){
+   document.getElementById("onlineQuestionType").value=q.type;
+   document.getElementById("onlineQuestionPoints").value=q.points;
+   const ta=document.getElementById("onlineQuestionPrompt"); ta.value=q.prompt||""; oqAutosize(ta);
+   renderOnlineQuestionTypeFields(q.type,q);
+  }
  }
- const totalPoints=getOnlineTestTotalPoints({questions:ONLINE_TEST_DRAFT.questions});
- resume.textContent = `${ONLINE_TEST_DRAFT.questions.length} question${ONLINE_TEST_DRAFT.questions.length>1?"s":""} · ${fmt(totalPoints,2).replace(/\.00$/,"")} point${totalPoints>1?"s":""}`;
- container.querySelectorAll(".btn-edit-online-question").forEach(btn=>{
-  btn.addEventListener("click",()=>{
-   const idx=parseInt(btn.dataset.qindex,10);
-   const question=ONLINE_TEST_DRAFT.questions[idx];
-   if(question) resetOnlineQuestionEditor(question,idx);
-  });
- });
- container.querySelectorAll(".btn-delete-online-question").forEach(btn=>{
-  btn.addEventListener("click",()=>{
-   const idx=parseInt(btn.dataset.qindex,10);
-   ONLINE_TEST_DRAFT.questions.splice(idx,1);
+ oqRefreshResume();
+}
+function oqToggle(id){
+ commitOpenQuestion();
+ ONLINE_TEST_DRAFT.openId = (ONLINE_TEST_DRAFT.openId===id) ? null : id;   /* l'ancienne question dépliée se referme aussitôt */
+ renderOnlineQuestionsList();
+ if(ONLINE_TEST_DRAFT.openId){
+  const row=[...document.querySelectorAll("#onlineQuestionsList .oq-row")].find(r=>r.dataset.qid===id);
+  try{ row&&row.scrollIntoView({block:"nearest"}); }catch(_){}
+ }
+}
+function oqAdd(){
+ commitOpenQuestion();
+ const q=oqNew(); ONLINE_TEST_DRAFT.questions.push(q); ONLINE_TEST_DRAFT.openId=q.id;
+ renderOnlineQuestionsList();
+ const row=[...document.querySelectorAll("#onlineQuestionsList .oq-row")].find(r=>r.dataset.qid===q.id);
+ try{ row&&row.scrollIntoView({block:"nearest"}); }catch(_){}
+ try{ document.getElementById("onlineQuestionPrompt")?.focus({preventScroll:true}); }catch(_){}
+}
+function oqDelete(id){
+ commitOpenQuestion();
+ const i=ONLINE_TEST_DRAFT.questions.findIndex(q=>q.id===id); if(i<0) return;
+ ONLINE_TEST_DRAFT.questions.splice(i,1);
+ if(ONLINE_TEST_DRAFT.openId===id) ONLINE_TEST_DRAFT.openId=null;
+ renderOnlineQuestionsList();
+}
+/* Déplacement d'une question : on attrape les deux traits à gauche de la ligne et on la glisse (souris ou doigt) */
+function oqStartDrag(e,row){
+ if(e.button!==undefined&&e.button!==0) return;
+ e.preventDefault(); e.stopPropagation();
+ commitOpenQuestion();
+ const list=document.getElementById("onlineQuestionsList");
+ const rows=[...list.querySelectorAll(".oq-row")];
+ const from=rows.indexOf(row); if(from<0) return;
+ let slot=from;
+ const grip=e.currentTarget;
+ try{ grip.setPointerCapture(e.pointerId); }catch(_){}
+ row.classList.add("oq-dragging");
+ const scroller=row.closest(".modal-body")||list;
+ const mark=()=>{
+  rows.forEach(r=>r.classList.remove("oq-drop-before","oq-drop-after"));
+  const final=slot>from?slot-1:slot;
+  if(final===from) return;
+  if(slot<rows.length) rows[slot].classList.add("oq-drop-before"); else rows[rows.length-1].classList.add("oq-drop-after");
+ };
+ const move=ev=>{
+  const y=ev.clientY; let n=0;
+  rows.forEach(r=>{ const b=r.getBoundingClientRect(); if(y>b.top+b.height/2) n++; });
+  slot=n; mark();
+  const sb=scroller.getBoundingClientRect();
+  if(y<sb.top+36) scroller.scrollTop-=14; else if(y>sb.bottom-36) scroller.scrollTop+=14;
+ };
+ const end=ev=>{
+  grip.removeEventListener("pointermove",move); grip.removeEventListener("pointerup",end); grip.removeEventListener("pointercancel",end);
+  try{ grip.releasePointerCapture(e.pointerId); }catch(_){}
+  rows.forEach(r=>r.classList.remove("oq-dragging","oq-drop-before","oq-drop-after"));
+  const final=slot>from?slot-1:slot;
+  if(ev.type!=="pointercancel"&&final!==from){
+   const [moved]=ONLINE_TEST_DRAFT.questions.splice(from,1);
+   ONLINE_TEST_DRAFT.questions.splice(final,0,moved);   /* les numéros se mettent à jour, la question reste la même */
    renderOnlineQuestionsList();
-   resetOnlineQuestionEditor();
-  });
+  }
+ };
+ grip.addEventListener("pointermove",move); grip.addEventListener("pointerup",end); grip.addEventListener("pointercancel",end);
+}
+(function bindOnlineQuestionsList(){
+ const list=document.getElementById("onlineQuestionsList"); if(!list) return;
+ list.addEventListener("click",e=>{
+  if(e.target.closest("[data-oq-del]")){ const row=e.target.closest(".oq-row"); if(row) oqDelete(row.dataset.qid); return; }
+  const head=e.target.closest(".oq-head");
+  if(!head||e.target.closest(".oq-grip")) return;
+  oqToggle(head.closest(".oq-row").dataset.qid);
  });
- updateOnlineQuestionNumberLabel();
+ list.addEventListener("keydown",e=>{
+  if((e.key==="Enter"||e.key===" ")&&e.target.classList&&e.target.classList.contains("oq-head")){ e.preventDefault(); oqToggle(e.target.closest(".oq-row").dataset.qid); }
+ });
+ list.addEventListener("pointerdown",e=>{
+  const grip=e.target.closest(".oq-grip"); if(grip) oqStartDrag({ button:e.button, pointerId:e.pointerId, currentTarget:grip, preventDefault:()=>e.preventDefault(), stopPropagation:()=>e.stopPropagation() }, grip.closest(".oq-row"));
+ });
+ list.addEventListener("change",e=>{
+  if(e.target.id==="onlineQuestionType"){ renderOnlineQuestionTypeFields(e.target.value,null); oqSyncHead(); }
+ });
+ list.addEventListener("input",e=>{
+  if(e.target.id==="onlineQuestionPrompt") oqAutosize(e.target);
+  if(e.target.id==="onlineQuestionPrompt"||e.target.id==="onlineQuestionPoints") oqSyncHead();
+ });
+})();
+document.getElementById("onlineAddQuestionBtn")?.addEventListener("click",oqAdd);
+function oqValidate(q){
+ if(!q.prompt) return "l’intitulé de la question est requis.";
+ if(!(q.points>0)) return "le nombre de points doit être positif.";
+ if(q.type==="written") return "";
+ if(q.type==="fillblank") return (q.segments||[]).some(seg=>seg.type==="blank") ? "" : "ajoute au moins un trou.";
+ if((q.choices||[]).length<2) return "ajoute au moins deux propositions.";
+ if(!q.choices.some(c=>c.correct)) return "définis au moins une proposition correcte (double-clic ou appui prolongé sur la proposition).";
+ return "";
 }
 
 document.getElementById("onlineBuilderSaveBtn")?.addEventListener("click",()=>{
+ commitOpenQuestion();
  if(!ONLINE_TEST_DRAFT.questions.length){ alert("Ajoute au moins une question avant d’enregistrer le test."); return; }
+ for(let i=0;i<ONLINE_TEST_DRAFT.questions.length;i++){
+  const err=oqValidate(ONLINE_TEST_DRAFT.questions[i]);
+  if(err){
+   ONLINE_TEST_DRAFT.openId=ONLINE_TEST_DRAFT.questions[i].id; renderOnlineQuestionsList();
+   const row=[...document.querySelectorAll("#onlineQuestionsList .oq-row")].find(r=>r.dataset.qid===ONLINE_TEST_DRAFT.openId);
+   try{ row&&row.scrollIntoView({block:"nearest"}); }catch(_){}
+   setTimeout(()=>alert(`Question n°${i+1} : ${err}`),30);
+   return;
+  }
+ }
  const finalTest = sanitizeOnlineTest({
   ...ONLINE_TEST_DRAFT.meta,
   id: ONLINE_TEST_DRAFT.editingTestId || ONLINE_TEST_DRAFT.meta.id,
@@ -14053,10 +14236,10 @@ function initApp(){
  }
  function homeworkClassSubjects(classId){
   const cls=homeworkClassById(classId);
-  return (cls?.subjects||[]).map(s=>typeof s==="object" ? s.name : s).filter(Boolean);
+  return (cls?.subjects||[]).map(s=>typeof s==="object" ? s.name : s).filter(Boolean).filter(n=>window.edHwOk(classId,n));
  }
  function homeworkSortedClasses(){
-  return DATA.classes.slice().sort((a,b)=>String(a.name||"").localeCompare(String(b.name||""),"fr",{sensitivity:"base"}));
+  return DATA.classes.filter(c=>window.edOkCls(c.id,null)).sort((a,b)=>String(a.name||"").localeCompare(String(b.name||""),"fr",{sensitivity:"base"}));
  }
  function homeworkFormatLong(dateISO){
   const d=new Date(`${dateISO}T12:00:00`);
@@ -14139,13 +14322,13 @@ function initApp(){
  window.countPendingOnlineCorrections=countPendingOnlineCorrections;
  window.refreshOnlineCorrectionBadge=refreshOnlineCorrectionBadge;
  /* ── Cases « Fait » des devoirs (élève) : mémorisées sur l'appareil de l'élève ── */
- function hwDoneKey(){ return "hwdone:"+homeworkStudentId(); }
+ function hwDoneKey(){ return AUTH.role==="prof" ? "hwdonep:"+(AUTH.pid||AUTH.user||"prof") : "hwdone:"+homeworkStudentId(); }
  function hwDoneMap(){
-  if(AUTH.role!=="eleve") return {};
+  if(AUTH.role!=="eleve" && AUTH.role!=="prof") return {};
   try{ const m=JSON.parse(localStorage.getItem(hwDoneKey())||"{}"); return (m&&typeof m==="object")?m:{}; }catch(e){ return {}; }
  }
  function hwSetDone(homeworkId,on){
-  if(AUTH.role!=="eleve") return;
+  if(AUTH.role!=="eleve" && AUTH.role!=="prof") return;
   const m=hwDoneMap();
   if(on) m[homeworkId]=1; else delete m[homeworkId];
   try{ localStorage.setItem(hwDoneKey(),JSON.stringify(m)); }catch(e){}
@@ -14295,6 +14478,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
   saveHomeworkDraftFromDom();
   const draft=normalizeHomeworkEntry({...HOMEWORK_STATE.draft, locked:true, updatedAt:new Date().toISOString()});
   if(!draft.subject){ alert("La matière est requise."); return; }
+  if(window.edHwDenied && window.edHwDenied(draft)) return;
   const editorText=String(draft.contentHtml||"").replace(/<[^>]+>/g,"").trim();
   if(!editorText){ alert("Saisis le contenu du devoir."); return; }
   if(hasHomeworkCollision(draft)){
@@ -14352,6 +14536,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
   if(f.subject && f.subject!==HW_ALL && !f.group && !specT && !homeworkAllSubjects().includes(f.subject)) f.subject="";
  }
  function homeworkFilterMatches(item){
+  if(!window.edHwOk(item.classId,item.subject)) return false;
   const f=HOMEWORK_STATE.filter, t=hwFilterTarget(f), s=f.subject;
   if(t && t!==HW_ALL && item.classId!==t) return false;
   if(s && s!==HW_ALL && item.subject!==s) return false;
@@ -14361,7 +14546,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
  function homeworkLessonDates(t,s){
   const set=new Set();
   ((DATA.schedule&&DATA.schedule.events)||[]).forEach(e=>{
-   if(!e.cancelled && e.date && (s===null || (!e.evt && e.subject===s)) && (t===null || hwTargetHitsEvent(t,e))) set.add(e.date);
+   if(!e.cancelled && e.date && window.edOwnEvt(e) && (s===null || (!e.evt && e.subject===s)) && (t===null || hwTargetHitsEvent(t,e))) set.add(e.date);
   });
   return set;
  }
@@ -14402,6 +14587,8 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
   const todayStr=todayISO();
   const doneMap=isStudentCal ? hwDoneMap() : {};
   const studentTodoDates=new Set(), studentAnyDates=new Set();
+   const teacherAllDone=new Set();
+   if(!isStudentCal){ const _dm=hwDoneMap(); teacherDates.forEach(dt=>{ const its=(DATA.homework||[]).filter(i=>i.dateISO===dt && homeworkFilterMatches(i)); if(its.length && its.every(i=>_dm[i.id])) teacherAllDone.add(dt); }); }
   if(isStudentCal){
    (DATA.homework||[]).forEach(item=>{
     if(!item.dateISO || !homeworkMatchesStudentClass(item)) return;
@@ -14431,7 +14618,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
    }
    cells.push(`
     <button type="button" ${disabled ? "disabled aria-disabled=\"true\"" : ""}
-      class="homework-calendar-day ${teacherFrame ? "has-homework" : ""} ${teacherPastBlue ? "teacher-past-homework" : ""} ${stuCls} ${isSelected ? "is-selected" : ""} ${isToday ? "is-today" : ""} ${disabled ? "is-disabled" : ""}"
+      class="homework-calendar-day ${teacherFrame ? "has-homework" : ""} ${teacherFrame && teacherAllDone.has(dateISO) ? "teacher-all-done" : ""} ${teacherPastBlue ? "teacher-past-homework" : ""} ${stuCls} ${isSelected ? "is-selected" : ""} ${isToday ? "is-today" : ""} ${disabled ? "is-disabled" : ""}"
       data-hw-action="select-date"
       data-date="${dateISO}">
       ${day}
@@ -14444,11 +14631,11 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
   const info=homeworkTeacherCalendarInfo();
   const f=HOMEWORK_STATE.filter;
   const classes=homeworkSortedClasses();
-  const groups=grpUi().slice().sort((a,b)=>a.name.localeCompare(b.name,"fr",{numeric:true,sensitivity:"base"}));
+  const groups=grpUi().filter(g=>window.edOkCls(g.id,null)).slice().sort((a,b)=>a.name.localeCompare(b.name,"fr",{numeric:true,sensitivity:"base"}));
   const subjects=info.specT ? homeworkClassSubjects(info.t) : homeworkAllSubjects();
   const date=HOMEWORK_STATE.selectedDate;
   const stuOpts=(()=>{
-   const studs=(DATA.students||[]).slice().sort((a,b)=>(a.last||"").localeCompare(b.last||"","fr")||(a.first||"").localeCompare(b.first||"","fr")); let h="";
+   const studs=(DATA.students||[]).filter(x=>window.edOkStu(x.id,null)).sort((a,b)=>(a.last||"").localeCompare(b.last||"","fr")||(a.first||"").localeCompare(b.first||"","fr")); let h="";
    homeworkSortedClasses().forEach(c=>{
     const m=studs.filter(x=>x.classId===c.id); if(!m.length) return;
     h+=`<optgroup label="${escHtml(c.name)}">${m.map(x=>`<option value="${escHtml(x.id)}" ${x.id===f.student?"selected":""}>${escHtml((x.last||"")+" "+(x.first||""))}</option>`).join("")}</optgroup>`;
@@ -14585,14 +14772,19 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
  }
  function renderTeacherHomeworkCard(homework){
   const className=homeworkClassName(homework.classId);
+  const isDone=!!hwDoneMap()[homework.id];
   return `
-   <article class="homework-entry-card ${homework.isExam ? "is-exam" : ""}">
+   <article class="homework-entry-card ${homework.isExam ? "is-exam" : ""} ${isDone ? "is-done" : ""}">
     <button type="button" class="homework-entry-edit" data-hw-action="edit-homework" data-homework-id="${escHtml(homework.id)}" title="Modifier">✎</button>
     <div class="homework-entry-title" style="padding-left:42px;">
      <div>
       <h4><span class="class-name">${escHtml(className)}</span> - <span class="subject-name">${escHtml(homework.subject)}</span></h4>
       <div class="homework-entry-date">${escHtml(homeworkFormatLong(homework.dateISO))}</div>
      </div>
+      <label class="hw-done-row" title="Cocher quand le devoir est fait">
+       <input type="checkbox" class="hw-done-cb" data-hw-action="toggle-done" data-homework-id="${escHtml(homework.id)}" ${isDone ? "checked" : ""}>
+       <span>Fait</span>
+      </label>
     </div>
     ${homework.isExam ? '<div class="homework-entry-badge">Contrôle</div>' : ""}
     <div class="homework-entry-body" contenteditable="false">${homework.contentHtml || '<span style="color:#94a3b8;">Aucun contenu.</span>'}</div>
@@ -14769,6 +14961,10 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
   }else if((q.type==="qcu"||q.type==="qcm") && !(q.choices||[]).some(c=>c.correct)){
    /* test basique : aucune bonne réponse cochée -> le professeur tranche avec le bouton glissant */
    d.manual=true; d.verdict=V[hwVerdictKey(q.id)]||""; d.correct=(d.verdict==="ok");
+  }else if(q.type==="qcu"||q.type==="qcm"){
+   /* bonne réponse définie : verdict automatique par défaut, que le professeur peut inverser (erreur de saisie du test, etc.) */
+   const auto=!!d.correct, sv=V[hwVerdictKey(q.id)];
+   if(sv){ d.verdict=sv; d.correct=(sv==="ok"); d.overridden=(d.correct!==auto); } else d.verdict=auto?"ok":"ko";
   }else if(q.type==="fillblank"){
    const blanks=(q.segments||[]).filter(sg=>sg.type==="blank");
    const vals=Array.isArray(d.answer)?d.answer:[];
@@ -14842,7 +15038,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
    const picked=sel.has(c.id), good=!!c.correct;
    return `<label class="homework-quiz-option hwt-opt${picked?" is-picked":""}${good?" is-expected":""}"><input type="${type}" disabled ${picked?"checked":""}><span>${escHtml(c.text||"")}</span></label>`;
   }).join("");
-  const manual=d.manual?`<div class="hwt-verdict-row"><span class="hwt-exp">Aucune bonne réponse définie — ta correction :</span> ${hwSwitchHtml(hwVerdictKey(q.id),d.verdict)}</div>`:"";
+  const manual=d.manual?`<div class="hwt-exp hwt-exp-none">Aucune bonne réponse définie : utilise le bouton à côté des points.</div>`:"";
   return `<div class="hwt-legend"><span class="hwt-lg-pick">Réponse de l’élève</span><span class="hwt-lg-exp">Réponse attendue</span></div><div class="homework-quiz-options">${opts}</div>${manual}`;
  }
  function hwAutoDetails(submission,test){
@@ -14882,7 +15078,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
     inner='<div class="hwc-choices">'+(q.choices||[]).map(c=>{
      const picked=sel.has(c.id), good=!!c.correct;
      let cls="", tag="";
-     if(d.manual){ if(picked){ cls=ok?"is-ok":"is-ko"; tag=ok?"Ta réponse ✓":"Ta réponse ✗"; } }
+     if(d.manual||d.overridden){ if(picked){ cls=ok?"is-ok":"is-ko"; tag=ok?"Ta réponse ✓":"Ta réponse ✗"; } }
      else if(picked&&good){ cls="is-ok"; tag="Ta réponse ✓"; }
      else if(picked&&!good){ cls="is-ko"; tag="Ta réponse ✗"; }
      else if(!picked&&good){ cls=ok?"is-ok":"is-ko"; tag="Réponse attendue"; }
@@ -14999,9 +15195,11 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
   if(q && q.started && !q.submitted && !q.test?.options?.trainingMode && AUTH.role==="eleve"){
    if(q.test?.options?.focusMode){
     /* mode Focus : fermer = rendre le test tel quel, après confirmation */
-    if(!confirm("Tu es en mode Focus : si tu fermes le test, il sera envoyé tel quel et tu ne pourras plus le refaire.\n\nFermer et envoyer le test ?")) return;
-    q.leftPage=true;
-    finishHomeworkQuiz("close");
+    siteConfirm("Tu es en mode Focus : si tu fermes le test, il sera envoyé tel quel et tu ne pourras plus le refaire.\n\nFermer et envoyer le test ?",{ok:"Fermer et envoyer"}).then(ok=>{
+     if(!ok) return;
+     q.leftPage=true;
+     finishHomeworkQuiz("close");
+    });
     return;
    }
    /* sinon : les réponses sont sauvegardées automatiquement, l'élève reprendra là où il s'est arrêté */
@@ -15221,6 +15419,14 @@ async function finishHomeworkQuiz(reason){
  /* ── Mode Focus (élève) : fonctionne sur ordinateur ET mobile ──
     Mobile : on s'appuie sur visibilitychange / pagehide (changement d'appli, écran verrouillé, onglet changé)
     et on re-vérifie au retour sur la page (le navigateur peut avoir suspendu le JavaScript en arrière-plan). */
+ /* Un blur de fenêtre n'est une vraie sortie de page que sur ordinateur : sur mobile / tablette, l'ouverture du clavier
+    virtuel (ou son redimensionnement) peut déclencher un blur sans que l'élève ait quitté la page. */
+ window.edRealBlur=(function(){
+  let kbUntil=0; const mark=()=>{ kbUntil=Date.now()+2000; };
+  try{ if(window.visualViewport) window.visualViewport.addEventListener("resize",mark); }catch(_){}
+  const coarse=()=>{ try{ return matchMedia("(pointer:coarse)").matches || (navigator.maxTouchPoints>0 && /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)); }catch(_){ return false; } };
+  return function(){ return !coarse() && Date.now()>kbUntil; };
+ })();
  function hwFocusActive(){
   const q=HOMEWORK_STATE.quiz;
   return !!(q && q.started && !q.submitted && q.test?.options?.focusMode && !q.test.options.trainingMode && homeworkQuizModal?.classList.contains("open"));
@@ -15243,7 +15449,8 @@ async function finishHomeworkQuiz(reason){
  window.addEventListener("focus",hwFocusBack);
  window.addEventListener("blur",()=>{
   if(!hwFocusActive()) return;
-  setTimeout(()=>{ if(hwFocusActive() && !document.hasFocus()) hwFocusLeft(); },120);
+  if(!window.edRealBlur()) return;   /* clavier virtuel / appareil tactile : pas une sortie de page */
+  setTimeout(()=>{ if(hwFocusActive() && !document.hasFocus() && window.edRealBlur()) hwFocusLeft(); },120);
  });
  function renderHomeworkQuizQuestion(){
   const body=document.getElementById("homeworkQuizBody");
@@ -15573,7 +15780,7 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
      if(!isProf) return;
      if(LOCKED_PERIODS[period]) return;
      const reveal=homeworkEvalRevealed(hw,test);
-     ev={id:'ev_'+Math.random().toString(36).slice(2,10),...fields,defaultImportant:false,coef:1,hideFromStudent:!reveal,hwRevealed:reveal,hwKey:key,hwId:hw.id,hwTestId:test.id};
+     ev={id:'ev_'+Math.random().toString(36).slice(2,10),...fields,hwCoefSrc:((test.coef!==undefined&&test.coef!==null&&test.coef!==""&&isFinite(Number(test.coef))&&Number(test.coef)>=0)?Number(test.coef):1),defaultImportant:false,coef:((test.coef!==undefined&&test.coef!==null&&test.coef!==""&&isFinite(Number(test.coef))&&Number(test.coef)>=0)?Number(test.coef):1),hideFromStudent:!reveal,hwRevealed:reveal,hwKey:key,hwId:hw.id,hwTestId:test.id};
      cls.evals.push(ev);
      changed=true;
     }else if(isProf && !(ev.period!=="YEAR" && LOCKED_PERIODS[ev.period])){
@@ -15588,7 +15795,12 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
       ev.hwRevealed=true; ev.hideFromStudent=false; revealedNow=true; changed=true;
      }
     }
-    if(ev.coef==null || isNaN(Number(ev.coef))){ ev.coef=1; if(isProf) changed=true; }   /* le coef modifié par le prof est conservé */
+    if(ev.coef==null || isNaN(Number(ev.coef))){ ev.coef=1; if(isProf) changed=true; }
+    if(isProf){
+     const _tc=(test.coef!==undefined&&test.coef!==null&&test.coef!==""&&isFinite(Number(test.coef))&&Number(test.coef)>=0)?Number(test.coef):null;
+     if(ev.hwCoefSrc===undefined){ ev.hwCoefSrc=ev.coef; changed=true; }
+     else if(_tc!==null && _tc!==ev.hwCoefSrc){ if(Number(ev.coef)===Number(ev.hwCoefSrc)) ev.coef=_tc; ev.hwCoefSrc=_tc; changed=true; }   /* coef modifié à la main par le prof : conservé */
+    }   /* le coef modifié par le prof est conservé */
     const members=(cls.memberIds||[]).filter(id=>isProf || id===myId);
     members.forEach(sid=>{
      const arr=DATA.notes[sid]||(DATA.notes[sid]=[]);
@@ -15698,8 +15910,8 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
      <div class="homework-review-student">
       <span class="homework-status-dot ${done||special ? "is-done" : ""}"></span>
       <div>
-       <strong>${escHtml(stu.first)} ${escHtml(stu.last)}${multi ? ` <span style="font-weight:500;color:#007ac6;">· ${escHtml(homeworkDateToFr(item.homework.dateISO))}</span>` : ""}</strong>
-       <div style="color:#64748b;font-size:13px;">${done ? "Test réalisé" : (special ? "Marqué « "+escHtml(special)+" »" : "Pas encore fait")} ${submission?.publishedAt ? "· note publiée" : ""}</div>
+       <strong>${escHtml(stu.first)} ${escHtml(stu.last)}${multi ? ` <span style="font-weight:500;color:#007ac6;">· ${escHtml(homeworkDateToFr(item.homework.dateISO))}</span>` : ""}${hwNoteStateIcon(!!(submission?.publishedAt||special||manualNum), done, `data-homework-id="${escHtml(item.homework.id)}" data-test-id="${escHtml(item.test.id)}" data-student-id="${escHtml(stu.id)}"`)}</strong>
+       <div style="color:#64748b;font-size:13px;">${done ? "Test réalisé" : (special ? "Marqué « "+escHtml(special)+" »" : "Pas encore fait")}</div>
       </div>
       <input class="homework-grade-input" data-hw-action="grade-input" data-homework-id="${escHtml(item.homework.id)}" data-test-id="${escHtml(item.test.id)}" data-student-id="${escHtml(stu.id)}" value="${escHtml(grade)}" placeholder="Note" title="Clic droit ou appui long : Abs, Disp, NE, X, EA…">
       <div style="display:flex;align-items:center;gap:8px;">
@@ -15749,6 +15961,7 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
       <label>Points</label>
       <input type="number" min="0" max="${Number(question.points)||0}" step="0.25" data-question-id="${escHtml(question.id)}" value="${escHtml(String(defaultScore))}" placeholder="—">
       <span>/ ${fmt(question.points,2).replace(/\.00$/,"")}</span>
+      ${(question.type==="qcu"||question.type==="qcm") ? `<span class="hw-score-verdict">${hwSwitchHtml(hwVerdictKey(question.id),detail.verdict)}</span>` : ""}
       <button type="button" class="hw-qc-btn${(submission.review?.questionComments?.[question.id]||"")?" has":""}" data-qc="${escHtml(question.id)}" data-qn="${index+1}" title="Commentaire pour l'élève sur cette question" aria-label="Commentaire"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
      </div>
      <div class="hw-qc-prev" data-qc-prev="${escHtml(question.id)}"${(submission.review?.questionComments?.[question.id]||"")?"":" hidden"}>${escHtml(submission.review?.questionComments?.[question.id]||"")}</div>
@@ -15961,7 +16174,7 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
   /* le serveur doit supprimer le rendu (sinon il serait ré-ajouté par la fusion des rendus d'élèves) */
   (window.HW_CANCELLED_SUBS||(window.HW_CANCELLED_SUBS=new Set())).add(`${homeworkId}|${testId}|${studentId}`);
  }
- function resetHomeworkSubmission(homeworkId,testId,studentId){
+ async function resetHomeworkSubmission(homeworkId,testId,studentId){
   if(AUTH.role!=="prof") return;
   const sub=getHomeworkSubmission(homeworkId,testId,studentId);
   const hw=getHomeworkById(homeworkId);
@@ -15974,7 +16187,7 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
   const name=stu ? `${stu.first} ${stu.last}` : "cet élève";
   const msg=sub ? `Annuler la soumission de ${name} ?\n\nSes réponses seront effacées et il pourra refaire le test depuis son devoir. Sa note repassera à NR.`
                 : `Retirer la note « ${special} » de ${name} ?\n\nIl pourra faire le test depuis son devoir. Sa note repassera à NR.`;
-  if(!confirm(msg)) return;
+  if(!(await siteConfirm(msg,{ok:"Confirmer"}))) return;
   if(sub) purgeHomeworkSubmission(hw,sub);
   else { const r=hwFindEvalNote(homeworkId,testId,studentId); if(r){ applyHomeworkDirectValue(r.note,""); r.note.hwAuto=true; } }
   if(!Array.isArray(DATA.homeworkRedo)) DATA.homeworkRedo=[];
@@ -16020,15 +16233,96 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
   }
   return note;
  }
- function publishHomeworkGrades(){
+ /* Liste des élèves dont la note va être saisie (même logique que la saisie réelle) */
+ function hwNoteStateIcon(entered,done,ids){
+  const pen='<path d="M15.5 4.5l4 4L8 20H4v-4z"/>';
+  if(entered) return '<button type="button" class="hw-note-ico is-ok" data-hw-action="toggle-publish" '+ids+' title="Note saisie : cliquer pour annuler la saisie"><svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g transform="translate(1 1) scale(.95)">'+pen+'</g><circle cx="23" cy="23" r="7" fill="#16a34a" stroke="#fff" stroke-width="1.5"/><path d="M19.8 23l2.2 2.2 3.8-4.4" stroke="#fff" stroke-width="2"/></svg></button>';
+  if(done) return '<button type="button" class="hw-note-ico is-wait" data-hw-action="toggle-publish" '+ids+' title="Note non saisie : cliquer pour la saisir"><svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g transform="translate(1 1) scale(.95)">'+pen+'</g><circle cx="23" cy="23" r="7" fill="#64748b" stroke="#fff" stroke-width="1.5"/><circle cx="20.2" cy="23" r=".9" fill="#fff" stroke="none"/><circle cx="23" cy="23" r=".9" fill="#fff" stroke="none"/><circle cx="25.8" cy="23" r=".9" fill="#fff" stroke="none"/></svg></button>';
+  return "";
+ }
+ function hwToggleOnePublish(hid,tid,sid){
+  const sub=getHomeworkSubmission(hid,tid,sid), hw=getHomeworkById(hid), test=getHomeworkTest(tid);
+  if(!hw||!test) return;
+  const special=hwSpecialMark(hw,test,sid), manualNum=(!sub||!sub.submittedAt)?hwManualGrade(hw,test,sid):"";
+  const entered=!!(sub&&sub.publishedAt)||!!special||!!manualNum;
+  if(entered){
+   /* annuler la saisie de cet élève uniquement */
+   if(sub && sub.publishedAt){ sub.publishedAt=""; upsertHomeworkSubmission(sub); }
+   if(special||manualNum||(sub&&sub.manualOverride&&CLASS_SPECIAL_VALUES.has(String(sub.manualOverride)))) hwApplyManualMark(hid,tid,sid,"");
+   syncHomeworkDirectGrades(); saveData(); rebuildUI(); renderHomeworkReviewModal(); renderOnlineTestsView();
+   hwShowSuccessToast("Saisie de la note annulée");
+   return;
+  }
+  const n=doPublishHomeworkGrades({hid,tid,sid});
+  if(n) hwShowSuccessToast(`${n} note saisie avec succès`);
+  else siteAlert("Aucune note à saisir pour cet élève.");
+ }
+ function hwPublishPreview(){
   const assignments=getHomeworkReviewAssignments(HOMEWORK_STATE.reviewFilterTestId);
   const current=assignments.find(item=>item.key===HOMEWORK_STATE.reviewSelectedKey);
-  if(!current){ alert("Sélectionne une assignation."); return; }
+  if(!current) return null;
+  const rows=[];
+  getHomeworkReviewScope(assignments,current).forEach(item=>{
+   const cls=homeworkClassById(item.homework.classId);
+   (cls?.memberIds||[]).forEach(studentId=>{
+    const stu=homeworkStudentById(studentId); if(!stu) return;
+    const submission=getHomeworkSubmission(item.homework.id,item.test.id,studentId);
+    const input=document.querySelector(`.homework-grade-input[data-homework-id="${CSS.escape(item.homework.id)}"][data-test-id="${CSS.escape(item.test.id)}"][data-student-id="${CSS.escape(studentId)}"]`);
+    const typedRaw=String(input?.value||"").trim();
+    const typedSpecial=[...CLASS_SPECIAL_VALUES].find(v=>v.toLowerCase()===typedRaw.toLowerCase());
+    let value="";
+    if(typedSpecial && typedSpecial!=="NR") value=typedSpecial;
+    else if(!submission || !submission.submittedAt){ const num=parseFloat(typedRaw.replace(",",".")); if(typedRaw!=="" && !isNaN(num)) value=typedRaw; }
+    else value=(typedRaw || getHomeworkResolvedGrade(submission,item.test) || "").trim();
+    if(value) rows.push({name:`${stu.first} ${stu.last}`, value});
+   });
+  });
+  return rows;
+ }
+ function hwConfirmModal(){
+  let m=document.getElementById("hwPublishConfirmModal");
+  if(!m){
+   m=document.createElement("div"); m.id="hwPublishConfirmModal"; m.className="modal"; m.style.zIndex=310; m.setAttribute("aria-hidden","true");
+   m.innerHTML='<div class="modal-card online-modal-medium" role="dialog" aria-modal="true"><div class="modal-header"><h3>Saisir les notes</h3><button class="modal-close" type="button" aria-label="Fermer">×</button></div><div class="modal-body"><div id="hwPublishConfirmBody"></div><div class="modal-actions"><button type="button" class="btn" data-cancel="1">Annuler</button><button type="button" class="btn btn-primary" data-ok="1">Valider</button></div></div></div>';
+   document.body.appendChild(m);
+   const close=()=>setModalOpen(m,false);
+   m.querySelector(".modal-close").onclick=close; m.querySelector("[data-cancel]").onclick=close;
+   m.addEventListener("mousedown",e=>{ if(e.target===m) close(); });
+   m.querySelector("[data-ok]").onclick=()=>{ close(); const n=doPublishHomeworkGrades(); hwShowSuccessToast(`${n} note${n>1?"s":""} saisie${n>1?"s":""} avec succès`); };
+  }
+  return m;
+ }
+ function hwShowSuccessToast(text){
+  const old=document.getElementById("hwSuccessToast"); if(old) old.remove();
+  const t=document.createElement("div"); t.id="hwSuccessToast"; t.className="hw-success-toast"; t.setAttribute("role","status");
+  t.innerHTML='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke-width="2"/><path d="M7.5 12.5l3 3 6-7"/></svg><span></span>';
+  t.querySelector("span").textContent=text;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),1000);
+ }
+ function publishHomeworkGrades(){
+  const rows=hwPublishPreview();
+  if(rows===null){ hwShowSuccessToast("Sélectionne une assignation"); return; }
+  const m=hwConfirmModal(), body=m.querySelector("#hwPublishConfirmBody"), ok=m.querySelector("[data-ok]");
+  if(!rows.length){
+   body.innerHTML='<p class="hwpc-empty">Aucune note à saisir.</p>'; ok.style.display="none";
+  }else{
+   ok.style.display="";
+   body.innerHTML=`<p class="hwpc-intro">${rows.length} note${rows.length>1?"s":""} ${rows.length>1?"vont":"va"} être saisie${rows.length>1?"s":""} dans l’évaluation :</p><div class="hwpc-list">${rows.map(r=>`<div class="hwpc-row"><span>${escHtml(r.name)}</span><b>${escHtml(r.value)}</b></div>`).join("")}</div>`;
+  }
+  setModalOpen(m,true);
+ }
+ function doPublishHomeworkGrades(only){
+  const assignments=getHomeworkReviewAssignments(HOMEWORK_STATE.reviewFilterTestId);
+  const current=assignments.find(item=>item.key===HOMEWORK_STATE.reviewSelectedKey);
+  if(!current) return 0;
   let publishedCount=0;
   getHomeworkReviewScope(assignments,current).forEach(item=>{
+   if(only && (item.homework.id!==only.hid || item.test.id!==only.tid)) return;
    const cls=homeworkClassById(item.homework.classId);
    const specialMarks=[];   /* valeurs spéciales (Abs, NE, Disp, X, EA) à poser, avec ou sans copie rendue */
    (cls?.memberIds||[]).forEach(studentId=>{
+    if(only && studentId!==only.sid) return;
     const submission=getHomeworkSubmission(item.homework.id,item.test.id,studentId);
     const typedInput=document.querySelector(`.homework-grade-input[data-homework-id="${CSS.escape(item.homework.id)}"][data-test-id="${CSS.escape(item.test.id)}"][data-student-id="${CSS.escape(studentId)}"]`);
     const typedRaw=String(typedInput?.value||"").trim();
@@ -16061,6 +16355,7 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
     upsertHomeworkSubmission(submission);
     publishedCount += 1;
    });
+   if(only && !publishedCount) return;
    /* démasque l'évaluation aux élèves (les non-rendus gardent NR) */
    const ev=classLike(item.homework.classId)?.evals?.find(e=>e.hwKey===`${item.homework.id}::${item.test.id}`);
    if(ev){
@@ -16077,14 +16372,14 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
   rebuildUI();
   renderHomeworkReviewModal();
   renderOnlineTestsView();
-  alert(`${publishedCount} note${publishedCount>1?"s":""} saisie${publishedCount>1?"s":""} dans l'évaluation de classe.`);
+  return publishedCount;
  }
  /* Bilan d'un test : copies rendues / non rendues / non corrigées (toutes assignations confondues, hors entraînement) */
  function getHomeworkReviewStatsForTest(testId){
-  const st={ students:0, submitted:0, notReturned:0, uncorrected:0 };
+  const st={ students:0, submitted:0, notReturned:0, uncorrected:0, pending:0 };
   getHomeworkReviewAssignments(testId).forEach(item=>{
    st.students+=item.totalStudents; st.submitted+=item.submitted;
-   st.notReturned+=item.totalStudents-item.submitted; st.uncorrected+=item.pending;
+   st.notReturned+=item.totalStudents-item.submitted; st.uncorrected+=item.openSubmitted; st.pending+=item.pending;
   });
   return st;
  }
@@ -16122,17 +16417,17 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
     reviewBtn.addEventListener("click",()=>openHomeworkReviewModal(btn.dataset.testid));
     actions.appendChild(reviewBtn);
    }
-   reviewBtn.className="btn-homework-review";   // neutre : les couleurs sont sur les blocs d'assignation de la fenêtre de correction
+   reviewBtn.className="btn-homework-review"+(stats.uncorrected>0?" needs-correction":"");   // cadre rouge : des copies rendues restent à corriger
    reviewBtn.title="Voir et corriger les soumissions";
    /* pastille de notif sur le bloc du test : nombre de tests rendus */
    const card=btn.closest(".online-test-card");
    if(card){
     card.querySelectorAll(":scope > .online-test-badge").forEach(x=>x.remove());
-    if(stats.uncorrected>0){
+    if(stats.pending>0){
      const b=document.createElement("span");
      b.className="online-test-badge";
-     b.textContent=stats.uncorrected>99?"99+":String(stats.uncorrected);
-     b.title=stats.uncorrected+" test"+(stats.uncorrected>1?"s":"")+" non corrigé"+(stats.uncorrected>1?"s":"");
+     b.textContent=stats.pending>99?"99+":String(stats.pending);
+     b.title=stats.pending+" test"+(stats.pending>1?"s":"")+" non corrigé"+(stats.pending>1?"s":"");
      card.appendChild(b);
     }
    }
@@ -16378,6 +16673,10 @@ function handleHomeworkActionClick(btn){
   }
   if(action==="open-correction"){
    openHomeworkCorrection(btn.dataset.homeworkId,btn.dataset.testId,btn.dataset.studentId);
+   return;
+  }
+  if(action==="toggle-publish"){
+   hwToggleOnePublish(btn.dataset.homeworkId,btn.dataset.testId,btn.dataset.studentId);
    return;
   }
   if(action==="reset-submission"){
@@ -16709,7 +17008,7 @@ function studentSubjectNames(stu){
   (g.evals||[]).forEach(e=>add(e.subject));
  });
  const order=(typeof SUBJECT_REGISTRY!=="undefined"?SUBJECT_REGISTRY:[]).map(x=>typeof x==="object"?x.name:x);
- return order.filter(n=>out.includes(n)).concat(out.filter(n=>!order.includes(n)));
+ return order.filter(n=>out.includes(n)).concat(out.filter(n=>!order.includes(n))).filter(n=>window.edOkStu(stu.id,n));
 }
 function grpById(id){ return grpEns().find(g=>g.id===id)||null; }
 /* Cible « un seul élève » : groupe technique d'un membre, invisible dans les listes de groupes (id = solo_<idÉlève>) */
@@ -17275,6 +17574,7 @@ const VS_ICO={
  ret:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="13" r="7"/><path d="M12 9v4l3 2M4 5l3-2M20 5l-3-2"/></svg>'
 };
 function vsItems(sid){
+ if(!window.edOkStu(sid,null)) return [];
  const V=vsEns(), out=[], abs={};
  V.appels.forEach(a=>{
   if((a.absent||[]).includes(sid)) (abs[a.date]=abs[a.date]||[]).push(a);
@@ -17315,10 +17615,10 @@ function renderVie(){
  const root=document.getElementById("vieBody"); if(!root) return;
  if(AUTH.role==="eleve"){ root.innerHTML=vsContent(AUTH.studentId); return; }
  const _vg=VS.grp?grpById(VS.grp):null;
- const list=DATA.students.filter(s=>(!VS.cls||s.classId===VS.cls)&&(!VS.grp||(_vg&&(_vg.memberIds||[]).includes(s.id)))).sort(cmpStu);
+ const list=DATA.students.filter(s=>window.edOkStu(s.id,null)&&(!VS.cls||s.classId===VS.cls)&&(!VS.grp||(_vg&&(_vg.memberIds||[]).includes(s.id)))).sort(cmpStu);
  if(VS.tab==="hist"){ root.innerHTML=vsTabs()+histHtml(); holMark(root); return; }
  const prevList=root.querySelector(".vs-list"), keepTop=prevList?prevList.scrollTop:0, keepY=window.scrollY;
- root.innerHTML=vsTabs()+'<div class="vs-split"><div class="vs-side"><div class="filter-pair"><select id="vsCls" class="btn" style="flex:1 1 0;min-width:0"><option value="">Toutes les classes</option>'+DATA.classes.map(c=>'<option value="'+c.id+'"'+(c.id===VS.cls?" selected":"")+'>'+escHtml(c.name)+'</option>').join("")+'</select><select id="vsGrp" class="btn" style="flex:1 1 0;min-width:0"><option value="">Tous les groupes</option>'+grpUi().slice().sort((a,b)=>String(a.name).localeCompare(String(b.name),"fr",{numeric:true,sensitivity:"base"})).map(g=>'<option value="'+g.id+'"'+(g.id===VS.grp?" selected":"")+'>'+escHtml(g.name)+'</option>').join("")+'</select></div><div class="vs-list">'
+ root.innerHTML=vsTabs()+'<div class="vs-split"><div class="vs-side"><div class="filter-pair"><select id="vsCls" class="btn" style="flex:1 1 0;min-width:0"><option value="">Toutes les classes</option>'+DATA.classes.filter(c=>window.edOkCls(c.id,null)).map(c=>'<option value="'+c.id+'"'+(c.id===VS.cls?" selected":"")+'>'+escHtml(c.name)+'</option>').join("")+'</select><select id="vsGrp" class="btn" style="flex:1 1 0;min-width:0"><option value="">Tous les groupes</option>'+grpUi().filter(g=>window.edOkCls(g.id,null)).slice().sort((a,b)=>String(a.name).localeCompare(String(b.name),"fr",{numeric:true,sensitivity:"base"})).map(g=>'<option value="'+g.id+'"'+(g.id===VS.grp?" selected":"")+'>'+escHtml(g.name)+'</option>').join("")+'</select></div><div class="vs-list">'
   +list.map(s=>'<div class="vs-stu'+(s.id===VS.sid?" on":"")+'" data-sid="'+s.id+'"'+'>'+vsBands(s.id)+'<span>'+escHtml(s.last)+' '+escHtml(s.first)+'</span></div>').join("")+'</div></div><div class="vs-main">'
   +(VS.sid?vsContent(VS.sid):'<div class="pl-empty">Cliquez sur un élève pour voir sa vie scolaire.</div>')+'</div></div>';
  const newList=root.querySelector(".vs-list"); if(newList) newList.scrollTop=keepTop;
@@ -17335,7 +17635,7 @@ function vsDetail(sid,key){
   else body+=vsRow("Sanction appliquée","Retenue de <b>"+d.h+" h "+d.m+" min</b> le "+escHtml(dLong(d.day))+", de "+hmF(d.start)+" à "+hmF(minToHM(tmin(d.start)+d.h*60+d.m)))+(s.level==="R"?vsRow("Travail",escHtml(d.work||"").replace(/\n/g,"<br>")):"");
   body+=vsRow("Professeur",escHtml(s.prof||"—"));
   if(prof){
-   btns.unshift({label:"Supprimer la sanction",cls:"btn-danger",fn:()=>{ if(!confirm("Supprimer cette sanction ?")) return false; V.sanctions=V.sanctions.filter(x=>x.id!==key); saveData(); renderVie(); renderSchedule(); }});
+   btns.unshift({label:"Supprimer la sanction",cls:"btn-danger",fn:(mm)=>{ siteConfirm("Supprimer cette sanction ?",{ok:"Supprimer"}).then(ok=>{ if(!ok){ if(mm&&mm.classList) mm.classList.add("open"); return; } V.sanctions=V.sanctions.filter(x=>x.id!==key); saveData(); renderVie(); renderSchedule(); }); }});
    btns.unshift({label:"Modifier la sanction",cls:"btn-primary",fn:()=>vsSanForm(s.sid,s)});
   }
  } else {
@@ -17391,7 +17691,7 @@ document.getElementById("vieBody").addEventListener("change",e=>{ if(e.target.id
 
 /* ---------- Sanctions dans l'emploi du temps ---------- */
 function vsSanSlots(){
- let l=vsEns().sanctions; if(AUTH.role==="eleve") l=l.filter(x=>x.sid===AUTH.studentId);
+ let l=vsEns().sanctions.filter(x=>window.edOkStu(x.sid,null)); if(AUTH.role==="eleve") l=l.filter(x=>x.sid===AUTH.studentId);
  return l.map(x=>{ const d=x.d||{}, st=DATA.students.find(s=>s.id===x.sid), nm=AUTH.role==="eleve"?"":(st?st.last+" "+st.first:"");
   if(x.level==="J") return {id:x.id,L:x.level,date:d.dueDate,start:d.dueTime,end:minToHM(tmin(d.dueTime)+60),nm,sub:"Date limite"};
   return {id:x.id,L:x.level,date:d.day,start:d.start,end:minToHM(tmin(d.start)+d.h*60+d.m),nm,sub:"Retenue"}; });
@@ -18058,6 +18358,7 @@ const pad=n=>String(n).padStart(2,"0");
 const isoOf=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
 const uid=p=>p+"_"+Math.random().toString(36).slice(2,9)+Date.now().toString(36);
 const isStu=()=>AUTH.role==="eleve";
+const PID=()=>isStu()?"":String(AUTH.pid||"");
 const isPrev=()=>document.body.classList.contains("ed-preview");
 const H={thread:null,reply:null,filter:"",draft:{},read:new Set(),readFor:null,pendingScroll:false,sel:{on:false,kind:"",ids:new Set()}};
 
@@ -18113,12 +18414,34 @@ function loadRead(){
 function saveRead(){ if(!isStu()||isPrev()) return; try{ localStorage.setItem("ed_read_"+AUTH.studentId,JSON.stringify([...H.read].slice(-500))); }catch(e){} }
 const incoming=m=>isStu()?m.dir==="p2s":m.dir==="s2p";
 const isRead=m=>!!m.read||H.read.has(m.id);
-function myMessages(){ ensure(); return isStu()?DATA.messages.filter(m=>m.sid===AUTH.studentId):DATA.messages; }
+function myMessages(){ ensure(); return isStu()?DATA.messages.filter(m=>m.sid===AUTH.studentId):DATA.messages.filter(m=>!m.pid||!AUTH.pid||String(m.pid)===String(AUTH.pid)); }
+/* Professeurs de l'élève : tous ceux qu'il a au moins une fois dans l'emploi du temps (un fil de discussion chacun) */
+function stuProfs(){
+ if(!isStu()) return [];
+ const st=stuById(AUTH.studentId); if(!st) return [];
+ const by={}, order=[];
+ ((typeof schEns==="function"?schEns().events:[])||[]).forEach(e=>{
+  if(!e||e.evt||!e.profId||!studentInTargets(st,e.classIds||[])) return;
+  const k=String(e.profId);
+  if(!by[k]){ by[k]={pid:k,subjects:[]}; order.push(k); }
+  if(e.subject&&!by[k].subjects.includes(e.subject)) by[k].subjects.push(e.subject);
+ });
+ return order.map(k=>{
+  const p=(AUTH.etabProfs||[]).find(x=>String(x.pid)===k);
+  const nm=p?((p.civ==="Madame"?"Mme ":p.civ==="Monsieur"?"M. ":"")+(p.last||"")).trim():"";
+  return {pid:k,name:nm||"Professeur",subjects:by[k].subjects};
+ }).sort((a,b)=>a.name.localeCompare(b.name,"fr"));
+}
+function legacyPid(){ const P=stuProfs(); if(!P.length) return ""; const r=(AUTH.etabProfs||[]).find(p=>p.resp&&P.some(x=>x.pid===String(p.pid))); return r?String(r.pid):P[0].pid; }
+const msgPid=m=>m.pid?String(m.pid):legacyPid();
+const isProfKey=k=>String(k||"").slice(0,2)==="p:";
+function stuProfOf(key){ return stuProfs().find(p=>"p:"+p.pid===key)||null; }
+function stuThreadKey(m){ return isStu()&&stuProfs().length?"p:"+msgPid(m):"stu"; }
 function unreadMessages(){ return myMessages().filter(m=>incoming(m)&&!isRead(m)); }
 
 function markRead(sid){
  ensure(); let scope=null;
- if(sid){ const GMr=grpMap(); scope=isGrp(sid)?(m=>GMr[m.id]===grpId(sid)):(isStu()?(m=>!GMr[m.id]):(m=>m.sid===sid&&!GMr[m.id])); }
+ if(sid){ const GMr=grpMap(); scope=isGrp(sid)?(m=>GMr[m.id]===grpId(sid)):(isStu()?(m=>!GMr[m.id]&&(!isProfKey(sid)||msgPid(m)===String(sid).slice(2))):(m=>m.sid===sid&&!GMr[m.id])); }
  const list=myMessages().filter(m=>incoming(m)&&!isRead(m)&&(!scope||scope(m)));
  if(!list.length) return false;
  if(isStu()){
@@ -18219,11 +18542,11 @@ function tlItems(){
   }catch(x){ console.warn("appels timeline:",x); }
  }
  const groups={}, GMt=grpMap();
- unreadMessages().forEach(m=>{ const k=GMt[m.id]?"g:"+GMt[m.id]:(isStu()?"stu":m.sid); (groups[k]||(groups[k]=[])).push(m); });
+ unreadMessages().forEach(m=>{ const k=GMt[m.id]?"g:"+GMt[m.id]:(isStu()?stuThreadKey(m):m.sid); (groups[k]||(groups[k]=[])).push(m); });
  Object.keys(groups).forEach(sid=>{
   const l=groups[sid].sort((a,b)=>new Date(a.at)-new Date(b.at)), last=l[l.length-1], ts=new Date(last.at).getTime()||Date.now();
   const G=isGrp(sid)?grpInfo(grpId(sid)):null;
-  const who=isStu()?profName():(G?"":stuName(sid)), iso=isoOf(new Date(ts));
+  const who=isStu()?(stuProfOf(sid)?stuProfOf(sid).name:profName()):(G?"":stuName(sid)), iso=isoOf(new Date(ts));
   out.push({k:"m"+sid,type:"msg",act:"msg",sid,ts,iso,today:iso===today,
    title:G?((l.length>1?l.length+" nouveaux messages dans « ":"Nouveau message dans « ")+G.subject+" »"):((l.length>1?l.length+" nouveaux messages de ":"Nouveau message de ")+who),
    sub:String(last.text||"").replace(/\s+/g," ").slice(0,70)});
@@ -18454,7 +18777,7 @@ function stableTarget(all,ids){
  return null;
 }
 /* id de message -> bid de la discussion de groupe à laquelle il appartient (message du prof envoyé en groupe + réponses de l'élève qui le suivent) */
-const grpBase=()=>isStu()?myMessages():(DATA.messages||[]);
+const grpBase=()=>myMessages();
 function grpMap(){
  const by={}, map={};
  grpBase().forEach(m=>{ (by[m.sid]||(by[m.sid]=[])).push(m); });
@@ -18473,9 +18796,11 @@ function grpMap(){
 function stuGroups(){ return isStu()?grpList().filter(g=>grpMessages(g.bid).length):[]; }
 /* Conversation individuelle côté prof : sans les messages envoyés à une classe / un groupe */
 function soloMessages(sid){
+ const key=sid;
  if(isStu()) sid=AUTH.studentId;
  const GM=grpMap();
- return grpBase().filter(z=>z.sid===sid&&!GM[z.id]);
+ const pf=(isStu()&&isProfKey(key))?key.slice(2):null;
+ return grpBase().filter(z=>z.sid===sid&&!GM[z.id]&&(pf===null||msgPid(z)===pf));
 }
 function threadList(key){ return isGrp(key)?grpMessages(grpId(key)):soloMessages(key); }
 function threadMessages(sid){ return soloMessages(sid).sort((a,b)=>new Date(a.at)-new Date(b.at)); }
@@ -18492,12 +18817,15 @@ function stuGrpThreadHtml(bid){
 /* Liste des conversations de l'élève : échange personnel avec le prof + discussions de classe / groupe */
 function stuListHtml(){
  const GM=grpMap(), solo=myMessages().filter(m=>!GM[m.id]).sort((a,b)=>new Date(a.at)-new Date(b.at));
- const rows=[{key:"stu",name:profName(),grp:false,last:solo[solo.length-1]||null,unread:solo.filter(m=>incoming(m)&&!isRead(m)).length}];
+ const PF=stuProfs();
+ const rows=PF.length
+  ? PF.map(p=>{ const l=solo.filter(m=>msgPid(m)===p.pid); return {key:"p:"+p.pid,name:p.name,ini:(p.name.replace(/^(Mme|M\.)\s+/,"")[0]||"P").toUpperCase(),def:p.subjects.join(", "),grp:false,last:l[l.length-1]||null,unread:l.filter(m=>incoming(m)&&!isRead(m)).length}; })
+  : [{key:"stu",name:profName(),grp:false,last:solo[solo.length-1]||null,unread:solo.filter(m=>incoming(m)&&!isRead(m)).length}];
  stuGroups().forEach(g=>{ const l=grpMessages(g.bid); rows.push({key:"g:"+g.bid,name:g.subject,grp:true,last:l[l.length-1],unread:l.filter(m=>incoming(m)&&!isRead(m)).length}); });
  rows.sort((a,b)=>(b.last?new Date(b.last.at).getTime():0)-(a.last?new Date(a.last.at).getTime():0));
  return rows.map(r=>{
-  const sub=r.last?((incoming(r.last)?"":"Vous : ")+String(r.last.text).replace(/\s+/g," ").slice(0,60)):"Message personnel";
-  return '<button type="button" class="cl-it" data-act="thread" data-sid="'+esc(r.key)+'"><span class="av'+(r.grp?" av-grp":"")+'">'+(r.grp?ICON_GRP:"P")+'</span>'
+  const sub=r.last?((incoming(r.last)?"":"Vous : ")+String(r.last.text).replace(/\s+/g," ").slice(0,60)):(r.def||"Message personnel");
+  return '<button type="button" class="cl-it" data-act="thread" data-sid="'+esc(r.key)+'"><span class="av'+(r.grp?" av-grp":"")+'">'+(r.grp?ICON_GRP:esc(r.ini||"P"))+'</span>'
    +'<span class="cl-tx"><b>'+esc(r.name)+'</b><small>'+esc(sub)+'</small></span>'
    +'<span class="cl-mt">'+(r.last?'<time>'+esc(shortStamp(r.last.at))+'</time>':"")+(r.unread?'<i class="cl-bd">'+r.unread+'</i>':"")+'</span></button>';
  }).join("");
@@ -18578,7 +18906,12 @@ const isRead_p2s=m=>!!m.read||H.read.has(m.id);
 function renderChat(){
  const host=$("homeChat"); if(!host) return;
  if(!isStu()&&H.thread&&(isGrp(H.thread)?!grpInfo(grpId(H.thread)):!stuById(H.thread))) H.thread=null;
- if(isStu()){ if(!stuGroups().length) H.thread="stu"; else if(H.thread&&H.thread!=="stu"&&!(isGrp(H.thread)&&grpInfo(grpId(H.thread)))) H.thread=null; }
+ if(isStu()){
+  const _P=stuProfs(), _okKey=k=>!!k&&(isGrp(k)?!!grpInfo(grpId(k)):(_P.length?_P.some(p=>"p:"+p.pid===k):k==="stu"));
+  if(!_P.length){ if(!stuGroups().length) H.thread="stu"; else if(H.thread&&!_okKey(H.thread)) H.thread=null; }
+  else if(_P.length===1&&!stuGroups().length) H.thread="p:"+_P[0].pid;
+  else if(H.thread&&!_okKey(H.thread)) H.thread=null;
+ }
  const view=H.thread?"thread":"list", sid=isStu()?AUTH.studentId:H.thread;
  const key=view==="thread"?H.thread:"";
  if(H.sel.on&&(isStu()||H.sel.kind!==(view==="list"?"thread":"msg"))){ H.sel.on=false; H.sel.ids.clear(); }
@@ -18598,10 +18931,11 @@ function renderChat(){
  }else{
   const G=isGrp(H.thread)?grpInfo(grpId(H.thread)):null;
   if(H.reply&&(isStu()||!G||H.reply.thread!==H.thread||!findMsg(H.reply.mid))) H.reply=null;
-  const who=G?G.subject:(isStu()?profName():stuName(sid)), sub=G?(isStu()?"Discussion de groupe":(G.label||(G.members.length+" élèves"))):(isStu()?"Professeur":className(sid)), av=G?ICON_GRP:(isStu()?"P":initials(sid));
-  host.innerHTML='<div class="ch-head">'+((isStu()&&!stuGroups().length)?"":'<button type="button" class="ch-back" data-act="back" aria-label="Retour aux conversations">'+ICON_BACK+'</button>')
+  const _sp=(isStu()&&!G)?stuProfOf(H.thread):null;
+  const who=G?G.subject:(isStu()?(_sp?_sp.name:profName()):stuName(sid)), sub=G?(isStu()?"Discussion de groupe":(G.label||(G.members.length+" élèves"))):(isStu()?(_sp&&_sp.subjects.length?_sp.subjects.join(", "):"Professeur"):className(sid)), av=G?ICON_GRP:(isStu()?(_sp?(_sp.name.replace(/^(Mme|M\.)\s+/,"")[0]||"P").toUpperCase():"P"):initials(sid));
+  host.innerHTML='<div class="ch-head">'+((isStu()&&!stuGroups().length&&stuProfs().length<2)?"":'<button type="button" class="ch-back" data-act="back" aria-label="Retour aux conversations">'+ICON_BACK+'</button>')
    +'<span class="av'+(G?" av-grp":"")+'">'+(G?av:esc(av))+'</span><div class="ti"><b>'+esc(who)+'</b>'+(sub?'<small>'+esc(sub)+'</small>':"")+'</div></div>'
-   +'<div class="ch-msgs'+(selMsgOn()?" selecting":"")+'">'+(G?(isStu()?stuGrpThreadHtml(G.bid):grpThreadHtml(G.bid)):threadHtml(sid))+'</div>'
+   +'<div class="ch-msgs'+(selMsgOn()?" selecting":"")+'">'+(G?(isStu()?stuGrpThreadHtml(G.bid):grpThreadHtml(G.bid)):threadHtml(isStu()?H.thread:sid))+'</div>'
    +(selMsgOn()?selBarHtml():replyBarHtml()+'<div class="ch-compose"><textarea rows="1" placeholder="'+(H.reply?"Réponse privée à "+esc(stuName(H.reply.sid))+"…":"Écrire un message…")+'" aria-label="Message"></textarea><button type="button" class="ch-send" data-act="send" aria-label="Envoyer">'+ICON_SEND+'</button></div>');
   const ta=host.querySelector("textarea"); if(ta){ ta.value=H.draft[key]||""; autosize(ta); }
   if(selMsgOn()) selRefresh();
@@ -18641,17 +18975,19 @@ async function sendFromThread(){
   const at=new Date().toISOString();
   if(H.reply&&H.reply.thread===H.thread&&stuById(H.reply.sid)){
    const rsid=H.reply.sid;
-   DATA.messages.push({id:uid("m"),sid:rsid,dir:"p2s",text,at,read:false,bid:g.bid,bl:g.label,bs:g.subject,priv:true});
+   DATA.messages.push({id:uid("m"),sid:rsid,dir:"p2s",pid:PID(),text,at,read:false,bid:g.bid,bl:g.label,bs:g.subject,priv:true});
    H.reply=null; ta.value=""; H.draft[H.thread]=""; H.pendingScroll=true; saveData(); renderChat();
    $("homeChat").querySelector("textarea")?.focus(); toast("Réponse privée envoyée à "+stuName(rsid)+"."); return;
   }
-  g.members.filter(stuById).forEach(x=>DATA.messages.push({id:uid("m"),sid:x,dir:"p2s",text,at,read:false,bid:g.bid,bl:g.label,bs:g.subject}));
+  g.members.filter(stuById).forEach(x=>DATA.messages.push({id:uid("m"),sid:x,dir:"p2s",pid:PID(),text,at,read:false,bid:g.bid,bl:g.label,bs:g.subject}));
   ta.value=""; H.draft[H.thread]=""; H.pendingScroll=true; saveData(); renderChat();
   $("homeChat").querySelector("textarea")?.focus(); return;
  }
  const sid=isStu()?AUTH.studentId:H.thread;
  const m={id:uid("m"),sid,dir:isStu()?"s2p":"p2s",text,at:new Date().toISOString(),read:false};
- if(isStu()) m.bid=isGrp(H.thread)?grpId(H.thread):"-";   /* « - » = conversation personnelle ; sinon identifiant de la discussion de groupe */
+ if(isStu()) m.bid=isGrp(H.thread)?grpId(H.thread):"-";
+ if(isStu()&&isProfKey(H.thread)) m.pid=String(H.thread).slice(2);   /* professeur destinataire */
+ if(!isStu()&&PID()) m.pid=PID();   /* « - » = conversation personnelle ; sinon identifiant de la discussion de groupe */
  if(isStu()){
   if(isPrev()){
    const P=window.EDPREV; if(P){ (P.msgs||(P.msgs=[])).push(m); }
@@ -18685,7 +19021,7 @@ function sendNewMsg(){
  ensure(); const at=new Date().toISOString(), st=stableTarget(MM.pick.all,ids), multi=ids.length>1||!!st;
  const bid=st?st.bid:(ids.length>1?uid("b"):""), bl=multi?(st?st.label:audLabel(MM.pick.all,new Set(ids))):"";
  const bs=multi?(st?st.label:(($("mmSubject")&&$("mmSubject").value.trim())||bl)):"";
- ids.forEach(sid=>DATA.messages.push(multi?{id:uid("m"),sid,dir:"p2s",text,at,read:false,bid,bl,bs}:{id:uid("m"),sid,dir:"p2s",text,at,read:false,bid,bl}));
+ ids.forEach(sid=>DATA.messages.push(multi?{id:uid("m"),sid,dir:"p2s",pid:PID(),text,at,read:false,bid,bl,bs}:{id:uid("m"),sid,dir:"p2s",pid:PID(),text,at,read:false,bid,bl}));
  saveData(); closeModal("msgModal");
  if(!multi){ H.thread=ids[0]; H.pendingScroll=true; }
  else { H.thread="g:"+bid; H.pendingScroll=true; }
@@ -19109,6 +19445,10 @@ body.admin-mode .topbar,body.admin-mode .container,body.admin-mode #locksBar,bod
 .ad-ov{position:fixed;inset:0;z-index:350;background:var(--bg);display:flex;flex-direction:column}
 .ad-ovbar{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:#fff;border-bottom:1px solid var(--border)}
 .ad-ovbox{flex:1;padding:10px}.ad-ovbox .ad-frame{height:100%}
+/* consultation d'un compte : le compte occupe toute la page, sans barre ni cadre autour */
+.ad-ov-full{z-index:600;background:var(--bg)}
+.ad-ov-full .ad-ovbox{padding:0;position:relative;flex:1}
+.ad-ov-full .ad-frame{position:absolute;inset:0;width:100%;height:100%;min-height:0;border:0;border-radius:0}
 .ed-ro-flag{position:fixed;bottom:10px;left:10px;z-index:500;background:#92400e;color:#fff;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:600;pointer-events:none;opacity:.92}
 
 /* ═══ Popup de correction prof : présentation identique à celle de l'élève ═══ */
@@ -19218,7 +19558,16 @@ if(typeof EDC!=="undefined"&&EDC&&EDC.ro){
  document.body.classList.add("consult-ro");
  try{ cloudPush=async function(){}; }catch(e){}
  const b=document.createElement("div"); b.className="ed-ro-flag"; b.textContent=EDC.snap?"Version sauvegardée — lecture seule":"Consultation — lecture seule"; document.body.appendChild(b);
+ /* bouton « Quitter l'aperçu » (à la place de Déconnexion) : demande à l'administration de fermer la consultation */
+ const xb=document.getElementById("edPreviewExitTop");
+ if(xb){ xb.textContent="Quitter l'aperçu"; xb.title="Quitter l'aperçu"; xb.addEventListener("click",e=>{ e.preventDefault(); e.stopImmediatePropagation(); try{ parent.postMessage({edConsult:"exit"},"*"); }catch(x){} },true); }
 }
+/* côté administration : fermeture de la consultation demandée par le compte affiché */
+window.addEventListener("message",e=>{
+ const d=e.data; if(!d||d.edConsult!=="exit") return;
+ const ok=[...document.querySelectorAll(".ad-ov-full iframe")].some(f=>f.contentWindow===e.source); if(!ok) return;
+ document.querySelectorAll(".ad-ov-full").forEach(o=>o.remove());
+});
 function mountFrame(box,p,snap){
  box.innerHTML=""; const f=document.createElement("iframe");
  f.name="ED_CONSULT:"+JSON.stringify({u:p.user,p:p.pass,ro:1,snap:snap||""});
@@ -19250,13 +19599,13 @@ function profTable(arr){
 }
 const blank=()=>({civ:"Monsieur",first:"",last:"",user:"",pass:"",resp:false});
 /* Responsable : un seul par établissement. Donner l'étoile à un autre professeur = transfert (confirmation). Retourne false si annulé. */
-function setResp(arr,i,val){
+async function setResp(arr,i,val){
  const p=arr[i]; if(!p) return false;
  if(!val){ p.resp=false; return true; }
  const k=arr.findIndex((x,j)=>j!==i&&x.resp);
  if(k>=0){
   const nm=x=>(x.civ==="Madame"?"Mme ":"M. ")+(x.first?x.first+" ":"")+(x.last||"(nouveau)");
-  if(!confirm("Transférer la responsabilité de "+nm(arr[k])+" à "+nm(p)+" ?\n\n"+nm(arr[k])+" ne sera plus responsable (plus de gestion des emplois du temps, classes, groupes, salles, congés ni élèves).\nLe changement sera effectif après « Enregistrer ».")) return false;
+  if(!(await siteConfirm("Transférer la responsabilité de "+nm(arr[k])+" à "+nm(p)+" ?\n\n"+nm(arr[k])+" ne sera plus responsable (plus de gestion des emplois du temps, classes, groupes, salles, congés ni élèves).\nLe changement sera effectif après « Enregistrer »."))) return false;
   arr.forEach(x=>{ x.resp=false; });
  }
  p.resp=true; return true;
@@ -19277,19 +19626,19 @@ function profPopup(e,i,isNew){
   f("last","Nom")+f("first","Prénom")+f("user","Identifiant")+f("pass","Mot de passe")+
   '<label class="ad-chk" style="margin-top:14px"><input type="checkbox" data-pp="resp"'+(p.resp?" checked":"")+'><span><strong>Responsable</strong><br><small>Gère emplois du temps, classes, groupes, salles, congés et élèves.</small></span></label>'+
   (isNew?"":'<div class="ad-row"><button type="button" class="btn btn-danger" data-del>Retirer ce professeur</button></div>');
- const m=modal(isNew?"Nouveau professeur":"Paramètres du professeur",body,"Valider",mm=>{
+ const m=modal(isNew?"Nouveau professeur":"Paramètres du professeur",body,"Valider",async mm=>{
   const g=k=>{ const el=mm.querySelector('[data-pp="'+k+'"]'); return el.type==="checkbox"?el.checked:el.value.trim(); };
   const v={civ:g("civ"),last:g("last"),first:g("first"),user:g("user"),pass:mm.querySelector('[data-pp="pass"]').value,resp:g("resp")};
   if(!v.last||!v.user||!v.pass) return "Le nom, l'identifiant et le mot de passe sont obligatoires.";
   if(d.profs.some((x,k)=>k!==i&&String(x.user).trim()===v.user)) return "Cet identifiant est déjà utilisé dans cet établissement.";
-  if(v.resp&&!p.resp){ if(!setResp(d.profs,i,true)) return "Transfert de responsabilité annulé."; }
+  if(v.resp&&!p.resp){ if(!(await setResp(d.profs,i,true))) return "Transfert de responsabilité annulé."; }
   else if(!v.resp) p.resp=false;
   delete v.resp; Object.assign(p,v); done=true; render(); return "";
  },460);
- m.addEventListener("click",ev=>{
+ m.addEventListener("click",async ev=>{
   if(ev.target.closest("[data-del]")){
    if(d.profs.length<2){ alert("Un établissement doit garder au moins un professeur."); return; }
-   if(confirm("Retirer ce professeur ? Son carnet sera supprimé à l'enregistrement.")){ d.profs.splice(i,1); done=true; m.remove(); render(); }
+   if((await siteConfirm("Retirer ce professeur ? Son carnet sera supprimé à l'enregistrement."))){ d.profs.splice(i,1); done=true; m.remove(); render(); }
    return; }
   if(isNew&&!done&&(ev.target.closest("[data-x]")||ev.target===m)){ d.profs.splice(i,1); done=true; render(); }
  });
@@ -19390,7 +19739,7 @@ function cPick(i){
  const s=cItems[i]; if(!s) return;
  if(!s.user||!s.pass){ alert("Cet élève n'a pas de compte (identifiant et mot de passe vides)."); return; }
  const inp=$("adSearch"); inp.value=s.first+" "+s.last; const c=$("adClr"); if(c) c.hidden=false;
- cClose(); const st=$("adStage"); if(st) mountFrame(st,{user:s.user,pass:s.pass},"");
+ cClose(); overlay({user:s.user,pass:s.pass},"",s.first+" "+s.last);
 }
 document.addEventListener("input",e=>{ if(e.target&&e.target.id==="adSearch"){ const c=$("adClr"); if(c) c.hidden=!e.target.value; cRender(); } });
 document.addEventListener("focusin",e=>{ if(e.target&&e.target.id==="adSearch"&&e.target.value.trim()) cRender(); });
@@ -19412,9 +19761,9 @@ document.addEventListener("touchend",e=>{ const it=e.target.closest&&e.target.cl
 document.addEventListener("mousemove",e=>{ const it=e.target.closest&&e.target.closest("#adList .cs-it"); if(it&&+it.dataset.i!==cAct) cSetAct(+it.dataset.i); });
 function findProf(eid,pid){ const e=S.reg.etabs.find(x=>x.id===eid); return e&&e.profs.find(p=>p.pid===pid); }
 function overlay(p,snap,title){
- const o=document.createElement("div"); o.className="ad-ov";
- o.innerHTML='<div class="ad-ovbar"><strong>'+E(title)+'</strong><button type="button" class="btn" data-x>Fermer</button></div><div class="ad-ovbox"></div>';
- o.addEventListener("click",e=>{ if(e.target.closest("[data-x]")) o.remove(); });
+ /* le compte (ou la version sauvegardée) s'ouvre sur toute la page ; on en sort par « Quitter l'aperçu » */
+ const o=document.createElement("div"); o.className="ad-ov ad-ov-full"; o.setAttribute("aria-label",title||"Consultation");
+ o.innerHTML='<div class="ad-ovbox"></div>';
  document.body.appendChild(o); mountFrame(o.querySelector(".ad-ovbox"),p,snap);
 }
 function newEtab(){
@@ -19428,7 +19777,7 @@ function newEtab(){
  const draw=()=>{ m.querySelector("#adNProfs").innerHTML=profTable(nw.profs); };
  m.addEventListener("input",e=>{ const t=e.target; if(t.dataset.f&&t.dataset.f!=="resp"&&t.closest("#adNProfs")) nw.profs[t.dataset.i][t.dataset.f]=t.value; });
  m.addEventListener("change",e=>{ const t=e.target; if(!t.dataset.f||!t.closest("#adNProfs")) return;
-  if(t.dataset.f==="resp"){ setResp(nw.profs,+t.dataset.i,t.checked); draw(); }
+  if(t.dataset.f==="resp"){ setResp(nw.profs,+t.dataset.i,t.checked).then(()=>draw()); }
   else nw.profs[t.dataset.i][t.dataset.f]=t.value; });
  m.addEventListener("click",e=>{ if(e.target.id==="adNAdd"){ nw.profs.push(blank()); draw(); } const d=e.target.closest('[data-a="delprof"]'); if(d&&nw.profs.length>1){ nw.profs.splice(+d.dataset.i,1); if(!nw.profs.some(x=>x.resp)) nw.profs[0].resp=true; draw(); } });
  draw();
@@ -19441,14 +19790,14 @@ document.addEventListener("click",async ev=>{
  else if(a==="sub"){ S.sub=b.dataset.k; render(); }
  else if(a==="new") newEtab();
  else if(a==="addprof"){ const d=dr(e); d.profs.push(blank()); render(); profPopup(e,d.profs.length-1,true); }
- else if(a==="star"){ const arr=dr(e).profs, i=+b.dataset.i; if(arr[i]){ setResp(arr,i,!arr[i].resp); render(); } }
+ else if(a==="star"){ const arr=dr(e).profs, i=+b.dataset.i; if(arr[i]){ setResp(arr,i,!arr[i].resp).then(()=>render()); } }
  else if(a==="gear"){ profPopup(e,+b.dataset.i,false); }
- else if(a==="delprof"){ const d=dr(e); if(d.profs.length<2){ alert("Un établissement doit garder au moins un professeur."); return; } if(confirm("Retirer ce professeur ? Son carnet sera supprimé à l'enregistrement.")){ d.profs.splice(+b.dataset.i,1); render(); } }
- else if(a==="save"){ const d=dr(e); d.profs.forEach(p=>{ p.resp=!!p.resp; }); if(!d.profs.some(p=>p.resp)&&!confirm("Aucun professeur n'est responsable : personne ne pourra gérer les emplois du temps, classes, groupes, salles, congés ni élèves. Enregistrer quand même ?")) return; const j=await call("adminSaveEtab",{id:e.id,name:d.name,profs:d.profs}); if(j){ delete S.draft[e.id]; render(); } }
- else if(a==="delEtab"){ if(confirm("Supprimer « "+e.name+" » et TOUTES ses données (professeurs, élèves, sauvegardes) ? Irréversible.")&&confirm("Dernière confirmation : supprimer définitivement « "+e.name+" » ?")){ const j=await call("adminDelEtab",{id:e.id}); if(j){ delete S.draft[e.id]; S.tab=""; render(); } } }
+ else if(a==="delprof"){ const d=dr(e); if(d.profs.length<2){ alert("Un établissement doit garder au moins un professeur."); return; } if((await siteConfirm("Retirer ce professeur ? Son carnet sera supprimé à l'enregistrement."))){ d.profs.splice(+b.dataset.i,1); render(); } }
+ else if(a==="save"){ const d=dr(e); d.profs.forEach(p=>{ p.resp=!!p.resp; }); if(!d.profs.some(p=>p.resp)&&!(await siteConfirm("Aucun professeur n'est responsable : personne ne pourra gérer les emplois du temps, classes, groupes, salles, congés ni élèves. Enregistrer quand même ?"))) return; const j=await call("adminSaveEtab",{id:e.id,name:d.name,profs:d.profs}); if(j){ delete S.draft[e.id]; render(); } }
+ else if(a==="delEtab"){ if((await siteConfirm("Supprimer « "+e.name+" » et TOUTES ses données (professeurs, élèves, sauvegardes) ? Irréversible."))&&(await siteConfirm("Dernière confirmation : supprimer définitivement « "+e.name+" » ?"))){ const j=await call("adminDelEtab",{id:e.id}); if(j){ delete S.draft[e.id]; S.tab=""; render(); } } }
  else if(a==="snapSave"){ const n=($("adSnapName").value||"").trim(); if(!n){ alert("Donnez un nom à la sauvegarde."); return; } if(await call("adminSnapSave",{etabId:e.id,name:n})) render(); }
- else if(a==="snapDel"){ if(confirm("Supprimer cette sauvegarde ?")&&await call("adminSnapDel",{id:b.dataset.id})) render(); }
- else if(a==="publish"){ const s=S.snaps.find(x=>x.id===b.dataset.id); if(confirm("Publier la version « "+s.name+" » ?\nLes données actuelles de tous les professeurs de l'établissement seront remplacées (l'état actuel est sauvegardé avant).")&&await call("adminSnapRestore",{id:s.id})){ delete S.draft[e.id]; render(); alert("Version publiée."); } }
+ else if(a==="snapDel"){ if((await siteConfirm("Supprimer cette sauvegarde ?"))&&await call("adminSnapDel",{id:b.dataset.id})) render(); }
+ else if(a==="publish"){ const s=S.snaps.find(x=>x.id===b.dataset.id); if((await siteConfirm("Publier la version « "+s.name+" » ?\nLes données actuelles de tous les professeurs de l'établissement seront remplacées (l'état actuel est sauvegardé avant)."))&&await call("adminSnapRestore",{id:s.id})){ delete S.draft[e.id]; render(); alert("Version publiée."); } }
  else if(a==="csnap"){ const s=S.snaps.find(x=>x.id===b.dataset.id), sel=b.parentNode.querySelector("select"), p=e.profs.find(x=>x.pid===sel.value); overlay(p,s.id,"Version « "+s.name+" » — "+p.last); }
  else if(a==="cRefresh"){ ev.preventDefault(); P.list=null; loadPeople(true); }
 });
@@ -19470,10 +19819,10 @@ document.addEventListener("click",async ev=>{
   const y=new Date().getFullYear(), m=new Date().getMonth()<7?y-1:y;
   const name=await ask("Renommer cette sauvegarde","Nom de la sauvegarde créée avant la réinitialisation","Année "+m+"-"+(m+1),"Sauvegarder et réinitialiser");
   if(!name) return;
-  if(!confirm("Réinitialiser : "+Object.keys(o).map(k=>opts.find(x=>x[0]===k)[1]).join(", ")+" ?\nUne sauvegarde « "+name+" » est créée avant.")) return;
+  if(!(await siteConfirm("Réinitialiser : "+Object.keys(o).map(k=>opts.find(x=>x[0]===k)[1]).join(", ")+" ?\nUne sauvegarde « "+name+" » est créée avant."))) return;
   try{ if(typeof IS_MODIFIED!=="undefined"&&IS_MODIFIED) await cloudPush(); }catch(x){}
   try{ const j=await api("resetYear",{opts:o,name:name}); if(!j.ok){ alert(j.error||"Erreur"); return; }
-   alert("Sauvegarde « "+name+" » créée. Réinitialisation effectuée."); location.reload(); }
+   await siteAlert("Sauvegarde « "+name+" » créée. Réinitialisation effectuée."); location.reload(); }
   catch(x){ alert("Échec : "+(x.message||x)); }
  });
 })();
@@ -19508,14 +19857,57 @@ document.addEventListener("click",async ev=>{
   sel.innerHTML=l.map(p=>'<option value="'+esc(p.pid)+'">'+esc((p.civ==="Madame"?"Mme ":"M. ")+(p.last||""))+'</option>').join("");
   const ev=SCH.editId?schEns().events.find(x=>x.id===SCH.editId):null;
   sel.value=(ev&&ev.profId)||AUTH.pid||sel.value; };
- /* notes : seulement pour les classes/groupes où le prof a cours, dans la matière demandée */
- const own=()=>(schEns().events||[]).filter(e=>!e.evt&&e.profId&&e.profId===AUTH.pid);
- const okClass=(t,sub)=>own().some(e=>e.subject===sub&&(e.classIds||[]).includes(t));
- const okStu=(sid,sub)=>{ const st=(DATA.students||[]).find(s=>s.id===sid); return !!st&&own().some(e=>e.subject===sub&&studentInTargets(st,e.classIds)); };
- const deny=sub=>alert("Vous ne pouvez saisir de note que pour une classe ou un groupe avec lequel vous avez au moins un cours de la matière « "+sub+" » dans votre emploi du temps.");
+ /* notes : un professeur non responsable ne peut noter que les classes (ou groupes) qu'il a AU MOINS UNE FOIS dans son emploi du temps
+    (toutes dates confondues) et, dans ces classes, que les matières qu'il y a enseignées au moins une fois. */
+ const own=()=>(schEns().events||[]).filter(e=>!e.evt&&e.profId&&String(e.profId)===String(AUTH.pid));
+ const grpCovered=(g,e)=>{ const m=g.memberIds||[]; return m.length>0&&m.every(id=>{ const st=(DATA.students||[]).find(x=>x.id===id); return !!st&&studentInTargets(st,e.classIds); }); };
+ const okClass=(t,sub)=>{ if(!t) return false; const g=(typeof grpById==="function")?grpById(t):null;
+  return own().some(e=>(sub==null||e.subject===sub)&&((e.classIds||[]).includes(t)||(g&&grpCovered(g,e)))); };
+ const okStu=(sid,sub)=>{ const st=(DATA.students||[]).find(s=>s.id===sid); return !!st&&own().some(e=>(sub==null||e.subject===sub)&&studentInTargets(st,e.classIds)); };
+ window.edNoteDenied=(t,sub)=>lim()&&!okClass(t,sub);
+ /* affichage : un professeur non responsable ne voit que ses élèves, classes, groupes et les matières qu'il y a enseignées (notes, sanctions, vie scolaire) */
+ window.edOkStu=(sid,sub)=>!lim()||okStu(sid,sub);
+ window.edOkCls=(t,sub)=>!lim()||okClass(t,sub);
+ /* devoirs : uniquement ses propres cours dans l'emploi du temps ; un devoir pour UN SEUL élève reste possible n'importe quel jour */
+ window.edOwnEvt=e=>!lim()||(!e.evt&&!!e.profId&&String(e.profId)===String(AUTH.pid));
+ window.edHwOk=(t,sub)=>{ if(!lim()) return true; if(isSoloId(t)) return okStu(String(t).slice(SOLO_PFX.length),sub); return okClass(t,sub); };
+ window.edHwDenied=d=>{ if(!lim()) return false;
+  if(!window.edHwOk(d.classId,d.subject)){ alert("Vous ne pouvez donner un devoir qu'à une classe, un groupe ou un élève que vous avez dans votre emploi du temps, et dans une matière que vous y enseignez."); return true; }
+  if(isSoloId(d.classId)) return false;
+  if(!homeworkLessonDates(d.classId,d.subject).has(d.dateISO)){ alert("Vous ne pouvez donner un devoir à une classe ou un groupe que les jours où vous avez cours avec elle, dans la matière concernée (seul un devoir pour un élève seul peut être mis n'importe quel jour)."); return true; }
+  return false; };
+ const deny=sub=>alert(sub?("Vous ne pouvez saisir de note que pour une classe ou un groupe que vous avez au moins une fois dans votre emploi du temps, et uniquement dans une matière que vous y avez enseignée (ici : « "+sub+" » n'a jamais été enseignée par vous à cette classe)."):"Vous ne pouvez saisir de note que pour une classe ou un groupe que vous avez au moins une fois dans votre emploi du temps.");
  const nf=$("noteForm"), cf=$("classEvalForm");
  nf&&nf.addEventListener("submit",e=>{ if(!lim()) return; const sub=$("noteSubject").value; if(!okStu(NOTE_FORM_STATE.studentId,sub)){ e.preventDefault(); e.stopImmediatePropagation(); deny(sub); } },true);
  cf&&cf.addEventListener("submit",e=>{ if(!lim()) return; const sub=$("classSubject").value; if(!okClass($("classSelect").value,sub)){ e.preventDefault(); e.stopImmediatePropagation(); deny(sub); } },true);
+ /* listes déroulantes : seulement les classes, élèves et matières autorisés */
+ const subjOptions=names=>names.map(n=>'<option>'+esc(n)+'</option>').join("");
+ const allSubjects=()=>(SUBJECT_REGISTRY||[]).map(x=>typeof x==="object"?x.name:x);
+ let busy=false;
+ function filterSelects(){
+  if(!lim()||busy) return; busy=true;
+  try{
+   const cs=$("classSelect"), sb=$("classSubject"), ns=$("noteStudentSelect"), nb=$("noteSubject");
+   if(cs){ [...cs.options].forEach(o=>{ if(o.value&&!okClass(o.value,null)) o.remove(); });
+    cs.querySelectorAll("optgroup").forEach(g=>{ if(!g.children.length) g.remove(); }); }
+   if(sb&&cs){ const t=cs.value; [...sb.options].forEach(o=>{ if(!okClass(t,o.value||o.textContent)) o.remove(); }); }
+   if(ns){ [...ns.options].forEach(o=>{ if(o.value&&!okStu(o.value,null)) o.remove(); }); }
+   if(nb&&ns){ const sid=ns.value; [...nb.options].forEach(o=>{ if(!okStu(sid,o.value||o.textContent)) o.remove(); }); }
+  }finally{ busy=false; }
+ }
+ window.edFilterNoteSelects=filterSelects;
+ const cs0=$("classSelect"), ns0=$("noteStudentSelect");
+ cs0&&cs0.addEventListener("change",()=>{ if(!lim()) return; const sb=$("classSubject"); if(!sb) return; const prev=sb.value;
+  sb.innerHTML=subjOptions(allSubjects()); filterSelects(); if([...sb.options].some(o=>o.value===prev)) sb.value=prev; });
+ ns0&&ns0.addEventListener("change",()=>{ if(!lim()) return; const nb=$("noteSubject"); if(!nb) return;
+  const st=(DATA.students||[]).find(s=>s.id===ns0.value), cl=st&&(DATA.classes||[]).find(c=>c.id===st.classId);
+  const names=(cl&&Array.isArray(cl.subjects)&&cl.subjects.length)?cl.subjects.map(x=>typeof x==="object"?x.name:x):allSubjects();
+  const prev=nb.value; nb.innerHTML=subjOptions(names); filterSelects(); if([...nb.options].some(o=>o.value===prev)) nb.value=prev; });
+ try{ const mo=new MutationObserver(()=>filterSelects());
+  ["classSelect","classSubject","noteStudentSelect","noteSubject"].forEach(id=>{ const el=$(id); if(el) mo.observe(el,{childList:true,subtree:true}); }); }catch(e){}
+ const _roleInit=window.edRoleInit; window.edRoleInit=function(j){ const r=_roleInit.apply(this,arguments); try{ filterSelects(); }catch(e){}
+  if(lim()) ["renderStudentList","renderClassList","renderAppreciationStudentList","renderVie"].forEach(n=>{ try{ if(typeof window[n]==="function") window[n](); }catch(e){} });
+  return r; };
 })();
 </script>
 </body>
