@@ -1039,6 +1039,9 @@ body.student-mode #homeworkView .card-header strong::after{ content:""; }
 #studentListUI .pl-item + .pl-item,#appreciationListUI .pl-item + .pl-item{ margin-top:2px }
 #studentListUI .pl-item:hover,#appreciationListUI .pl-item:hover{ background:transparent; border-color:#109ef5 }
 #studentListUI .pl-item.sel:hover,#appreciationListUI .pl-item.sel:hover{ background:#dbf0fd }
+/* Élève avec une note EA : fin trait rouge + prénom en rouge */
+#studentListUI .pl-item.pl-ea,#studentListUI .pl-item.pl-ea:hover{ border-color:#dc2626 }
+#studentListUI .pl-item.pl-ea .pl-ea-first{ color:#dc2626 }
 /* Bouton d'import dans les en-têtes de carte */
 .card-header .hdr-left{ display:flex; align-items:center; gap:12px; min-width:0 }
 .card-header .import-btn{ margin:0; align-self:center; padding:6px 9px; border:1px solid #cbd5e1; background:#fff; color:#0471b5 }
@@ -2021,7 +2024,12 @@ header .header-actions{margin-left:auto;align-items:center}
 .homework-calendar-day.hw-done:hover{ background:#bbf7d0; border-color:#22c55e }
 .homework-calendar-day.teacher-past-homework{ background:#d7effe; border-color:#8dd0fb; color:#0471b5 }
 .homework-calendar-day.teacher-past-homework:hover{ background:#c5e8fd; border-color:#4db5f5 }
-.homework-calendar-day.is-selected.hw-past,.homework-calendar-day.is-selected.hw-todo,.homework-calendar-day.is-selected.hw-done,.homework-calendar-day.is-selected.teacher-past-homework{
+/* Prof : devoirs passés -> vert si tous cochés, rouge sinon */
+.homework-calendar-day.teacher-past-done{ background:#dcfce7; border-color:#4ade80; color:#15803d }
+.homework-calendar-day.teacher-past-done:hover{ background:#bbf7d0; border-color:#22c55e }
+.homework-calendar-day.teacher-past-todo{ background:#fee2e2; border-color:#f87171; color:#b91c1c }
+.homework-calendar-day.teacher-past-todo:hover{ background:#fecaca; border-color:#ef4444 }
+.homework-calendar-day.is-selected.hw-past,.homework-calendar-day.is-selected.hw-todo,.homework-calendar-day.is-selected.hw-done,.homework-calendar-day.is-selected.teacher-past-homework,.homework-calendar-day.is-selected.teacher-past-done,.homework-calendar-day.is-selected.teacher-past-todo{
  background:#0080d0; border-color:#007ac6; color:#fff
 }
 .hw-done-row{ display:inline-flex; align-items:center; gap:8px; cursor:pointer; font-weight:700; font-size:14px; color:#334155; user-select:none; -webkit-user-select:none; flex:none }
@@ -5516,6 +5524,9 @@ document.getElementById("deleteStudentBtn").addEventListener("click",()=>{
 
     if(hasMissing) opt.style.color = "var(--danger)";
     else if(hasHidden) opt.style.color = "var(--primary)";
+
+    /* note « EA » (en attente) : élève encadré d'un fin trait rouge, prénom en rouge */
+    if(sNotes.some(n => n && n.noteText === "EA")){ opt.dataset.ea="1"; opt.dataset.last=s.last; opt.dataset.first=s.first; }
     
     list.appendChild(opt);
    });
@@ -5535,6 +5546,7 @@ function renderPrettyList(selId,uiId,kind){
   d.className="pl-item"+(o.value===ui.dataset.sel?" sel":"");
   d.dataset.value=o.value; d.textContent=o.textContent; d.tabIndex=0; d.setAttribute("role","option");
   if(o.style.color) d.style.color=o.style.color;
+  if(o.dataset.ea==="1"){ d.classList.add("pl-ea"); d.innerHTML=escHtml(o.dataset.last)+' <span class="pl-ea-first">'+escHtml(o.dataset.first)+'</span>'; }
   ui.appendChild(d);
  });
  if(ui.dataset.sel) sel.value=ui.dataset.sel;
@@ -9735,6 +9747,7 @@ classEvalForm.addEventListener("submit",e=>{
     chg("subject",targetEval.subject,subject); chg("label",targetEval.label,label);
     chg("date",targetEval.isoDate,isoDate); chg("outof",Number(targetEval.outof),Number(outof));
     chg("period",targetEval.period,period); chg("defaultImportant",!!targetEval.defaultImportant,!!defaultImportant);
+    chg("coef",Number(targetEval.coef),Number(coef));   /* coef modifié par le prof : la synchro du test ne le remet plus au coef programmé */
     if(ed.has("date")) ed.add("period");
     targetEval.hwEdited=[...ed];
   }
@@ -14618,7 +14631,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
    }
    cells.push(`
     <button type="button" ${disabled ? "disabled aria-disabled=\"true\"" : ""}
-      class="homework-calendar-day ${teacherFrame ? "has-homework" : ""} ${teacherFrame && teacherAllDone.has(dateISO) ? "teacher-all-done" : ""} ${teacherPastBlue ? "teacher-past-homework" : ""} ${stuCls} ${isSelected ? "is-selected" : ""} ${isToday ? "is-today" : ""} ${disabled ? "is-disabled" : ""}"
+      class="homework-calendar-day ${teacherFrame ? "has-homework" : ""} ${teacherFrame && teacherAllDone.has(dateISO) ? "teacher-all-done" : ""} ${teacherPastBlue ? (teacherAllDone.has(dateISO) ? "teacher-past-done" : "teacher-past-todo") : ""} ${stuCls} ${isSelected ? "is-selected" : ""} ${isToday ? "is-today" : ""} ${disabled ? "is-disabled" : ""}"
       data-hw-action="select-date"
       data-date="${dateISO}">
       ${day}
@@ -15798,8 +15811,17 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
     if(ev.coef==null || isNaN(Number(ev.coef))){ ev.coef=1; if(isProf) changed=true; }
     if(isProf){
      const _tc=(test.coef!==undefined&&test.coef!==null&&test.coef!==""&&isFinite(Number(test.coef))&&Number(test.coef)>=0)?Number(test.coef):null;
-     if(ev.hwCoefSrc===undefined){ ev.hwCoefSrc=ev.coef; changed=true; }
-     else if(_tc!==null && _tc!==ev.hwCoefSrc){ if(Number(ev.coef)===Number(ev.hwCoefSrc)) ev.coef=_tc; ev.hwCoefSrc=_tc; changed=true; }   /* coef modifié à la main par le prof : conservé */
+     const _ed=new Set(Array.isArray(ev.hwEdited)?ev.hwEdited:[]);
+     if(ev.hwCoefSrc===undefined){
+      /* évaluation sans coef d'origine mémorisé : tout écart avec le coef du test est un réglage du prof → conservé */
+      ev.hwCoefSrc=(_tc!==null)?_tc:Number(ev.coef);
+      if(_tc!==null && Number(ev.coef)!==_tc){ _ed.add("coef"); ev.hwEdited=[..._ed]; }
+      changed=true;
+     }
+     else if(_tc!==null && _tc!==ev.hwCoefSrc){
+      if(!_ed.has("coef") && Number(ev.coef)===Number(ev.hwCoefSrc)) ev.coef=_tc;   /* coef modifié à la main par le prof : conservé */
+      ev.hwCoefSrc=_tc; changed=true;
+     }
     }   /* le coef modifié par le prof est conservé */
     const members=(cls.memberIds||[]).filter(id=>isProf || id===myId);
     members.forEach(sid=>{
@@ -17567,7 +17589,8 @@ document.getElementById("appelCtl").addEventListener("click",e=>{
 document.getElementById("appelCtl").addEventListener("change",e=>{ if(e.target.id==="apSel"){ const ev=schEns().events.find(x=>x.id===e.target.value); if(ev){ apLoad(ev); renderAppel(); } } });
 
 /* ---------- Vie scolaire ---------- */
-const VS={cls:"",grp:"",sid:"",tab:"eleves"};
+const VS={cls:"",grp:"",sid:"",tab:"eleves",q:""};
+function vsNorm(t){ return String(t||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim(); }
 const VS_ICO={
  san:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"><path d="M12 3 2 21h20z"/><path d="M12 10v5M12 18v.5"/></svg>',
  abs:'<svg viewBox="0 0 24 24" width="22" height="22" fill="#fff"><path d="M12 2C7.6 2 5 5.2 5 9.5V22l2.3-2 2.4 2 2.3-2 2.3 2 2.4-2 2.3 2V9.5C19 5.2 16.4 2 12 2z"/><circle cx="9.3" cy="10" r="1.4" fill="#0080d0"/><circle cx="14.7" cy="10" r="1.4" fill="#0080d0"/></svg>',
@@ -17615,10 +17638,10 @@ function renderVie(){
  const root=document.getElementById("vieBody"); if(!root) return;
  if(AUTH.role==="eleve"){ root.innerHTML=vsContent(AUTH.studentId); return; }
  const _vg=VS.grp?grpById(VS.grp):null;
- const list=DATA.students.filter(s=>window.edOkStu(s.id,null)&&(!VS.cls||s.classId===VS.cls)&&(!VS.grp||(_vg&&(_vg.memberIds||[]).includes(s.id)))).sort(cmpStu);
+ const list=DATA.students.filter(s=>window.edOkStu(s.id,null)&&(!VS.cls||s.classId===VS.cls)&&(!VS.grp||(_vg&&(_vg.memberIds||[]).includes(s.id)))&&(!VS.q||vsNorm(s.last+" "+s.first).includes(vsNorm(VS.q))||vsNorm(s.first+" "+s.last).includes(vsNorm(VS.q)))).sort(cmpStu);
  if(VS.tab==="hist"){ root.innerHTML=vsTabs()+histHtml(); holMark(root); return; }
  const prevList=root.querySelector(".vs-list"), keepTop=prevList?prevList.scrollTop:0, keepY=window.scrollY;
- root.innerHTML=vsTabs()+'<div class="vs-split"><div class="vs-side"><div class="filter-pair"><select id="vsCls" class="btn" style="flex:1 1 0;min-width:0"><option value="">Toutes les classes</option>'+DATA.classes.filter(c=>window.edOkCls(c.id,null)).map(c=>'<option value="'+c.id+'"'+(c.id===VS.cls?" selected":"")+'>'+escHtml(c.name)+'</option>').join("")+'</select><select id="vsGrp" class="btn" style="flex:1 1 0;min-width:0"><option value="">Tous les groupes</option>'+grpUi().filter(g=>window.edOkCls(g.id,null)).slice().sort((a,b)=>String(a.name).localeCompare(String(b.name),"fr",{numeric:true,sensitivity:"base"})).map(g=>'<option value="'+g.id+'"'+(g.id===VS.grp?" selected":"")+'>'+escHtml(g.name)+'</option>').join("")+'</select></div><div class="vs-list">'
+ root.innerHTML=vsTabs()+'<div class="vs-split"><div class="vs-side"><div class="filter-pair"><select id="vsCls" class="btn" style="flex:1 1 0;min-width:0"><option value="">Toutes les classes</option>'+DATA.classes.filter(c=>window.edOkCls(c.id,null)).map(c=>'<option value="'+c.id+'"'+(c.id===VS.cls?" selected":"")+'>'+escHtml(c.name)+'</option>').join("")+'</select><select id="vsGrp" class="btn" style="flex:1 1 0;min-width:0"><option value="">Tous les groupes</option>'+grpUi().filter(g=>window.edOkCls(g.id,null)).slice().sort((a,b)=>String(a.name).localeCompare(String(b.name),"fr",{numeric:true,sensitivity:"base"})).map(g=>'<option value="'+g.id+'"'+(g.id===VS.grp?" selected":"")+'>'+escHtml(g.name)+'</option>').join("")+'</select></div><input type="search" id="vsQ" class="btn" placeholder="Rechercher un élève…" autocomplete="off" value="'+escHtml(VS.q)+'" style="width:100%;box-sizing:border-box;margin-top:8px;text-align:left"><div class="vs-list">'
   +list.map(s=>'<div class="vs-stu'+(s.id===VS.sid?" on":"")+'" data-sid="'+s.id+'"'+'>'+vsBands(s.id)+'<span>'+escHtml(s.last)+' '+escHtml(s.first)+'</span></div>').join("")+'</div></div><div class="vs-main">'
   +(VS.sid?vsContent(VS.sid):'<div class="pl-empty">Cliquez sur un élève pour voir sa vie scolaire.</div>')+'</div></div>';
  const newList=root.querySelector(".vs-list"); if(newList) newList.scrollTop=keepTop;
@@ -17686,6 +17709,12 @@ document.getElementById("vieBody").addEventListener("click",e=>{
  const sd=e.target.closest(".vs-stu"); if(sd){ VS.sid=sd.dataset.sid; renderVie(); return; }
  if(e.target.id==="vsSanBtn"){ vsSanForm(VS.sid); return; }
  const r=e.target.closest(".vs-row"); if(r) vsDetail(AUTH.role==="eleve"?AUTH.studentId:VS.sid,r.dataset.k);
+});
+document.getElementById("vieBody").addEventListener("input",e=>{
+ if(e.target.id!=="vsQ") return;
+ VS.q=e.target.value;
+ const q=vsNorm(VS.q);
+ document.querySelectorAll("#vieBody .vs-stu").forEach(r=>{ const t=r.querySelector("span:last-child"); r.style.display=(!q||vsNorm(t?t.textContent:r.textContent).includes(q))?"":"none"; });
 });
 document.getElementById("vieBody").addEventListener("change",e=>{ if(e.target.id==="vsCls"||e.target.id==="vsGrp"){ if(e.target.id==="vsCls") VS.cls=e.target.value; else VS.grp=e.target.value; if(VS.sid){ const s=DATA.students.find(x=>x.id===VS.sid); const g=VS.grp?grpById(VS.grp):null; if(!s||(VS.cls&&s.classId!==VS.cls)||(VS.grp&&!(g&&(g.memberIds||[]).includes(s.id)))) VS.sid=""; } renderVie(); } });
 
