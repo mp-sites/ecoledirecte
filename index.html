@@ -5270,6 +5270,8 @@ function buildCSVText(){
   }
  }
  (DATA.posts||[]).forEach(p=>rows.push(["post",p.id,escapeCsv(p.html||""),p.color||"",escapeCsv(JSON.stringify({all:!!p.all,ids:p.ids||[]})),p.createdAt||"",escapeCsv(p.author||""),p.updatedAt||""].join(";")));
+ {const _hw=new Set((DATA.homework||[]).map(h=>h.id)), _d=DATA.hwDone||{};
+  Object.keys(_d).sort().forEach(k=>Object.keys(_d[k]||{}).sort().forEach(id=>{ if(_d[k][id] && _hw.has(id)) rows.push(["hwDone",escapeCsv(k),escapeCsv(id)].join(";")); }));}
  (DATA.messages||[]).forEach(m=>rows.push(["msg",m.id,m.sid,m.dir,escapeCsv(m.text||""),m.at||"",m.read?1:0,m.bid||"",escapeCsv(m.bl||""),escapeCsv(m.bs||""),m.priv?1:""].join(";")));
  return rows.join("\n");
 }
@@ -5304,6 +5306,7 @@ function importCSV(text){
   const cols=parseCsvLine(line).map(s=>s.trim());
   const type=cols[0];
   if(type==="lock") LOCKED_PERIODS[cols[1]]=cols[2]==="1";
+  else if(type==="hwDone"){ const k=unescapeCsv(cols[1]||""), id=unescapeCsv(cols[2]||""); if(k&&id){ if(!DATA.hwDone) DATA.hwDone={}; (DATA.hwDone[k]||(DATA.hwDone[k]={}))[id]=1; } }
   else if(type==="subjectMaster"){const name=unescapeCsv(cols[4]||"");const coef=cols[5]?parseFloat(cols[5]):1;SUBJECT_REGISTRY.push({name,coef,color:cols[6]||""});}
   else if(type==="student"){const id=cols[1],first=unescapeCsv(cols[2]||""),last=unescapeCsv(cols[3]||"");DATA.students.push({id,first,last,classId:cols[4]||"",sex:cols[6]||""});DATA.notes[id]=[];}
   else if(type==="class"){DATA.classes.push({id:cols[1],name:unescapeCsv(cols[2]||""),subjects:[],memberIds:[],evals:[]});}
@@ -14336,12 +14339,36 @@ function initApp(){
  window.refreshOnlineCorrectionBadge=refreshOnlineCorrectionBadge;
  /* ── Cases « Fait » des devoirs (élève) : mémorisées sur l'appareil de l'élève ── */
  function hwDoneKey(){ return AUTH.role==="prof" ? "hwdonep:"+(AUTH.pid||AUTH.user||"prof") : "hwdone:"+homeworkStudentId(); }
+ /* Prof : les cases « Fait » sont dans DATA.hwDone (lignes « hwDone » du carnet) : elles sont donc enregistrées sur le serveur
+    et retrouvées sur tous les appareils. Élève : toujours mémorisées sur son appareil. */
+ function hwProfKey(){ return AUTH.pid||AUTH.user||"prof"; }
  function hwDoneMap(){
-  if(AUTH.role!=="eleve" && AUTH.role!=="prof") return {};
+  if(AUTH.role==="prof"){
+   const st=DATA.hwDone||(DATA.hwDone={}), k=hwProfKey();
+   /* reprise unique des anciennes cases mémorisées sur cet appareil (une fois les données chargées) */
+   try{
+    if(typeof CLOUD!=="undefined" && CLOUD.ready){
+     const raw=localStorage.getItem("hwdonep:"+k);
+     if(raw){
+      localStorage.removeItem("hwdonep:"+k);
+      const old=JSON.parse(raw);
+      if(old && typeof old==="object"){ const m=st[k]||(st[k]={}); Object.keys(old).forEach(id=>{ if(old[id]) m[id]=1; }); }
+     }
+    }
+   }catch(e){}
+   return st[k]||{};
+  }
+  if(AUTH.role!=="eleve") return {};
   try{ const m=JSON.parse(localStorage.getItem(hwDoneKey())||"{}"); return (m&&typeof m==="object")?m:{}; }catch(e){ return {}; }
  }
  function hwSetDone(homeworkId,on){
-  if(AUTH.role!=="eleve" && AUTH.role!=="prof") return;
+  if(AUTH.role==="prof"){
+   const st=DATA.hwDone||(DATA.hwDone={}), k=hwProfKey(), m=st[k]||(st[k]={});
+   if(on) m[homeworkId]=1; else delete m[homeworkId];
+   try{ saveData(); }catch(e){}   /* envoi au serveur */
+   return;
+  }
+  if(AUTH.role!=="eleve") return;
   const m=hwDoneMap();
   if(on) m[homeworkId]=1; else delete m[homeworkId];
   try{ localStorage.setItem(hwDoneKey(),JSON.stringify(m)); }catch(e){}
@@ -18196,7 +18223,11 @@ document.getElementById("schDelete").onclick=()=>{
    var rg=document.createRange(); rg.selectNodeContents(n); var r=rg.getBoundingClientRect(); if(!r.width) continue;
    if(r.left<L){L=r.left; nl=n;} if(r.right>R){R=r.right; nr=n;}
   }
-  if(!nl) return null;
+  if(!nl){   /* pastille de compétences : que des points de couleur, pas de texte → on mesure les points */
+   var dl=1e9, dr=-1e9;
+   el.querySelectorAll(".color-dot").forEach(function(d){ var q=d.getBoundingClientRect(); if(q.width){ if(q.left<dl) dl=q.left; if(q.right>dr) dr=q.right; } });
+   return dl<dr ? {l:dl, r:dr} : null;
+  }
   var tl=nl.nodeValue.replace(/^\s+/,""), tr=nr.nodeValue.replace(/\s+$/,"");
   cv.font=fontOf(nl.parentElement); var m1=cv.measureText(tl.charAt(0));
   cv.font=fontOf(nr.parentElement); var ch=tr.charAt(tr.length-1), m2=cv.measureText(ch);
@@ -18217,10 +18248,12 @@ document.getElementById("schDelete").onclick=()=>{
    var topSnap=Math.round((absBottom-H)*dpr)/dpr;                  /* haut du trait aligné sur un pixel physique */
    var off=absBottom-(topSnap+H);                                  /* décalage pour que le trait tombe pile sur la grille */
    var key=p.textContent+"|"+Math.round(b.width)+"|"+D+"|"+dpr+"|"+off.toFixed(3); if(p.dataset.ulKey===key) return;
-   var k=ink(p); if(!k) return;
-   p.style.setProperty("--ul-l",(k.l-b.left-D)+"px");
-   p.style.setProperty("--ul-r",(b.right-k.r-D)+"px");
-   p.style.setProperty("--ul-h",H+"px");
+   var k=ink(p);
+   if(k){
+    p.style.setProperty("--ul-l",(k.l-b.left-D)+"px");
+    p.style.setProperty("--ul-r",(b.right-k.r-D)+"px");
+   }
+   p.style.setProperty("--ul-h",H+"px");   /* même épaisseur (pixels entiers) pour toutes les évaluations */
    p.style.setProperty("--ul-b",off+"px");
    p.dataset.ulKey=key;
   });
