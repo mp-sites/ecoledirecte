@@ -1203,7 +1203,20 @@ body.student-mode .sch-prof-only{display:none!important}
 .sch-chip{display:flex;justify-content:space-between;align-items:center;gap:3px;margin-top:2px;padding:1px 5px;border-radius:4px;font-size:11px;border:1px solid rgba(0,0,0,.15);overflow:hidden;white-space:nowrap}
 .sch-dot{display:inline-block;width:22px;height:22px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #94a3b8;cursor:pointer;position:relative;overflow:hidden}
 .sch-dot input{position:absolute;inset:-6px;opacity:0;cursor:pointer;width:40px;height:40px;padding:0;border:0}
-.sch-classes{display:flex;flex-wrap:wrap;gap:6px 14px}.sch-classes label{margin:0!important;display:flex!important;gap:5px;align-items:center}.sch-classes input{width:auto!important}
+.sch-classes{display:block}.sch-classes label{margin:0!important;display:flex!important;gap:8px;align-items:center;padding:6px 10px;cursor:pointer;border-radius:6px}.sch-classes label:hover{background:#eef9ff}.sch-classes input{width:auto!important}
+.sch-ms-btn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:#fff;cursor:pointer;font:inherit;text-align:left}
+.sch-ms-btn span.sch-ms-txt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sch-ms-btn.open{border-color:#4db5f5;box-shadow:0 0 0 3px rgba(77,181,245,.18)}
+.sch-ms-panel{border:1px solid var(--border);border-radius:8px;margin-top:4px;max-height:210px;overflow:auto;background:#fff;padding:4px}
+.sch-ms-panel[hidden]{display:none}
+.sch-ms-sep{font-weight:600;color:#475569;padding:6px 10px 2px;font-size:13px}
+.sch-ms-clear{display:block;margin:2px 6px 4px auto;background:none;border:0;color:#0080d0;cursor:pointer;font-size:12px;text-decoration:underline}
+#schWarnBtn{display:none;align-items:center;justify-content:center;width:34px;height:34px;padding:0;border:1px solid transparent;border-radius:8px;background:transparent;cursor:pointer}
+#schWarnBtn:hover{background:#f1f5f9}
+#schWarnBtn svg{width:26px;height:26px;fill:#fff;stroke:#94a3b8;transition:fill .15s,stroke .15s}
+#schWarnBtn svg .ex{stroke:#94a3b8;fill:none}
+#schWarnBtn.on svg{fill:#ef4444;stroke:#b91c1c}
+#schWarnBtn.on svg .ex{stroke:#fff}
 .sch-room{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-bottom:1px solid var(--border)}
 .sch-x{border:none;background:none;color:#b91c1c;font-size:18px;cursor:pointer}
 .sch-x.sch-pen{font-size:14px;padding:0 6px 0 0}
@@ -2021,6 +2034,13 @@ header .header-actions{margin-left:auto;align-items:center}
 }
 </style>
 <style id="patch-mobile-saisie">
+/* ── Carnet de notes classes/groupes : le tableau ne dépasse jamais ; barre de défilement toujours visible pour le surplus ── */
+#classesView :has(.bys-scroll){ min-width:0 !important; max-width:100% !important }
+#classesView .bys-scroll{ display:block; width:100%; max-width:100%; box-sizing:border-box; overflow-x:scroll !important; overflow-y:auto !important; scrollbar-gutter:stable; scrollbar-width:auto; scrollbar-color:#4db5f5 #e8eef4 }
+#classesView .bys-scroll::-webkit-scrollbar{ height:14px; width:14px }
+#classesView .bys-scroll::-webkit-scrollbar-track{ background:#e8eef4; border-radius:8px }
+#classesView .bys-scroll::-webkit-scrollbar-thumb{ background:#4db5f5; border-radius:8px; border:3px solid #e8eef4 }
+#classesView .bys-scroll::-webkit-scrollbar-thumb:hover{ background:#0080d0 }
 /* ── Téléphone : saisie des notes de classe / groupe ── */
 @media (max-width:700px){
  #classesView .bys-scroll{ max-height:calc(100vh - 200px) !important; max-height:calc(100dvh - 200px) !important; -webkit-overflow-scrolling:touch; overscroll-behavior:contain }
@@ -2558,7 +2578,7 @@ button.hw-note-ico:hover{ background:#eef2f7 }
 </div>
 
 <div id="schEventModal" class="modal" aria-hidden="true" style="z-index:40">
- <div class="modal-card" style="width:480px"><div class="modal-header"><h3 id="schEventTitle">Ajouter un cours</h3><button class="modal-close" id="schEventClose">×</button></div>
+ <div class="modal-card" style="width:480px"><div class="modal-header"><div style="display:flex;align-items:center;gap:8px;min-width:0"><h3 id="schEventTitle">Ajouter un cours</h3><button type="button" id="schWarnBtn" aria-pressed="false" title="Signaler ce cours comme modifié (rouge = signalé)"><svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M12 3.2 22 20.5H2L12 3.2z"/><path class="ex" d="M12 9.5v5M12 17.4v.1" stroke-width="2.2"/></svg></button></div><button class="modal-close" id="schEventClose">×</button></div>
  <div class="modal-body"><form id="schEventForm" class="modal-form" autocomplete="off">
   <div id="schSubjWrap"><label>Matière</label><select id="schSubject"></select></div>
   <div id="schNameWrap" style="display:none"><label>Nom de l'événement</label><div style="display:flex;gap:8px;align-items:center"><input type="text" id="schEvName" maxlength="80" style="flex:1;min-width:0"><label class="sch-dot" title="Couleur de l'événement" style="background:#ffffff;border:1px solid #94a3b8;flex:none;margin:0" id="schEvColorDot"><input type="color" id="schEvColor" value="#ffffff"></label></div></div>
@@ -17439,10 +17459,22 @@ function schOpen(id,asEvent){
  { const c=(isEv&&e&&e.color)?e.color:"#ffffff"; document.getElementById("schEvColor").value=c; document.getElementById("schEvColorDot").style.background=c; }
  const names=SUBJECT_REGISTRY.map(s=>typeof s==="object"?s.name:s); if(e&&!e.evt&&!names.includes(e.subject)) names.push(e.subject);
  document.getElementById("schSubject").innerHTML=names.map(n=>`<option>${escHtml(n)}</option>`).join("");
- { const chk=(id,n)=>`<label><input type="checkbox" value="${id}"${e&&(e.classIds||[]).includes(id)?" checked":""}>${escHtml(n)}</label>`;
+ { const chk=(id,n)=>`<label><input type="checkbox" value="${id}" data-name="${escHtml(n)}"${e&&(e.classIds||[]).includes(id)?" checked":""}>${escHtml(n)}</label>`;
   const gl=grpUi().slice().sort((a,b)=>a.name.localeCompare(b.name,"fr",{numeric:true,sensitivity:"base"}));
-  document.getElementById("schClasses").innerHTML=(DATA.classes.length?DATA.classes.map(c=>chk(c.id,c.name)).join(""):"<span class='hint'>Aucune classe créée.</span>")
-   +(gl.length?'<div style="flex-basis:100%;font-weight:600;color:#475569;margin-top:6px">Groupes</div>'+gl.map(g=>chk(g.id,g.name)).join(""):""); }
+  const host=document.getElementById("schClasses");
+  host.innerHTML='<button type="button" class="sch-ms-btn" id="schMsBtn" aria-haspopup="listbox" aria-expanded="false"><span class="sch-ms-txt"></span><span aria-hidden="true">▾</span></button>'
+   +'<div class="sch-ms-panel" id="schMsPanel" hidden>'
+   +(DATA.classes.length?'<div class="sch-ms-sep">Classes</div>'+DATA.classes.map(c=>chk(c.id,c.name)).join(""):"<span class='hint' style='padding:6px 10px;display:block'>Aucune classe créée.</span>")
+   +(gl.length?'<div class="sch-ms-sep">Groupes</div>'+gl.map(g=>chk(g.id,g.name)).join(""):"")
+   +'<button type="button" class="sch-ms-clear" id="schMsClear">Tout décocher</button></div>';
+  const btn=host.querySelector("#schMsBtn"), panel=host.querySelector("#schMsPanel");
+  const paint=()=>{ const n=[...host.querySelectorAll("input:checked")].map(i=>i.dataset.name);
+   btn.querySelector(".sch-ms-txt").textContent=n.length?(n.length<=3?n.join(", "):n.length+" sélectionnés : "+n.slice(0,2).join(", ")+"…"):"Choisir une ou plusieurs classes / groupes…"; };
+  btn.onclick=()=>{ const o=panel.hidden; panel.hidden=!o; btn.classList.toggle("open",o); btn.setAttribute("aria-expanded",String(o)); };
+  panel.addEventListener("change",paint);
+  host.querySelector("#schMsClear").onclick=()=>{ host.querySelectorAll("input:checked").forEach(i=>{ i.checked=false; }); paint(); };
+  paint(); }
+ { const wb=document.getElementById("schWarnBtn"); wb.style.display=e?"inline-flex":"none"; schWarnPaint(!!(e&&e.changed)); }
  document.getElementById("schProf").innerHTML=`<option>${escHtml(profShort())}</option>`;
  const rooms=[...schEns().rooms]; if(e&&e.room&&!rooms.includes(e.room)) rooms.push(e.room);
  document.getElementById("schRoom").innerHTML='<option value="">—</option>'+rooms.sort((a,b)=>a.localeCompare(b,"fr",{numeric:true})).map(r=>`<option>${escHtml(r)}</option>`).join("");
@@ -17458,6 +17490,13 @@ function schOpen(id,asEvent){
  schFreqInit(e);
  schModal.classList.add("open"); schModal.setAttribute("aria-hidden","false");
 }
+function schWarnPaint(on){ const b=document.getElementById("schWarnBtn"); if(!b) return; b.classList.toggle("on",!!on); b.setAttribute("aria-pressed",String(!!on)); b.title=on?"Cours signalé comme modifié : cliquer pour retirer le panneau attention":"Signaler ce cours comme modifié (sans message)"; }
+/* Panneau attention : bascule immédiatement le statut « signalé comme modifié » du cours/événement (sans question) */
+document.getElementById("schWarnBtn").onclick=()=>{
+ const e=schEns().events.find(x=>x.id===SCH.editId); if(!e) return;
+ e.changed=!e.changed; if(!e.changed) delete e.changed;
+ schWarnPaint(!!e.changed); saveData(); renderSchedule(); if(typeof schDetId!=="undefined"&&schDetId) schDetFill();
+};
 function schSyncAppels(){ const ok=new Set(schEns().events.filter(x=>!x.cancelled).map(x=>x.id)); const V=vsEns(), n=V.appels.length; V.appels=V.appels.filter(a=>ok.has(a.eventId)); return V.appels.length!==n; }
 function schCommit(){ schSyncAppels(); saveData(); renderSchedule(); schClose(); if(schDetId) schDetFill(); }
 document.getElementById("schAdd").onclick=()=>schOpen(null);
@@ -17780,13 +17819,15 @@ function apPeekOpen(){
  const opt=c=>'<option value="'+escHtml(c.id)+'"'+(c.id===cur?" selected":"")+'>'+escHtml(c.name)+'</option>';
  m.innerHTML='<div class="modal-card" style="width:440px"><div class="modal-header"><h3 style="margin:0">Appel libre</h3><button class="modal-close" type="button">×</button></div><div class="modal-body">'
   +'<p style="margin-top:0;color:#64748b">Choisissez une classe ou un groupe pour faire le point. Cet appel est indépendant de l\'emploi du temps : <b>rien n\'est transmis à la Vie scolaire</b>.</p>'
-  +'<label style="display:block;font-weight:600;margin-bottom:4px" for="apPeekSel">Classe ou groupe</label>'
-  +'<select id="apPeekSel" style="width:100%;padding:9px;border:1px solid var(--border);border-radius:8px"><option value="">Choisir…</option>'
-  +(cls.length?'<optgroup label="Classes">'+cls.map(opt).join("")+'</optgroup>':"")
-  +(gs.length?'<optgroup label="Groupes">'+gs.map(opt).join("")+'</optgroup>':"")+'</select>'
+  +'<label style="display:block;font-weight:600;margin-bottom:4px" for="apPeekSelC">Classe</label>'
+  +'<select id="apPeekSelC" style="width:100%;padding:9px;border:1px solid var(--border);border-radius:8px"><option value="">—</option>'+cls.map(opt).join("")+'</select>'
+  +'<div style="text-align:center;font-weight:700;color:#64748b;margin:8px 0">OU</div>'
+  +'<label style="display:block;font-weight:600;margin-bottom:4px" for="apPeekSelG">Groupe</label>'
+  +'<select id="apPeekSelG" style="width:100%;padding:9px;border:1px solid var(--border);border-radius:8px"><option value="">—</option>'+gs.map(opt).join("")+'</select>'
   +'<div id="apPeekMsg" style="color:#b91c1c;font-size:13px;margin-top:8px;display:none"></div>'
   +'<div class="modal-actions" style="margin-top:14px"><button type="button" class="btn" id="apPeekCancel">Annuler</button><button type="button" class="btn btn-primary" id="apPeekGo">Afficher</button></div></div></div>';
- const sel=m.querySelector("#apPeekSel"), msg=m.querySelector("#apPeekMsg");
+ const selC=m.querySelector("#apPeekSelC"), selG=m.querySelector("#apPeekSelG"), msg=m.querySelector("#apPeekMsg");
+ const sel={ get value(){ return selC.value||selG.value||""; }, focus(){ (selC.value||!selG.value?selC:selG).focus(); } };
  const close=()=>{ m.classList.remove("open"); m.setAttribute("aria-hidden","true"); };
  const go=()=>{
   if(!sel.value){ msg.textContent="Choisissez une classe ou un groupe."; msg.style.display="block"; return; }
@@ -17795,8 +17836,10 @@ function apPeekOpen(){
  };
  m.querySelector(".modal-close").onclick=close; m.querySelector("#apPeekCancel").onclick=close; m.querySelector("#apPeekGo").onclick=go;
  m.onmousedown=e=>{ if(e.target===m) close(); };
- sel.addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); go(); } else if(e.key==="Escape"){ close(); } });
- sel.addEventListener("change",()=>{ msg.style.display="none"; });
+ [selC,selG].forEach(x=>x.addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); go(); } else if(e.key==="Escape"){ close(); } }));
+ /* une classe OU un groupe : choisir l'un remet l'autre à « — » */
+ selC.addEventListener("change",()=>{ if(selC.value) selG.value=""; msg.style.display="none"; });
+ selG.addEventListener("change",()=>{ if(selG.value) selC.value=""; msg.style.display="none"; });
  m.classList.add("open"); m.setAttribute("aria-hidden","false"); sel.focus();
 }
 function apSend(){
