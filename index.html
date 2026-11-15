@@ -107,6 +107,9 @@ h1{margin:0; font-size:24px; font-weight:700; letter-spacing:-.01em }
 .bys-table td.bys-ro{ background:#d5d9df }
 .bys-table td.bys-cm{ background:#ffe2bd }
 .bys-avg{ position:sticky; z-index:1; background:#c7e6fb !important; text-align:center; font-weight:700; color:#0471b5; font-size:16px; font-variant-numeric:tabular-nums; padding:4px 2px !important }
+.bys-rank{ position:sticky; z-index:1; background:#e0f0fc !important; text-align:center; font-weight:700; color:#0471b5; font-size:16px; font-variant-numeric:tabular-nums; padding:4px 2px !important }
+.bys-rank-head{ position:sticky; top:0; z-index:3; background:#e5e7eb !important; text-align:center; font-weight:700; color:#0471b5; padding:4px 2px !important; font-size:14px; cursor:default }
+.bys-subhead th.bys-rank-head{ z-index:3 }
 .bys-avg-head{ position:sticky; top:0; z-index:3; background:#e5e7eb !important; text-align:center; font-weight:700; color:#0471b5; padding:4px 2px !important; font-size:14px; cursor:default }
 .bys-subhead th{ position:sticky; z-index:2; background:#e5e7eb !important; padding:3px 3px !important; text-align:center }
 .bys-subhead th.bys-stu,.bys-subhead th.bys-avg-head{ z-index:3 }
@@ -1978,6 +1981,9 @@ header .header-actions{margin-left:auto;align-items:center}
 #classesView .bys-table td.bys-stu-click{ cursor:pointer }
 #classesView .bys-table td.bys-stu-click:hover{ background:#e3f3fe !important }
 #classesView .bys-table .bys-corner{ background:#f4f5f7 !important }
+#classesView .bys-table .bys-rank-head{ background:#f4f5f7 !important; text-align:center; font-size:14px }
+#classesView .bys-table .bys-rank{ text-align:center; font-family:Arial,Helvetica,sans-serif; font-size:17px }
+#classesView .bys-table tr.bys-classavg td.bys-rank{ z-index:4; background:#c7e6fb !important }
 #classesView .bys-table .bys-avg-head{ text-align:center; padding:4px 2px !important; font-size:14px }
 /* notes et moyennes : Arial, alignées à droite */
 #classesView .bys-table .bys-avg{ text-align:right; padding:3px 8px 3px 2px !important; font-family:Arial,Helvetica,sans-serif; font-size:17px }
@@ -2012,6 +2018,20 @@ header .header-actions{margin-left:auto;align-items:center}
  #classesView #classPreviewContent .matiere-line{ grid-template-columns:minmax(0,1fr) !important }
  #classesView #classPreviewContent .general-box{ width:100% }
  #classesView #classPreviewContent .matiere-line > .notes-list{ column-gap:24px; row-gap:13px }
+}
+</style>
+<style id="patch-mobile-saisie">
+/* ── Téléphone : saisie des notes de classe / groupe ── */
+@media (max-width:700px){
+ #classesView .bys-scroll{ max-height:calc(100vh - 200px) !important; max-height:calc(100dvh - 200px) !important; -webkit-overflow-scrolling:touch; overscroll-behavior:contain }
+ /* seule la colonne « Élève » reste fixe ; Moyenne et Rang défilent avec les notes (plus de place pour les évaluations) */
+ #classesView .bys-table .bys-avg,#classesView .bys-table .bys-rank,
+ #classesView .bys-table .bys-avg-head,#classesView .bys-table .bys-rank-head{ left:auto !important }
+ #classesView .bys-table .bys-stu{ font-size:13px; text-overflow:ellipsis; padding:4px 6px !important }
+ #classesView .bys-table .bys-avg,#classesView .bys-table .bys-rank{ font-size:15px; padding:3px 4px !important }
+ #classesView .bys-table .bys-input{ font-size:16px !important; min-height:44px; padding:6px 8px 6px 2px }   /* 16 px : évite le zoom automatique d'iOS */
+ #classesView .bys-table th.bys-head{ font-size:12px }
+ #classesView .bys-table .bys-label{ white-space:normal; word-break:break-word }
 }
 </style>
 <style id="patch-hw-checks">
@@ -2086,6 +2106,13 @@ body:not(.student-mode) .tab-btn[data-hw-todo]::after{ display:none!important }
 /* Tests en ligne : copies rendues non corrigées → cadre rouge complet */
 .online-test-card.has-pending-correction{ border:1px solid #e2e8f0 !important; box-shadow:none !important }
 .btn-homework-review.needs-correction{ border:2px solid #dc2626 !important; box-shadow:0 0 0 2px rgba(220,38,38,.18) }
+.btn-homework-review{ position:relative; overflow:visible }
+/* Pastille : nombre de tests rendus non corrigés, sur le bouton de correction */
+.btn-homework-review .hw-review-count{
+ position:absolute; top:-9px; right:-9px; z-index:5; min-width:20px; height:20px; padding:0 6px; border-radius:999px; box-sizing:border-box;
+ display:inline-flex; align-items:center; justify-content:center; background:#ef4444; color:#fff; font:700 12px/1 Arial,sans-serif;
+ border:2px solid #fff; box-shadow:0 1px 3px rgba(0,0,0,.3); pointer-events:none; font-variant-numeric:tabular-nums;
+}
 .online-test-card .otc-pending{ color:#dc2626; font-weight:700 }
 .hw-note-ico{ display:inline-flex; vertical-align:middle; margin-left:8px }
 .hw-note-ico.is-ok{ color:#334155 }
@@ -5029,6 +5056,12 @@ function isTodayDate(){const t=todayISO(); for(let i=0;i<arguments.length;i++){ 
 /* « Nouvelle note » : évaluation du jour, OU datée dans le futur (date butoire) : soulignée dès sa saisie, jusqu'à sa date incluse */
 function isNewDate(){const t=todayISO(); for(let i=0;i<arguments.length;i++){ const n=normDateISO(arguments[i]); if(n&&n>=t) return true; } return false;}
 
+/* « Nouvelle note » selon le jour de SAISIE : une note saisie aujourd'hui reste soulignée toute la journée,
+   même si elle est datée d'un autre jour. Une note simplement modifiée garde son horodatage d'origine : elle ne se souligne pas. */
+function createdTodayISO(o){ try{ const v=o&&o.createdAt; if(v==null||v==="") return ""; const t=/^\d+$/.test(String(v))?Number(v):Date.parse(v); if(!isFinite(t)||t<=0) return ""; return todayISOFromDate(new Date(t)); }catch(e){ return ""; } }
+function isCreatedToday(o){ return createdTodayISO(o)===todayISO(); }
+function isNewNote(o){ const a=Array.prototype.slice.call(arguments,1); return isCreatedToday(o) || isNewDate.apply(null,a); }
+
 /* ── Heure de saisie (createdAt, en ms) : sert à ordonner les évaluations individuelles ── */
 const __CTS={};
 function createdTs(o){ const v=o&&o.createdAt; if(v==null||v==="") return 0; const t=/^\d+$/.test(String(v))?Number(v):Date.parse(v); return isFinite(t)?t:0; }
@@ -5320,7 +5353,7 @@ function importCSV(text){
     }
    }
   }
-  else if(type==="classMember"){const cls=classLike(cols[1]);if(cls) cls.memberIds.push(cols[2]);}
+  else if(type==="classMember"){const cls=classLike(cols[1]);if(cls && !cls.memberIds.includes(cols[2])) cls.memberIds.push(cols[2]);}
   else if(type==="classEval"){
    const cls=classLike(cols[2]);
    if(cls){
@@ -5387,7 +5420,7 @@ function importCSV(text){
   else if(type==="sanction"){ let d={}; try{d=JSON.parse(unescapeCsv(cols[7]||"{}"))||{};}catch(e){}
    vsEns().sanctions.push({id:cols[1],sid:cols[2],level:cols[3],date:cols[4],time:cols[5],motif:unescapeCsv(cols[6]||""),d,prof:unescapeCsv(cols[8]||""),createdAt:cols[9]||""}); }
   else if(type==="holiday"){ holEns().push({id:cols[1],name:unescapeCsv(cols[2]||""),from:cols[3],to:cols[4]}); }
-  else if(type==="group"){ let mi=[]; try{mi=JSON.parse(unescapeCsv(cols[3]||"[]"))||[];}catch(e){} let ss; try{ const raw=unescapeCsv(cols[4]||""); ss=raw?JSON.parse(raw):undefined; }catch(e){ ss=undefined; } if(cols[1]) grpEns().push({id:cols[1],name:unescapeCsv(cols[2]||""),memberIds:mi,subjectsSel:Array.isArray(ss)?ss:undefined}); }
+  else if(type==="group"){ let mi=[]; try{mi=JSON.parse(unescapeCsv(cols[3]||"[]"))||[];}catch(e){} let ss; try{ const raw=unescapeCsv(cols[4]||""); ss=raw?JSON.parse(raw):undefined; }catch(e){ ss=undefined; } if(cols[1]) grpEns().push({id:cols[1],name:unescapeCsv(cols[2]||""),memberIds:Array.from(new Set(mi)),subjectsSel:Array.isArray(ss)?ss:undefined}); }
   else if(type==="room"){ const r=unescapeCsv(cols[2]||""); if(r) schEns().rooms.push(r); }
   else if(type==="scheduleEvent"){ let ci=[]; try{ci=JSON.parse(unescapeCsv(cols[3]||"[]"))||[];}catch(e){} schEns().events.push({id:cols[1],subject:unescapeCsv(cols[2]||""),classIds:ci,room:unescapeCsv(cols[4]||""),date:cols[5],start:cols[6],end:cols[7],cancelled:cols[8]==="1",changed:cols[9]==="1",serie:cols[10]||"",hors:cols[11]==="1",holCancel:cols[12]==="1",created:cols[13]||"",evt:cols[14]==="1",color:cols[15]||undefined,profId:unescapeCsv(cols[16]||"")}); }
   else if(type==="post"){ if(!Array.isArray(DATA.posts)) DATA.posts=[]; let au={}; try{au=JSON.parse(unescapeCsv(cols[4]||"{}"))||{};}catch(e){} DATA.posts.push({id:cols[1],html:unescapeCsv(cols[2]||""),color:cols[3]||"",all:!!au.all,ids:Array.isArray(au.ids)?au.ids:[],createdAt:cols[5]||"",author:unescapeCsv(cols[6]||""),updatedAt:cols[7]||""}); }
@@ -5727,7 +5760,7 @@ function renderClassPreviewContent(){
       if(empty) btn.classList.add("empty-eval");
       if(note && note.noteText==="EA"){ btn.classList.add("red"); evalHasEA=true; }
       
-      if(note && isNewDate(note.dateJJMMAA, note.isoDate)) btn.classList.add("today");
+      if(note && isNewNote(note, note.dateJJMMAA, note.isoDate)) btn.classList.add("today");
       if(note && !!note.important) btn.classList.add("important");
       if(!empty && (note.note/note.outof*20) < 10) btn.classList.add("red");
 
@@ -5976,6 +6009,7 @@ function showEvalStatsOnly(ev, classId) {
 function noteIsQuiz(n){
  if(!n) return false;
  if(n.homeworkSubmissionId) return true;
+ if(!n.classCommon && String(n.id||"").indexOf("hwn_")===0) return true;
  if(n.classCommon){
   try{ const c=classLike(n.classId); const ev=(c&&c.evals||[]).find(e=>e.id===n.classNoteId); return !!(ev&&ev.hwKey); }catch(e){ return false; }
  }
@@ -6577,7 +6611,7 @@ function renderEleveViewForPeriod(studentId,periodKey){
     const empty=!hasAnyResult(group,null,studentId);
     const pill=document.createElement("div");
     pill.className=(isCompRub?"comp-pill":"note-pill")+(empty?" empty-eval":"");
-     if(isNewDate(group.dateJJMMAA, group.date, group.isoDate)) pill.classList.add("today");
+     if(isNewNote(group, group.dateJJMMAA, group.date, group.isoDate)) pill.classList.add("today");
      try{ pill.dataset.nday=normDateISO(group.date)||normDateISO(group.dateJJMMAA)||""; pill.dataset.nsubj=group.subject||"—"; }catch(x){}
      pill.style.cssText="cursor:pointer;display:flex;align-items:center;background:#fff;";
      if(isCompRub) pill.style.borderRadius="999px";
@@ -6632,7 +6666,7 @@ function renderEleveViewForPeriod(studentId,periodKey){
     const btn=document.createElement("button"); btn.type="button";
     btn.className="note-pill"+(empty?" empty-eval":"");
     try{ btn.dataset.nday=n.isoDate||(typeof normDateISO==="function"?normDateISO(n.dateJJMMAA):"")||""; btn.dataset.nsubj=n.subject||"—"; }catch(x){}
-    const isToday=isNewDate(n.dateJJMMAA, n.isoDate);
+    const isToday=isNewNote(n, n.dateJJMMAA, n.isoDate);
     if(!!n.important) btn.classList.add("important");
     if(isToday) btn.classList.add("today");
     btn.style.cssText="background:#fff;";
@@ -7673,6 +7707,20 @@ function openNoteFormModal(studentId=null, noteToEdit=null, editIndex=null){
   }
   renderNoteModalCompetencies();
 
+  // Bouton « Accéder au test de l'élève » (note individuelle issue d'un test en ligne assigné à un seul élève)
+  try{
+    document.getElementById("noteGoTestBtn")?.remove();
+    const _act=document.querySelector("#noteForm .modal-actions");
+    if(_act && noteToEdit && typeof window.hwSoloOfNote==="function" && window.hwSoloOfNote(noteToEdit)){
+      const _b=document.createElement("button");
+      _b.type="button"; _b.id="noteGoTestBtn"; _b.className="btn";
+      _b.style.cssText="margin-right:auto;background:#eef9ff;border-color:#8dd0fb;color:#0080d0;";
+      _b.textContent="Accéder au test de l'élève";
+      _b.onclick=()=>{ closeNoteFormModal(); window.hwSoloOpenCorrection(noteToEdit,studentId); };
+      _act.insertBefore(_b,_act.firstChild);
+    }
+  }catch(e){ console.warn("noteGoTestBtn",e); }
+
   // ── FIX-BAREME-1 : Gestion barème unifiée, UNE SEULE fois, sans double déclaration ──
   updateBaremeFormState();
 
@@ -7857,6 +7905,8 @@ noteForm.addEventListener("submit", e => {
       TEMP_NOTE_COMPS.forEach(c=>DATA.competencies.push({...c,noteId:finalId,studentId,dateJJMMAA:noteObj.dateJJMMAA,date:noteObj.isoDate}));
     }
     if(editFor!==null && editIndex!==null){
+      const _prev=DATA.notes[editFor][editIndex];
+      if(_prev && _prev.createdAt) noteObj.createdAt=_prev.createdAt;   /* modification : pas de nouveau soulignement */
       DATA.notes[editFor][editIndex] = noteObj;
     } else {
       if(!DATA.notes[studentId]) DATA.notes[studentId]=[];
@@ -9282,7 +9332,8 @@ function renderClassBySubject(classId){
  const anyComp=evals.some(ev=>compIds.has(ev.id)||isCE(ev));
 
  // Largeurs : colonne des noms = nom le plus long ; colonne moyenne plus large ; notes = largeur fixe
- const COL_W=88, AVG_W=110;
+ const MOB=!!(window.matchMedia&&window.matchMedia("(max-width:700px)").matches);   /* téléphone : colonnes plus compactes, saisie plus confortable */
+ const COL_W=MOB?76:88, AVG_W=MOB?72:110, RANK_W=MOB?52:60;
  // Ronds de couleur des compétences d'un élève (dans l'ordre de l'éval)
  const compDotsHtml=(sid,ev)=>{
   const tpl=ev.template||[];
@@ -9294,10 +9345,19 @@ function renderClassBySubject(classId){
  const colW=ev=>isCE(ev)?Math.min(280,Math.max(COL_W,(ev.template||[]).length*17+14)):COL_W;
  const TOTAL_COLS_W=evals.reduce((a,ev)=>a+colW(ev),0);
  const _cv=document.createElement("canvas").getContext("2d");
- _cv.font="600 15px "+(getComputedStyle(document.body).fontFamily||"sans-serif");
- const NAME_W=Math.ceil(Math.max(_cv.measureText("Élève").width,_cv.measureText("Moyenne de classe").width,...students.map(s=>_cv.measureText(s.last+" "+s.first).width)))+22;
+ _cv.font="600 "+(MOB?13:15)+"px "+(getComputedStyle(document.body).fontFamily||"sans-serif");
+ const NAME_W_FULL=Math.ceil(Math.max(_cv.measureText("Élève").width,_cv.measureText("Moyenne de classe").width,...students.map(s=>_cv.measureText(s.last+" "+s.first).width)))+22;
+ const NAME_W=MOB?Math.min(NAME_W_FULL,112):NAME_W_FULL;
  const fmtAvg=v=>(v===null||v===undefined||isNaN(v))?"":fmtGrade2(v);
  const avgOf=sid=>ALL?statsGenAvg(sid,period):getStudentAverageForSubject(sid,active,period);
+ /* Classement : moyenne décroissante, ex æquo = même rang (1, 2, 2, 4…) ; élèves sans moyenne = « — » */
+ const rankMap=()=>{
+  const vals=students.map(s=>({id:s.id,v:avgOf(s.id)})).filter(x=>typeof x.v==="number"&&!isNaN(x.v));
+  const m={}; vals.forEach(x=>{ m[x.id]=1+vals.filter(y=>y.v>x.v+0.0001).length; });
+  return {m,n:vals.length};
+ };
+ const RK0=rankMap();
+ const rankTxt=(sid,rk)=>rk.m[sid]?String(rk.m[sid]):"—";
 
  const head=evals.map(ev=>`<th class="bys-head${isCE(ev)?" bys-head-comp":""}${isFullyEvaluated(ev,classId)?"":" bys-incomplete"}${ev.hideFromStudent?" bys-hidden":""}" data-evid="${ev.id}" title="${escHtml(ev.label||"(sans libellé)")} — Modifier l'évaluation">
    <div class="bys-label">${escHtml(ev.label||"(sans libellé)")}${ev.hideFromStudent?" 👁️":""}</div>
@@ -9305,7 +9365,7 @@ function renderClassBySubject(classId){
    <div class="bys-meta">/${fmt(ev.outof)}</div>`}
    <div class="bys-meta">${formatDateAAAA(ev.dateJJMMAA)}</div>
   </th>`).join("");
- const subHead=anyComp?`<tr class="bys-subhead"><th class="bys-stu"></th><th class="bys-avg-head" style="left:${NAME_W}px"></th>${evals.map(ev=>(compIds.has(ev.id)||isCE(ev))?`<th${isCE(ev)?' class="bys-head-comp-sub"':""}><button type="button" class="bys-comp-btn" data-evid="${ev.id}" title="Saisir les résultats des compétences">Compétences</button></th>`:`<th></th>`).join("")}</tr>`:"";
+ const subHead=anyComp?`<tr class="bys-subhead"><th class="bys-stu"></th><th class="bys-avg-head" style="left:${NAME_W}px"></th><th class="bys-rank-head" style="left:${NAME_W+AVG_W}px"></th>${evals.map(ev=>(compIds.has(ev.id)||isCE(ev))?`<th${isCE(ev)?' class="bys-head-comp-sub"':""}><button type="button" class="bys-comp-btn" data-evid="${ev.id}" title="Saisir les résultats des compétences">Compétences</button></th>`:`<th></th>`).join("")}</tr>`:"";
 
  const rows=students.map((stu,ri)=>{
   const cells=evals.map((ev,ci)=>{
@@ -9316,15 +9376,15 @@ function renderClassBySubject(classId){
    const ro=hasBar||isLockedEv(ev);
    const cm=findNote(stu.id,ev)?.comment||"";
    const roTitle=isDeniedEv(ev)?"Vous n'enseignez pas cette matière à cette classe (d'après votre emploi du temps)":(hasBar?"Évaluation avec barème : cliquer sur l'en-tête de la colonne, puis « Saisir les points »":"Période verrouillée");
-   return `<td class="bys-cell${ro?" bys-ro":""}${cm?" bys-cm":""}"${cm?` title="${escHtml(cm)}"`:(ro?` title="${escHtml(roTitle)}"`:"")}><input type="text" class="bys-input${cellValue(stu.id,ev)==="X"?" bys-x":""}" inputmode="decimal" autocomplete="off" data-stu="${stu.id}" data-ev="${ev.id}" data-r="${ri}" data-c="${ci}" value="${escHtml(cellValue(stu.id,ev))}" ${ro?"readonly":""}></td>`;
+   return `<td class="bys-cell${ro?" bys-ro":""}${cm?" bys-cm":""}"${cm?` title="${escHtml(cm)}"`:(ro?` title="${escHtml(roTitle)}"`:"")}><input type="text" class="bys-input${cellValue(stu.id,ev)==="X"?" bys-x":""}" inputmode="${MOB?'text':'decimal'}" enterkeyhint="next" autocomplete="off" data-stu="${stu.id}" data-ev="${ev.id}" data-r="${ri}" data-c="${ci}" value="${escHtml(cellValue(stu.id,ev))}" ${ro?"readonly":""}></td>`;
   }).join("");
-  return `<tr><td class="bys-stu bys-stu-click" data-stu-id="${stu.id}" title="Statistiques et classement de l'élève" style="width:${NAME_W}px">${escHtml(stu.last)} ${escHtml(stu.first)}</td><td class="bys-avg" data-avg-stu="${stu.id}" style="left:${NAME_W}px;width:${AVG_W}px">${fmtAvg(avgOf(stu.id))}</td>${cells}</tr>`;
+  return `<tr><td class="bys-stu bys-stu-click" data-stu-id="${stu.id}" title="Statistiques et classement de l'élève" style="width:${NAME_W}px">${escHtml(stu.last)} ${escHtml(stu.first)}</td><td class="bys-avg" data-avg-stu="${stu.id}" style="left:${NAME_W}px;width:${AVG_W}px">${fmtAvg(avgOf(stu.id))}</td><td class="bys-rank" data-rank-stu="${stu.id}" style="left:${NAME_W+AVG_W}px;width:${RANK_W}px" title="Classement sur ${RK0.n} élève(s) noté(s)">${rankTxt(stu.id,RK0)}</td>${cells}</tr>`;
  }).join("");
 
  const classAvgEv=ev=>{ const v=students.map(s=>findNote(s.id,ev)).filter(n=>n&&!isSpecial(n)&&typeof n.note==="number"&&!isNaN(n.note)).map(n=>n.note); return v.length?v.reduce((a,b)=>a+b,0)/v.length:null; };
  const classAvgAll=()=>{ const v=students.map(s=>avgOf(s.id)).filter(x=>typeof x==="number"&&!isNaN(x)); return v.length?v.reduce((a,b)=>a+b,0)/v.length:null; };
- const avgRow=`<tr class="bys-classavg"><td class="bys-stu bys-cavg-lab" style="width:${NAME_W}px">Moyenne de classe</td><td class="bys-avg" data-cavg-all="1" style="left:${NAME_W}px;width:${AVG_W}px">${fmtAvg(classAvgAll())}</td>${evals.map(ev=>`<td class="bys-cavg" data-cavg-ev="${ev.id}">${fmtAvg(classAvgEv(ev))}</td>`).join("")}</tr>`;
- host.innerHTML=`<div class="bys-scroll" style="overflow:auto;max-height:75vh;"><table class="bys-table" style="width:${NAME_W+AVG_W+TOTAL_COLS_W}px"><colgroup><col style="width:${NAME_W}px"><col style="width:${AVG_W}px">${evals.map(ev=>`<col style="width:${colW(ev)}px">`).join("")}</colgroup><thead><tr><th class="bys-stu bys-corner">Élève</th><th class="bys-avg-head" style="left:${NAME_W}px" title="Moyenne pondérée (sur 20) de la matière">Moyenne</th>${head}</tr>${subHead}</thead><tbody>${rows}${avgRow}</tbody></table></div>
+ const avgRow=`<tr class="bys-classavg"><td class="bys-stu bys-cavg-lab" style="width:${NAME_W}px">Moyenne de classe</td><td class="bys-avg" data-cavg-all="1" style="left:${NAME_W}px;width:${AVG_W}px">${fmtAvg(classAvgAll())}</td><td class="bys-rank bys-rank-foot" style="left:${NAME_W+AVG_W}px;width:${RANK_W}px"></td>${evals.map(ev=>`<td class="bys-cavg" data-cavg-ev="${ev.id}">${fmtAvg(classAvgEv(ev))}</td>`).join("")}</tr>`;
+ host.innerHTML=`<div class="bys-scroll" style="overflow:auto;max-height:75vh;"><table class="bys-table" style="width:${NAME_W+AVG_W+RANK_W+TOTAL_COLS_W}px"><colgroup><col style="width:${NAME_W}px"><col style="width:${AVG_W}px"><col style="width:${RANK_W}px">${evals.map(ev=>`<col style="width:${colW(ev)}px">`).join("")}</colgroup><thead><tr><th class="bys-stu bys-corner">Élève</th><th class="bys-avg-head" style="left:${NAME_W}px" title="Moyenne pondérée (sur 20) de la matière">Moyenne</th><th class="bys-rank-head" style="left:${NAME_W+AVG_W}px" title="Classement selon la moyenne (1 = meilleure moyenne)">Rang</th>${head}</tr>${subHead}</thead><tbody>${rows}${avgRow}</tbody></table></div>
   <div style="margin-top:8px;color:#64748b;font-size:12px;">Cliquez sur une case pour saisir la note (Entrée = élève suivant). Valeurs spéciales : Abs, Disp, NE, NR, EA, X. Clic sur l'en-tête d'une évaluation pour la modifier · clic droit sur une note pour ajouter un commentaire.</div>`;
 
  const scroller=host.querySelector(".bys-scroll");
@@ -9380,10 +9440,12 @@ function renderClassBySubject(classId){
  });
  ["pointerup","pointercancel","pointermove"].forEach(n=>scroller.addEventListener(n,()=>clearTimeout(_lp)));
 
+ const updateRanks=()=>{ const rk=rankMap(); host.querySelectorAll("td[data-rank-stu]").forEach(td=>{ td.textContent=rankTxt(td.dataset.rankStu,rk); td.title="Classement sur "+rk.n+" élève(s) noté(s)"; }); };
  const updateClassAvgRow=()=>{
   host.querySelectorAll("th.bys-head").forEach(th=>{ const ev=evals.find(e=>e.id===th.dataset.evid); if(ev) th.classList.toggle("bys-incomplete",!isFullyEvaluated(ev,classId)); });
   host.querySelectorAll("td[data-cavg-ev]").forEach(td=>{ const ev=evals.find(e=>e.id===td.dataset.cavgEv); td.textContent=ev?fmtAvg(classAvgEv(ev)):""; });
   const all=host.querySelector("td[data-cavg-all]"); if(all) all.textContent=fmtAvg(classAvgAll());
+  try{ updateRanks(); }catch(e){}
  };
  host.querySelectorAll("tbody td.bys-stu[data-stu-id]").forEach(td=>{
   td.addEventListener("click",()=>openStatsPopup(td.dataset.stuId,ALL?"general":"subject",ALL?null:active,period,{label:cls.isGroup?"Groupe":"Classe",ids:cls.memberIds||[]}));
@@ -9414,7 +9476,7 @@ function renderClassBySubject(classId){
    inp.classList.toggle("bys-x",inp.value==="X");
    const _ac=host.querySelector(`td[data-avg-stu="${inp.dataset.stu}"]`);
    if(_ac) _ac.textContent=fmtAvg(avgOf(inp.dataset.stu));
-   updateClassAvgRow();
+   updateClassAvgRow(); updateRanks();
    saveData();
   };
   inp.addEventListener("change",commit);
@@ -10093,7 +10155,7 @@ function autosaveClassNote(stuId,classId,ev,rawVal,importantFlag,baremeData=null
  else if(trimmed.length){const n=parseFloat(trimmed.replace(',','.'));if(isNaN(n)) return;noteObj={...base,note:n};}
  else{DATA.notes[stuId]=(DATA.notes[stuId]||[]).filter(m=>!(m.classCommon&&m.classId===classId&&m.classNoteId===ev.id));return;}
  const existing=(DATA.notes[stuId]||[]).find(m=>m.classCommon&&m.classId===classId&&m.classNoteId===ev.id);
- if(existing){noteObj.id=existing.id;if(existing.comment) noteObj.comment=existing.comment;}
+ if(existing){noteObj.id=existing.id;if(existing.comment) noteObj.comment=existing.comment;if(existing.createdAt) noteObj.createdAt=existing.createdAt;}
  else noteObj.id='n_'+Math.random().toString(36).slice(2,9);
  const idx=(DATA.notes[stuId]||[]).findIndex(m=>m.classCommon&&m.classId===classId&&m.classNoteId===ev.id);
  if(idx>=0) DATA.notes[stuId][idx]=noteObj; else DATA.notes[stuId].push(noteObj);
@@ -11292,7 +11354,7 @@ function openStatsPopup(studentId, kind, subject, periodKey, scope){
  const stu=DATA.students.find(s=>s.id===studentId); if(!stu) return;
  if(scope){   /* depuis l'onglet Classes/groupes : uniquement la matière affichée, sur la classe ou le groupe affiché */
   const isG=kind==="general", f=sid=>isG?statsGenAvg(sid,periodKey):statsSubjAvg(sid,subject,periodKey);
-  const avgs=(scope.ids||[]).map(f).filter(a=>a!==null).sort((a,b)=>b-a); if(!avgs.length) return;
+  const avgs=Array.from(new Set(scope.ids||[])).map(f).filter(a=>a!==null).sort((a,b)=>b-a); if(!avgs.length) return;
   const m=document.getElementById("statsModal"), bd=document.getElementById("statsBody"); if(!m||!bd) return;
   bd.innerHTML=statsBlockHtml(isG?"Général":subject,scope.label,avgs,f(studentId),isG);
   m.classList.add("open"); return;
@@ -11300,7 +11362,7 @@ function openStatsPopup(studentId, kind, subject, periodKey, scope){
  const cls=DATA.classes.find(c=>c.id===stu.classId); if(!cls) return;
  const isGen=kind==="general";
  const avgOf=sid=>isGen?statsGenAvg(sid,periodKey):statsSubjAvg(sid,subject,periodKey);
- const build=ids=>(ids||[]).map(avgOf).filter(a=>a!==null).sort((a,b)=>b-a);
+ const build=ids=>Array.from(new Set(ids||[])).map(avgOf).filter(a=>a!==null).sort((a,b)=>b-a);
  const clsAvgs=build(cls.memberIds);
  if(!clsAvgs.length) return;
  const modal=document.getElementById("statsModal"), body=document.getElementById("statsBody");
@@ -14496,7 +14558,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
   });
   Object.entries(DATA.notes||{}).forEach(([studentId,notes])=>{
    DATA.notes[studentId]=(notes||[]).filter(note=>{
-    const remove=relatedNoteIds.has(note.id) || (note.homeworkSubmissionId && relatedSubmissionIds.has(note.homeworkSubmissionId));
+    const remove=relatedNoteIds.has(note.id) || (note.homeworkSubmissionId && relatedSubmissionIds.has(note.homeworkSubmissionId)) || String(note.id||"").indexOf("hwn_"+homeworkId+"_")===0;
     if(remove && note.id) relatedNoteIds.add(note.id);
     return !remove;
    });
@@ -15174,10 +15236,24 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
   openHomeworkCorrection(homeworkId,testId,studentId);
   return true;
  };
+ /* Pop-up « Modifier » d'une note individuelle issue d'un test en ligne assigné à UN élève : accès direct à la page des tests + pop-up de correction de l'élève */
+ window.hwSoloOfNote=function(n){ try{ return (n&&!n.classCommon)?hwSoloFromNoteId(n.id):null; }catch(e){ return null; } };
+ window.hwSoloOpenCorrection=function(n,studentId){
+  const sl=window.hwSoloOfNote(n); if(!sl) return false;
+  try{ document.querySelector('#mainTabs .tab-btn[data-target="onlineTestsView"]')?.click(); }catch(e){}
+  setTimeout(()=>{ try{ if(!window.hwOpenFeedCorrection(sl.hw.id,sl.test.id,studentId)) alert("Aucune correction disponible pour ce test."); }catch(e){ console.warn("hwSoloOpenCorrection",e); } },60);
+  return true;
+ };
  window.hwNoteCorrectifBtn=function(n,studentId){
   try{
-   if(!n||!n.classCommon||!n.classNoteId) return "";
-   const cls=classLike(n.classId), ev=cls&&(cls.evals||[]).find(e=>e.id===n.classNoteId);
+   if(!n) return "";
+   const _sl=(!n.classCommon)?hwSoloFromNoteId(n.id):null;
+   let ev;
+   if(_sl) ev={hwId:_sl.hw.id,hwTestId:_sl.test.id};
+   else{
+    if(!n.classCommon||!n.classNoteId) return "";
+    const cls=classLike(n.classId); ev=cls&&(cls.evals||[]).find(e=>e.id===n.classNoteId);
+   }
    if(!ev||!ev.hwId||!ev.hwTestId) return "";
    const test=getHomeworkTest(ev.hwTestId);
    if(!test||test.options?.trainingMode||test.options?.hideCorrection) return "";
@@ -15638,7 +15714,9 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
   const sub=getHomeworkSubmission(homework.id,test.id,studentId);
   const cls=classLike(homework.classId);
   const ev=cls&&(cls.evals||[]).find(e=>e.hwKey===`${homework.id}::${test.id}`);
-  const note=ev&&(DATA.notes&&DATA.notes[studentId]||[]).find(m=>m.classCommon&&m.classId===cls.id&&m.classNoteId===ev.id);
+  const note=isSoloId(homework.classId)
+   ? hwSoloNote(homework.id,test.id,studentId)
+   : (ev&&(DATA.notes&&DATA.notes[studentId]||[]).find(m=>m.classCommon&&m.classId===cls.id&&m.classNoteId===ev.id));
   if(note){
    if(note.notReturned) return false;
    if(typeof note.note==="number" && !isNaN(note.note)) return true;
@@ -15657,8 +15735,81 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
   if(openSubmitted) return "orange";
   return "green";
  }
+ /* Test assigné à UN seul élève (cible « solo_… ») : la note est une note INDIVIDUELLE (ni classe, ni groupe), modifiable dans la section élève.
+    Son identifiant est déterministe (il est enregistré avec la note) : c'est lui qui la relie au devoir et au test. */
+ function hwSoloNoteId(homeworkId,testId){ return "hwn_"+homeworkId+"_"+testId; }
+ function hwSoloNote(homeworkId,testId,sid){
+  const id=hwSoloNoteId(homeworkId,testId);
+  return ((DATA.notes&&DATA.notes[sid])||[]).find(n=>n.id===id && !n.classCommon) || null;
+ }
+ function hwSoloFromNoteId(noteId){
+  if(!noteId || String(noteId).indexOf("hwn_")!==0) return null;
+  for(const hw of (DATA.homework||[])){
+   if(!isSoloId(hw.classId)) continue;
+   for(const tid of (hw.testIds||[])){
+    if(hwSoloNoteId(hw.id,tid)===noteId){ const test=getHomeworkTest(tid); if(test) return {hw,test}; }
+   }
+  }
+  return null;
+ }
+ function syncSoloHomeworkNote(hw,test,key,isProf,myId){
+  let changed=false;
+  const sid=String(hw.classId).slice(SOLO_PFX.length);
+  if(!isProf && sid!==myId) return false;
+  if(!(DATA.students||[]).some(x=>x.id===sid)) return false;
+  const nid=hwSoloNoteId(hw.id,test.id);
+  const arr=DATA.notes[sid]||(DATA.notes[sid]=[]);
+  const period=homeworkPeriodFromDate(hw.dateISO);
+  const total=getOnlineTestTotalPoints(test);
+  const tc=(test.coef!==undefined&&test.coef!==null&&test.coef!==""&&isFinite(Number(test.coef))&&Number(test.coef)>=0)?Number(test.coef):1;
+  /* reprise des anciennes évaluations « solo » (note de classe/groupe) : elles deviennent des notes individuelles */
+  if(isProf){
+   const scls=classLike(hw.classId);
+   const old=scls&&(scls.evals||[]).find(e=>e.hwKey===key);
+   if(old){
+    const cn=arr.find(m=>m.classCommon && m.classId===scls.id && m.classNoteId===old.id);
+    if(cn && !arr.some(m=>m.id===nid)){
+     const oldId=cn.id;
+     cn.classCommon=false; delete cn.classId; delete cn.classNoteId; cn.id=nid;
+     if(Array.isArray(DATA.competencies)) DATA.competencies.forEach(c=>{ if(oldId && c.noteId===oldId) c.noteId=nid; });
+    }else if(cn){
+     DATA.notes[sid]=arr.filter(m=>m!==cn);
+    }
+    scls.evals=scls.evals.filter(e=>e.id!==old.id);
+    changed=true;
+   }
+  }
+  const list=DATA.notes[sid]||(DATA.notes[sid]=[]);
+  let note=list.find(m=>m.id===nid && !m.classCommon);
+  const sub=getHomeworkSubmission(hw.id,test.id,sid);
+  const grade=homeworkGradeForEval(sub,test,hw);
+  if(!note){
+   if(!isProf) return changed;
+   if(LOCKED_PERIODS[period]) return changed;
+   const reveal=homeworkEvalRevealed(hw,test);
+   note={id:nid,subject:hw.subject,label:test.title||`Devoir ${hw.subject}`,dateJJMMAA:homeworkDateToFr(hw.dateISO),isoDate:hw.dateISO,
+    outof:total,coef:tc,classCommon:false,period,important:false,hideFromStudent:!reveal,hwAuto:true};
+   applyHomeworkDirectValue(note,grade);
+   list.push(note);
+   return true;
+  }
+  /* ancienne note restée à NR sans le marqueur automatique : on le rétablit */
+  if(!note.hwAuto && typeof note.note!=="number" && (!note.noteText || note.noteText==="NR")){ note.hwAuto=true; changed=true; }
+  /* tant que le professeur n'a pas modifié la note à la main, elle suit le rendu de l'élève ; une note modifiée à la main n'est plus jamais écrasée */
+  if(note.hwAuto){
+   const wasPending=typeof note.note!=="number" && (!note.noteText || note.noteText==="NR" || note.noteText==="EA");
+   if(isProf && note.outof!==total){ note.outof=total; changed=true; }
+   if(applyHomeworkDirectValue(note,grade)) changed=true;
+   if(isProf && wasPending && note.hideFromStudent){
+    const nowReal=typeof note.note==="number" || (note.noteText && note.noteText!=="NR" && note.noteText!=="EA");
+    if(nowReal){ note.hideFromStudent=false; changed=true; }
+   }
+  }
+  return changed;
+ }
  function hwFindEvalNote(homeworkId,testId,sid){
   const hw=getHomeworkById(homeworkId); if(!hw) return null;
+  if(isSoloId(hw.classId)){ const sn=hwSoloNote(homeworkId,testId,sid); return sn?{ev:null,note:sn}:null; }
   const cls=classLike(hw.classId); if(!cls) return null;
   const ev=(cls.evals||[]).find(e=>e.hwKey===`${homeworkId}::${testId}`); if(!ev) return null;
   const note=((DATA.notes&&DATA.notes[sid])||[]).find(m=>m.classCommon&&m.classId===cls.id&&m.classNoteId===ev.id);
@@ -15795,6 +15946,7 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
    homeworkDirectTests(hw).forEach(test=>{
     const key=`${hw.id}::${test.id}`;
     wanted.set(key,hw.classId);
+    if(isSoloId(hw.classId)){ if(syncSoloHomeworkNote(hw,test,key,isProf,myId)) changed=true; return; }
     const cls=classLike(hw.classId);
     if(!cls) return;
     if(!Array.isArray(cls.evals)) cls.evals=[];
@@ -15880,6 +16032,18 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
    });
   });
   if(isProf){
+   /* notes individuelles de tests « élève seul » dont le test n'est plus assigné : supprimées */
+   const wantedSolo=new Set();
+   wanted.forEach((cid,k)=>{ if(isSoloId(cid)){ const i=k.indexOf("::"); wantedSolo.add(hwSoloNoteId(k.slice(0,i),k.slice(i+2))); } });
+   Object.keys(DATA.notes||{}).forEach(sid=>{
+    const arr=DATA.notes[sid]||[];
+    const gone=arr.filter(n=>String(n.id||"").indexOf("hwn_")===0 && !n.classCommon && !wantedSolo.has(n.id));
+    if(!gone.length) return;
+    const goneIds=new Set(gone.map(n=>n.id));
+    DATA.notes[sid]=arr.filter(n=>!goneIds.has(n.id));
+    if(Array.isArray(DATA.competencies)) DATA.competencies=DATA.competencies.filter(c=>!goneIds.has(c.noteId));
+    changed=true;
+   });
    [...DATA.classes,...grpEns()].forEach(cls=>{
     if(!Array.isArray(cls.evals)) return;
     cls.evals.filter(e=>e.hwKey).forEach(ev=>{
@@ -15904,7 +16068,7 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
     const hw=getHomeworkById(sub.homeworkId);
     const arr=DATA.notes?.[sub.studentId];
     if(!hw || !arr) return;
-    const evExists=!!classLike(hw.classId)?.evals?.some(e=>e.hwKey===`${hw.id}::${sub.testId}`);
+    const evExists=!!classLike(hw.classId)?.evals?.some(e=>e.hwKey===`${hw.id}::${sub.testId}`) || (isSoloId(hw.classId) && !!hwSoloNote(hw.id,sub.testId,sub.studentId));
     if(!evExists) return;
     const legacy=arr.find(n=>!n.classCommon && n.homeworkSubmissionId===sub.id);
     if(!legacy) return;
@@ -16212,6 +16376,10 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
    const note=(DATA.notes?.[studentId]||[]).find(m=>m.classCommon && m.classNoteId===ev.id);
    if(note){ applyHomeworkDirectValue(note,""); note.hwAuto=true; }
   }
+  if(isSoloId(hw.classId)){
+   const sn=hwSoloNote(homeworkId,testId,studentId);
+   if(sn){ applyHomeworkDirectValue(sn,""); sn.hwAuto=true; }
+  }
   /* ancienne note autonome éventuelle */
   if(DATA.notes?.[studentId]){
    const legacyIds=new Set(DATA.notes[studentId].filter(n=>!n.classCommon && (n.homeworkSubmissionId===sub.id || (sub.noteId && n.id===sub.noteId))).map(n=>n.id));
@@ -16414,6 +16582,9 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
      if(note) note.hideFromStudent=false;
     });
    }
+   if(isSoloId(item.homework.classId)){
+    (cls?.memberIds||[]).forEach(sid=>{ const sn=hwSoloNote(item.homework.id,item.test.id,sid); if(sn) sn.hideFromStudent=false; });
+   }
    specialMarks.forEach(([sid,val])=>hwApplyManualMark(item.homework.id,item.test.id,sid,val));
   });
   syncHomeworkDirectGrades();
@@ -16467,7 +16638,14 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
     actions.appendChild(reviewBtn);
    }
    reviewBtn.className="btn-homework-review"+(stats.uncorrected>0?" needs-correction":"");   // cadre rouge : des copies rendues restent à corriger
-   reviewBtn.title="Voir et corriger les soumissions";
+   reviewBtn.title="Voir et corriger les soumissions"+(stats.uncorrected>0?" · "+stats.uncorrected+" test"+(stats.uncorrected>1?"s":"")+" rendu"+(stats.uncorrected>1?"s":"")+" non corrigé"+(stats.uncorrected>1?"s":""):"");
+   reviewBtn.querySelectorAll(":scope > .hw-review-count").forEach(x=>x.remove());
+   if(stats.uncorrected>0){
+    const cnt=document.createElement("span");
+    cnt.className="hw-review-count";
+    cnt.textContent=stats.uncorrected>99?"99+":String(stats.uncorrected);
+    reviewBtn.appendChild(cnt);
+   }
    /* pastille de notif sur le bloc du test : nombre de tests rendus */
    const card=btn.closest(".online-test-card");
    if(card){
@@ -18528,7 +18706,7 @@ function tlItems(){
    if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)&&typeof normDateISO==="function") iso=normDateISO(n.dateJJMMAA)||"";
    if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return;
    const ts=new Date(iso+"T12:00:00").getTime();
-   rows.push({idx:i,iso,ts,subject:n.subject||"—",label:n.label||"",period:n.period||"YEAR"});
+   rows.push({idx:i,iso,ts:Math.max(ts,createdTs(n)),cts:createdTodayISO(n),subject:n.subject||"—",label:n.label||"",period:n.period||"YEAR"});
   });
   /* Évaluations de compétences seules (sans note) : mêmes notifications que les notes */
   const cg={};
@@ -18549,7 +18727,7 @@ function tlItems(){
    .sort((a,b)=>(b.last.ts-a.last.ts)||(b.last.idx-a.last.idx))
    .forEach(({l,last})=>{
     const multi=l.length>1;
-    out.push({k:"n"+last.iso+"|"+last.subject,type:"grade",act:"grade",ts:last.ts,iso:last.iso,today:last.iso>=today,
+    out.push({k:"n"+last.iso+"|"+last.subject,type:"grade",act:"grade",ts:last.ts,iso:last.iso,today:(last.iso>=today||l.some(r=>r.cts===today)),
      subject:last.subject,period:last.period,
      title:(multi?"Nouvelles évaluations de ":"Nouvelle évaluation de ")+last.subject,
      sub:multi?"":l[0].label, lines:multi?l.map(r=>r.label||"Évaluation"):null});
