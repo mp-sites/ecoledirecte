@@ -14292,7 +14292,12 @@ function initApp(){
   return {id:g.id,name:g.name,subjects:subs,memberIds:studs.map(s=>s.id),isGroup:true};
  }
  function homeworkTargetOptionsHtml(sel){
-  const solo=isSoloId(sel)?`<optgroup label="Élève"><option value="${escHtml(sel)}" selected>${escHtml(homeworkClassName(sel))}</option></optgroup>`:"";
+  /* « Élèves » : un devoir peut être (ré)assigné à un seul élève, comme à une classe ou à un groupe */
+  const selSid=isSoloId(sel)?String(sel).slice(SOLO_PFX.length):"";
+  const stuList=(DATA.students||[]).filter(x=>x.id===selSid || !x.classId || window.edOkCls(x.classId,null))
+   .slice().sort((a,b)=>((a.last||"")+" "+(a.first||"")).localeCompare((b.last||"")+" "+(b.first||""),"fr",{sensitivity:"base"}));
+  const solo=stuList.length?`<optgroup label="Élèves">${stuList.map(x=>{ const v=soloGrpId(x.id), cn=(DATA.classes.find(c=>c.id===x.classId)||{}).name||"";
+   return `<option value="${escHtml(v)}" ${v===sel?"selected":""}>${escHtml(((x.last||"")+" "+(x.first||"")).trim()+(cn?" ("+cn+")":""))}</option>`; }).join("")}</optgroup>`:"";
   const gl=grpUi().slice().sort((a,b)=>a.name.localeCompare(b.name,"fr",{numeric:true,sensitivity:"base"}));
   return homeworkSortedClasses().map(cls=>`<option value="${escHtml(cls.id)}" ${cls.id===sel?"selected":""}>${escHtml(cls.name)}</option>`).join("")
    +(gl.length?`<optgroup label="Groupes">${gl.map(g=>`<option value="${escHtml(g.id)}" ${g.id===sel?"selected":""}>${escHtml(g.name)}</option>`).join("")}</optgroup>`:"")+solo;
@@ -14818,10 +14823,10 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
       <div class="homework-title-edit">
        <select id="homeworkDraftClassSelect" aria-label="Classe">${homeworkTargetOptionsHtml(draft.classId)}</select>
        <select id="homeworkDraftSubjectSelect" aria-label="Matière">${(()=>{ const subs=homeworkClassSubjects(draft.classId); if(draft.subject && !subs.includes(draft.subject)) subs.unshift(draft.subject); return subs.map(sub=>`<option value="${escHtml(sub)}" ${sub===draft.subject?"selected":""}>${escHtml(sub)}</option>`).join(""); })()}</select>
-       <button type="button" class="homework-title-ok" data-hw-action="confirm-title" title="Valider la classe et la matière" aria-label="Valider la classe et la matière"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
+       <button type="button" class="homework-title-ok" data-hw-action="confirm-title" title="Valider le destinataire et la matière" aria-label="Valider le destinataire et la matière"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
       </div>` : `
       <h4><span class="class-name">${escHtml(className)}</span> - <span class="subject-name">${escHtml(draft.subject)}</span>
-       <button type="button" class="homework-title-pencil" data-hw-action="edit-title" title="Modifier la classe et la matière" aria-label="Modifier la classe et la matière"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></button>
+       <button type="button" class="homework-title-pencil" data-hw-action="edit-title" title="Modifier le destinataire (classe, groupe ou élève) et la matière" aria-label="Modifier le destinataire et la matière"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></button>
       </h4>`;
   return `
    <article class="homework-entry-card">
@@ -16748,6 +16753,7 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
    return;
   }
   if(target.id==="homeworkDraftClassSelect"){
+   if(isSoloId(target.value)) ensureSoloGroup(String(target.value).slice(SOLO_PFX.length));
    const subSel=document.getElementById("homeworkDraftSubjectSelect");
    if(subSel){
     const subs=homeworkClassSubjects(target.value);
@@ -16837,15 +16843,31 @@ function handleHomeworkActionClick(btn){
    const subject=document.getElementById("homeworkDraftSubjectSelect")?.value || HOMEWORK_STATE.draft.subject;
    if(!subject){ alert("Cette classe (ou ce groupe) n’a aucune matière : ajoute-en une d’abord."); return; }
    saveHomeworkDraftFromDom();
+   if(isSoloId(classId)) ensureSoloGroup(String(classId).slice(SOLO_PFX.length));
    const test={...HOMEWORK_STATE.draft, classId, subject};
    if(hasHomeworkCollision(test)){
     alert("Un devoir existe déjà pour cette classe, cette matière et cette date.");
     return;
    }
-   HOMEWORK_STATE.draft.classId=classId;
-   HOMEWORK_STATE.draft.subject=subject;
-   HOMEWORK_STATE.editTitle=false;
-   renderHomeworkView();
+   const applyTitle=()=>{
+    HOMEWORK_STATE.draft.classId=classId;
+    HOMEWORK_STATE.draft.subject=subject;
+    HOMEWORK_STATE.editTitle=false;
+    renderHomeworkView();
+   };
+   /* devoir déjà enregistré et destinataire modifié : prévenir si des élèves ont déjà rendu un test */
+   const _prev=(DATA.homework||[]).find(h=>h.id===HOMEWORK_STATE.draft.id);
+   if(_prev && _prev.classId!==classId){
+    const _nbRendus=(DATA.homeworkSubmissions||[]).filter(x=>x.homeworkId===_prev.id && x.submittedAt).length;
+    if(_nbRendus){
+     openConfirmModal({
+      message:"Ce devoir a déjà "+_nbRendus+" rendu(s). En changeant de destinataire, les notes issues de ce devoir seront recalculées pour les nouveaux destinataires (les copies des élèves qui ne sont plus concernés sont conservées mais ne leur sont plus accessibles). Continuer ?",
+      onConfirm:applyTitle
+     });
+     return;
+    }
+   }
+   applyTitle();
    return;
   }
   if(action==="edit-homework"){ startHomeworkDraft(btn.dataset.homeworkId); return; }
