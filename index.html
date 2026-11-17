@@ -188,7 +188,7 @@ tbody tr:hover{ background:#f9fafb }
 .eval-pill{ display:inline-flex; align-items:center; gap:6px; padding:4px 10px; margin:2px 4px 2px 0; border:1px solid var(--border); border-radius:0; background:#fff; cursor:pointer; box-shadow:none; }
 .eval-pill:hover{ box-shadow:0 1px 3px rgba(0,0,0,0.1); }
 .eval-pill.empty-eval{ border-color:#ef4444; background:#fef2f2; }
-.eval-pill.empty-eval::before{ content:"⚠️ "; font-size:12px; }
+.eval-pill.empty-eval::before{ content:""; display:inline-block; width:13px; height:13px; margin-right:5px; vertical-align:-2px; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.8 1.6 20.6c-.4.8.1 1.6 1 1.6h18.8c.9 0 1.4-.8 1-1.6L12 2.8z' fill='%23dc2626'/%3E%3Cpath d='M12 9.4v5.3' stroke='white' stroke-width='2.2' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='18' r='1.25' fill='white'/%3E%3C/svg%3E") center/contain no-repeat; }
 .modal{ position: fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(2,6,23,0.45); z-index:50 }
 #studentCompModal, #classCompSetupModal, #classCompGradingModal { z-index: 60; }
 #classSingleCompGradingModal { z-index: 70; }
@@ -483,7 +483,11 @@ body.student-mode #onlineTestsView{ display:none !important }
  background: #f9fbfc; border: 1px solid #e2e8f0; border-radius: 8px; align-items: center;
 }
 .prof-batch-actions.active { display: flex; }
-.hidden-icon { color: #94a3b8; margin-right: 6px; position: relative; display: inline-block; font-size: 1.1em; }
+.hidden-icon { color: #94a3b8; margin-right: 6px; position: relative; display: inline-block; font-size: 1.1em; line-height:1; vertical-align:middle; }
+.ico-warn,.ico-eye{ width:1.05em; height:1.05em; vertical-align:-0.18em; display:inline-block; flex:none; }
+.hidden-icon .ico-eye{ width:1.1em; height:1.1em; vertical-align:-0.2em; }
+.color-dot .ico-warn{ width:12px; height:12px; vertical-align:middle; }
+.tl-note-nonsig{ display:inline-block; margin-left:8px; padding:2px 9px; border-radius:999px; background:#e0f2fe; color:#0369a1; border:1px solid #7dd3fc; font-size:12px; font-weight:700; vertical-align:middle; }
 .hidden-icon::after {
  content: ""; position: absolute; top: 50%; left: -20%; width: 140%; height: 2px;
  background: #ef4444; transform: rotate(-45deg); pointer-events: none; opacity: 0.8;
@@ -503,12 +507,12 @@ body.student-mode #onlineTestsView{ display:none !important }
 .dr-item .dr-bdg.dr-cnt{ min-width:22px; height:22px; padding:0 7px; border-radius:999px; background:#ef4444; color:#fff; font-size:12px; font-weight:700; line-height:22px; text-align:center }
 body.student-mode .tab-btn[data-pending-count]::after{ display:none !important }
 .tab-btn.has-empty-eval::after, .subtab-btn.has-empty-eval::after, .period-btn.has-empty-eval::after {
- content: "⚠️"; position: absolute; top: -6px; right: -6px; font-size: 11px;
+ content: ""; position: absolute; top: -6px; right: -6px; font-size: 11px;
  background: white; border-radius: 50%; padding: 1px; border: 1px solid #ccc;
  line-height: 1; z-index: 10; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center;
 }
 .tab-btn.has-hidden-eval::before, .subtab-btn.has-hidden-eval::before, .period-btn.has-hidden-eval::before {
- content: "👁️"; position: absolute; top: -6px; left: -6px; font-size: 11px;
+ content: ""; position: absolute; top: -6px; left: -6px; font-size: 11px;
  background: white; border-radius: 50%; padding: 1px; border: 1px solid #ccc;
  line-height: 1; z-index: 10; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center;
 }
@@ -780,7 +784,7 @@ body.student-mode .container .card{ border-top-left-radius:0 }
 .note-pill.today::after{ content:""; position:absolute; bottom:var(--ul-b,0px); height:var(--ul-h,var(--trait-epaisseur)); background:#007ac6; left:var(--ul-l,-6px); right:var(--ul-r,-6px); pointer-events:none }
 
 
-/* ── Icônes de coin des gros onglets (⚠️ / 👁️) : légèrement plus grandes ── */
+/* ── Icônes de coin des gros onglets (attention / œil) : légèrement plus grandes ── */
 .tab-btn.has-empty-eval::after, .tab-btn.has-hidden-eval::before{
  font-size:14px; width:23px; height:23px; top:-9px; padding:2px;
 }
@@ -1232,7 +1236,8 @@ body.student-mode .prof-only-tab{display:none!important}
 .ap-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px;margin:8px 0 22px}
 .ap-cls{margin:14px 0 4px;color:#0471b5}
 .ap-card{position:relative;background:#fff;border:1px solid #cbd5e1;border-radius:14px;padding:14px 10px 12px;text-align:center;cursor:pointer;overflow:hidden;user-select:none;box-shadow:0 1px 3px rgba(0,0,0,.08)}
-.ap-card svg{width:110px;height:110px;display:block;margin:0 auto 8px}
+.ap-card svg,.ap-card .ap-av{width:110px;height:110px;display:block;margin:0 auto 8px;object-fit:contain;pointer-events:none}
+.vs-st{flex:none;font-size:12px;font-weight:700;padding:2px 10px;border-radius:999px;white-space:nowrap}
 .ap-card .ap-n{font-size:15px;line-height:1.35}
 .ap-prev{border:4px solid #0080d0}
 .ap-veil{position:absolute;inset:0;background:rgba(1,128,207,.55);color:#fff;font-weight:700;font-size:22px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:46px;text-shadow:0 1px 3px rgba(0,0,0,.4)}
@@ -1267,7 +1272,7 @@ body.student-mode .prof-only-tab{display:none!important}
 .hist-ok{font-size:10px;font-weight:700;color:#166534;background:#dcfce7;border-radius:8px;padding:0 5px;margin-left:4px;white-space:nowrap}
 .sch-ev .hist-ok{position:absolute;right:4px;bottom:3px}
 .ap-grid-s{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
-.ap-grid-s .ap-card svg{width:80px;height:80px}
+.ap-grid-s .ap-card svg,.ap-grid-s .ap-card .ap-av{width:80px;height:80px}
 .ap-grid-s .ap-n{font-size:13px}
 .ap-grid-s .ap-veil{font-size:17px;padding-top:30px}
 .ap-ro{cursor:default}
@@ -1323,7 +1328,7 @@ body.student-mode .tab-btn[data-target="vieView"]{order:5}
 .vs-tab.vs-warn{border:2px solid #dc2626;border-radius:8px;color:#b91c1c;margin-bottom:2px}
 .vs-loc{align-self:center;margin-left:8px;padding:3px 10px;font-size:12px;font-weight:600;border:1px solid #dc2626;color:#b91c1c;background:#fef2f2;border-radius:14px;cursor:pointer}
 .vs-loc:hover{background:#fee2e2}
-.tab-btn.has-miss-call::after,.vs-tab.vs-warn::after{content:"⚠️";position:absolute;top:-9px;right:-9px;font-size:14px;background:#fff;border-radius:50%;padding:2px;border:1px solid #ccc;line-height:1;z-index:10;width:23px;height:23px;display:flex;align-items:center;justify-content:center;box-sizing:border-box}
+.tab-btn.has-miss-call::after,.vs-tab.vs-warn::after{content:"";position:absolute;top:-9px;right:-9px;font-size:14px;background:#fff;border-radius:50%;padding:2px;border:1px solid #ccc;line-height:1;z-index:10;width:23px;height:23px;display:flex;align-items:center;justify-content:center;box-sizing:border-box}
 .vs-tab{position:relative}
 .vs-tab.vs-warn{margin-right:8px}
 .hist-miss{outline:3px solid #dc2626;outline-offset:-2px;z-index:2}
@@ -1390,11 +1395,11 @@ html{ -webkit-text-size-adjust:100%; touch-action:manipulation }
  #appelView .card-header{ flex-direction:column; align-items:stretch }
  .ap-grid{ grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px }
  .ap-card{ padding:10px 6px 10px }
- .ap-card svg{ width:84px; height:84px }
+ .ap-card svg,.ap-card .ap-av{ width:84px; height:84px }
  .ap-card .ap-n{ font-size:14.5px }
  .ap-veil{ font-size:19px; padding-top:34px }
  .ap-grid-s{ grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px }
- .ap-grid-s .ap-card svg{ width:64px; height:64px }
+ .ap-grid-s .ap-card svg,.ap-grid-s .ap-card .ap-av{ width:64px; height:64px }
 
  .sch-nav{ gap:6px }
  .sch-nav .btn{ min-height:42px }
@@ -2154,6 +2159,14 @@ button.hw-note-ico:hover{ background:#eef2f7 }
 .hw-score-verdict .hw-verdict{ margin:0 }
 .btn-spin{ display:inline-block; width:14px; height:14px; margin-right:8px; vertical-align:-2px; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:50%; animation:btnspin .7s linear infinite; box-sizing:border-box }
 @keyframes btnspin{ to{ transform:rotate(360deg) } }
+/* titres d'onglets redondants masqués (le nom reste sur le bouton de l'onglet) */
+#appreciationsView .card-header>strong,#appelView .card-header>strong{ display:none }
+/* options de test retirées */
+/* envoi d'un test : cadre rouge + rond qui tourne, puis cadre vert + coche */
+.hw-send-box{ display:flex; align-items:center; justify-content:center; gap:14px; padding:22px 18px; border:2px solid #dc2626; background:#fef2f2; color:#991b1b; border-radius:12px; font-weight:600; text-align:center; transition:background .25s,border-color .25s,color .25s }
+.hw-send-box.is-sent{ border-color:#16a34a; background:#f0fdf4; color:#166534 }
+.hw-send-spin{ flex:none; width:22px; height:22px; border:3px solid rgba(220,38,38,.25); border-top-color:#dc2626; border-radius:50%; animation:btnspin .7s linear infinite; box-sizing:border-box }
+.hw-send-ok{ flex:none; display:inline-flex; width:26px; height:26px; border-radius:50%; border:2.5px solid #16a34a; align-items:center; justify-content:center; box-sizing:border-box }
 /* Paramètres des tests en ligne : case centrée verticalement et décollée du texte */
 #onlineTestSetupModal label.online-check-item,#onlineBasicTestModal label.online-check-item,
 #onlineTestSetupModal div.online-check-item,#onlineBasicTestModal div.online-check-item{ display:flex !important; align-items:center !important; gap:14px !important; margin:0 !important }
@@ -2185,6 +2198,43 @@ button.hw-note-ico:hover{ background:#eef2f7 }
  window.alert=function(msg){ window.siteAlert(msg); };
 })();
 </script>
+
+<style id="ed-patch-style">
+/* ── Classes et groupes : plus de liste latérale, deux filtres-recherche en haut ── */
+#classesView .card-body.split{ display:block }
+#classesView .card-body.split>.panel:first-child{ display:none }
+.cl-filters{ display:flex; gap:12px; flex-wrap:wrap; align-items:flex-start; padding:12px 14px 0 }
+.cb{ position:relative; flex:1 1 240px; max-width:380px; min-width:200px }
+.cb-in{ width:100%; box-sizing:border-box; padding:10px 58px 10px 12px; border:1px solid var(--border); border-radius:10px; background:#fff; font-size:14px; color:var(--text) }
+.cb-in:focus{ outline:2px solid #b9e2fc; border-color:#8dd0fb }
+.cb.has .cb-in{ border-color:#109ef5; background:#eef9ff; font-weight:600 }
+.cb-ar{ position:absolute; right:12px; top:50%; transform:translateY(-50%); pointer-events:none; color:#64748b; display:flex }
+.cb-x{ position:absolute; right:32px; top:50%; transform:translateY(-50%); border:0; background:transparent; color:#94a3b8; font-size:18px; line-height:1; cursor:pointer; padding:2px 4px; border-radius:6px; display:none }
+.cb.has .cb-x{ display:block }
+.cb-x:hover{ color:#ef4444; background:#fee2e2 }
+/* panneau déroulant moderne (listes de recherche et listes déroulantes de la vision prof) */
+.ed-pop{ position:fixed; z-index:100000; background:#fff; border:1px solid #dbe4ee; border-radius:12px; box-shadow:0 12px 32px rgba(15,23,42,.16),0 2px 6px rgba(15,23,42,.08); padding:5px; max-height:290px; overflow:auto; box-sizing:border-box }
+.ed-pop[hidden]{ display:none }
+.ed-it{ display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:8px; font-size:14px; line-height:1.25; cursor:pointer; color:var(--text,#0f172a) }
+.ed-it.hl,.ed-it:hover{ background:#eef9ff }
+.ed-it.on{ background:#dbf0fd; font-weight:600; color:#0471b5 }
+.ed-it .ed-ck{ margin-left:auto; color:#0080d0; flex:none; display:none }
+.ed-it.on .ed-ck{ display:block }
+.ed-empty{ padding:10px; color:#64748b; font-size:13px; font-style:italic }
+.ed-sep{ padding:6px 10px 2px; font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:#94a3b8; font-weight:700 }
+/* liste déroulante moderne (remplace le <select> natif, qui reste la source de données) */
+.cs{ position:relative; display:block; width:100%; box-sizing:border-box }
+.cs.cs-inl{ display:inline-block; width:auto }
+.cs-native{ position:absolute !important; inset:0; opacity:0; pointer-events:none; width:100% !important; height:100% !important; margin:0 !important; padding:0 !important; border:0 !important }
+.cs-btn{ width:100%; box-sizing:border-box; display:flex; align-items:center; gap:8px; text-align:left; padding:9px 12px; border:1px solid var(--border); border-radius:10px; background:#fff; font:inherit; font-size:14px; color:var(--text,#0f172a); cursor:pointer; min-height:38px; transition:border-color .12s,box-shadow .12s,background .12s }
+.cs-btn:hover{ border-color:#8dd0fb }
+.cs.open .cs-btn,.cs-btn:focus-visible{ outline:none; border-color:#109ef5; box-shadow:0 0 0 3px #b9e2fc }
+.cs-txt{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.cs-txt.cs-ph{ color:#94a3b8 }
+.cs-chev{ flex:none; color:#64748b; transition:transform .15s }
+.cs.open .cs-chev{ transform:rotate(180deg) }
+.cs.dis .cs-btn{ background:#f1f5f9; color:#94a3b8; cursor:not-allowed }
+</style>
 </head>
 <body class="auth-pending">
 <header>
@@ -2336,7 +2386,7 @@ button.hw-note-ico:hover{ background:#eef2f7 }
    <div class="card-header">
     <strong>Appréciations &amp; Bulletins</strong>
     <div id="appreciationWarning" class="import-banner" style="display:none; padding: 4px 10px; font-size: 0.85em; background: #fee2e2; border-color: #ef4444; color: #b91c1c; margin-left: auto; flex: 0 1 auto;">
-      ⚠️ Des appréciations sont manquantes pour les élèves en rouge.
+      <svg class="ico-warn" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 2.8 1.6 20.6c-.4.8.1 1.6 1 1.6h18.8c.9 0 1.4-.8 1-1.6L12 2.8z" fill="#dc2626"/><path d="M12 9.4v5.3" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="18" r="1.25" fill="#fff"/></svg> Des appréciations sont manquantes pour les élèves en rouge.
     </div>
    </div>
    <div class="card-body split">
@@ -2360,9 +2410,6 @@ button.hw-note-ico:hover{ background:#eef2f7 }
  </section>
  <section id="onlineTestsView" class="view">
   <div class="card">
-   <div class="card-header">
-    <strong>Test en ligne</strong>
-   </div>
    <div class="card-body">
     <div class="online-tests-shell">
      <div class="online-tests-toolbar">
@@ -2381,7 +2428,7 @@ button.hw-note-ico:hover{ background:#eef2f7 }
  </section>
 <section id="scheduleView" class="view">
  <div class="card"><div class="card-body" style="padding:14px">
-  <div class="sch-bar sch-prof-only"><button class="btn btn-primary" id="schAdd">Ajouter un cours</button><button class="btn btn-primary" id="schAddEvt">Ajouter un événement</button><button class="btn" id="schHol">Ajouter congés</button><button class="btn" id="schRooms">Salles</button><button class="btn" id="schGroups">Groupes</button></div>
+  <div class="sch-bar sch-prof-only"><button class="btn btn-primary" id="schAdd">Ajouter un cours</button><button class="btn btn-primary" id="schAddEvt">Ajouter un événement</button><button class="btn" id="schHol">Ajouter congés</button><button class="btn" id="schRooms">Salles</button></div>
   <div class="sch-nav"><button class="btn" id="schToday">Aujourd'hui</button><button class="btn" id="schPrev">‹</button><button class="btn" id="schNext">›</button><span class="sch-title" id="schTitle"></span>
    <label id="schMineWrap" style="display:none;align-items:center;gap:6px;margin-left:10px;font-size:0.9em;cursor:pointer"><input type="checkbox" id="schMine"> Mon emploi du temps uniquement</label>
    <div class="sch-views"><button class="btn" data-v="day">Jour</button><button class="btn" data-v="week">Semaine</button><button class="btn" data-v="month">Mois</button></div></div>
@@ -2389,12 +2436,9 @@ button.hw-note-ico:hover{ background:#eef2f7 }
  </div></div>
 </section>
  <section id="appelView" class="view"><div class="card"><div class="card-header"><strong>Feuille d'appel</strong><div id="appelCtl"></div></div><div class="card-body" id="appelBody"></div></div></section>
- <section id="vieView" class="view"><div class="card"><div class="card-header"><strong>Vie scolaire</strong></div><div class="card-body" id="vieBody"></div></div></section>
+ <section id="vieView" class="view"><div class="card"><div class="card-body" id="vieBody"></div></div></section>
  <section id="homeworkView" class="view">
   <div class="card">
-   <div class="card-header">
-    <strong>Devoirs</strong>
-   </div>
    <div class="card-body">
     <div class="homework-shell">
      <aside class="homework-calendar-panel">
@@ -2904,10 +2948,10 @@ button.hw-note-ico:hover{ background:#eef2f7 }
         </div>
 
         <div style="margin-top:15px; border-top:1px solid #e2e8f0; padding-top:15px;">
-          <label style="margin-bottom:8px; display:block;">Compétences associées</label>
+          <label style="margin-bottom:8px; display:block;">Compétences</label>
           <div id="profBatchEditCompsContainer" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;"></div>
           <button type="button" class="btn btn-sm" id="profBatchEditAddCompBtn">+ Remplacer par ces compétences</button>
-          <p style="font-size:0.75em; color:#ef4444; margin-top:5px;">⚠️ Remplacera TOUTES les compétences existantes des éléments sélectionnés.</p>
+          <p style="font-size:0.75em; color:#ef4444; margin-top:5px;"><svg class="ico-warn" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 2.8 1.6 20.6c-.4.8.1 1.6 1 1.6h18.8c.9 0 1.4-.8 1-1.6L12 2.8z" fill="#dc2626"/><path d="M12 9.4v5.3" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="18" r="1.25" fill="#fff"/></svg> Remplacera TOUTES les compétences existantes des éléments sélectionnés.</p>
         </div>
 
         <div class="modal-actions" style="margin-top:15px;">
@@ -3425,10 +3469,7 @@ button.hw-note-ico:hover{ background:#eef2f7 }
          <input id="onlineTestTimeLimitSeconds" type="number" min="0" max="59" step="1" placeholder="Sec" aria-label="Secondes"><span>s</span>
         </span>
        </div>
-       <label class="online-check-item"><input type="checkbox" id="onlineTestTrainingMode"><strong>Mode entraînement</strong></label>
        <label class="online-check-item" id="onlineTestFocusWrap"><input type="checkbox" id="onlineTestFocusMode"><strong>Mode Focus</strong></label>
-       <label class="online-check-item" id="onlineTestHideGradeWrap" style="display:none"><input type="checkbox" id="onlineTestHideGrade"><strong>Ne pas afficher la note</strong></label>
-       <label class="online-check-item" id="onlineTestHideCorrectionWrap"><input type="checkbox" id="onlineTestHideCorrection"><strong>Ne pas afficher la correction à la fin du test</strong></label>
       </div>
       <div id="onlineTestSetupHint" class="online-modal-note" style="display:none"></div>
      </div>
@@ -3481,10 +3522,7 @@ button.hw-note-ico:hover{ background:#eef2f7 }
          <input id="obtSec" type="number" min="0" max="59" step="1" placeholder="Sec" aria-label="Secondes"><span>s</span>
         </span>
        </div>
-       <label class="online-check-item"><input type="checkbox" id="obtTraining"><strong>Mode entraînement</strong></label>
        <label class="online-check-item" id="obtFocusWrap"><input type="checkbox" id="obtFocus"><strong>Mode Focus</strong></label>
-       <label class="online-check-item" id="obtHideGradeWrap" style="display:none"><input type="checkbox" id="obtHideGrade"><strong>Ne pas afficher la note</strong></label>
-       <label class="online-check-item" id="obtHideCorrectionWrap"><input type="checkbox" id="obtHideCorrection"><strong>Ne pas afficher la correction à la fin du test</strong></label>
       </div>
       <div id="obtHint" class="online-modal-note" style="display:none"></div>
      </div>
@@ -3683,6 +3721,9 @@ button.hw-note-ico:hover{ background:#eef2f7 }
 </div>
 
 <script>
+/* Icônes SVG (attention / œil) : remplacent les emojis colorés par défaut du système */
+const ICO_WARN=`<svg class="ico-warn" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 2.8 1.6 20.6c-.4.8.1 1.6 1 1.6h18.8c.9 0 1.4-.8 1-1.6L12 2.8z" fill="#dc2626"/><path d="M12 9.4v5.3" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="18" r="1.25" fill="#fff"/></svg>`;
+const ICO_EYE=`<svg class="ico-eye" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#048de2" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 12S5.5 5 12 5s10.5 7 10.5 7-4 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg>`;
 /* Filtrage par emploi du temps (surchargé par le module « ed-roles » pour les professeurs non responsables) */
 window.edOkStu=window.edOkStu||function(){return true;};
 window.edOkCls=window.edOkCls||function(){return true;};
@@ -5111,7 +5152,7 @@ function orderStudentItems(items,studentId){
   const stu=(DATA.students||[]).find(x=>x.id===studentId);
   const srcs=[]; const c0=stu&&stu.classId?classLike(stu.classId):null; if(c0) srcs.push(c0);
   (DATA.groups||[]).forEach(g=>{ if((g.memberIds||[]).includes(studentId)){ const gl=classLike(g.id); if(gl&&!srcs.includes(gl)) srcs.push(gl); } });
-  const colOf=(cont,evId)=>{ if(!cont||!evId) return null; const list=[].concat(cont.evals||[],cont.compEvals||[]); const r=list.findIndex(e=>e.id===evId); return r>=0?{c:cont.id,r,ev:list[r]}:null; };
+  const colOf=(cont,evId)=>{ if(!cont||!evId) return null; const list=[].concat(cont.evals||[],cont.compEvals||[]).sort(evOrderCmp); const r=list.findIndex(e=>e.id===evId); return r>=0?{c:cont.id,r,ev:list[r]}:null; };
   const infoOf=it=>{
     if(it.type==='competency_group'){ for(const c of srcs){ const i=colOf(c,it.id); if(i) return i; } return null; }
     if(it.classCommon&&it.classId) return colOf(classLike(it.classId),it.classNoteId);
@@ -5210,6 +5251,7 @@ function escHtml(s){return String(s||"").replace(/[&<>"']/g,m=>({'&':'&amp;','<'
 function specialMeaning(txt){return {Abs:"Absent(e)",Disp:"Dispensé(e)",NE:"Non évalué(e)",NR:"Non rendu",EA:"En attente",X:"Pas de note pour cet élève"}[txt]||"";}
 function isSpecial(n){return n&&typeof n.noteText==="string"&&(SPECIAL_VALUES.has(n.noteText)||n.noteText==="X");}
 /* Clé de jour unique (midi local) : une éval de compétences (date JJ/MM/AA) et une éval chiffrée (isoDate) du même jour ont exactement la même clé */
+function evOrderCmp(a,b){ return (dateKey(a)-dateKey(b))||(createdTs(a)-createdTs(b)); }
 function dateKey(n){ const iso=normDateISO(n.isoDate)||normDateISO(n.dateJJMMAA)||normDateISO(n.date); if(iso) return new Date(iso+"T12:00:00").getTime(); const d=parseDateJJMMAA(n.dateJJMMAA||"");return d?d.getTime():0;}
 function getSubjectCoef(subjectName){const sub=SUBJECT_REGISTRY.find(s=>(typeof s==='object'?s.name:s)===subjectName);return(typeof sub==='object'&&sub.coef!==undefined)?sub.coef:1;}
 
@@ -5808,8 +5850,8 @@ function renderClassPreviewContent(){
           btn.appendChild(sup);
         }
 
-        evalSum += (note.note/note.outof*20);
-        evalCount++;
+        if(!note.hideFromStudent){ evalSum += (note.note/note.outof*20);
+        evalCount++; }
       }
 
       // Compétences associées (points de couleur)
@@ -5901,7 +5943,7 @@ function openGeneralStatsForClass(classId, period, subject) {
     const filtered = notes.filter(n => {
       const pMatch = period === "YEAR" || n.period === period;
       const sMatch = (subject === "__ALL__" || n.subject === subject) && window.edOkSub(stu.id, n.subject);
-      return pMatch && sMatch && !isSpecial(n) && typeof n.note === 'number';
+      return pMatch && sMatch && !isSpecial(n) && typeof n.note === 'number' && !n.hideFromStudent;
     });
     
     filtered.forEach(n => {
@@ -5953,10 +5995,11 @@ function showEvalStatsOnly(ev, classId) {
   const cls = classLike(classId);
   if(!cls) return;
 
-  // Calcul des stats de classe
+  // Calcul des stats de classe (exprimées sur le barème de l'évaluation)
+  const _sx = (Number(ev.outof) > 0 ? Number(ev.outof) : 20);
   const classNotes = (cls.memberIds || []).map(sid => (DATA.notes[sid] || []).find(n => n.classCommon && n.classNoteId === ev.id))
-    .filter(n => n && !isSpecial(n) && typeof n.note === 'number')
-    .map(n => n.note / n.outof * 20);
+    .filter(n => n && !isSpecial(n) && typeof n.note === 'number' && !n.hideFromStudent)
+    .map(n => n.note / n.outof * _sx);
 
   let classStatsHtml = "";
   if(classNotes.length){
@@ -5966,9 +6009,9 @@ function showEvalStatsOnly(ev, classId) {
     classStatsHtml = `
       <div style="margin-top:12px;padding:12px;background:#f1faff;border-radius:0;border:1px solid #bfe6ff;">
         <div style="display:flex;justify-content:space-around;text-align:center;">
-          <div><div style="font-size:0.8em;color:#027ecb;">Moyenne</div><div style="font-weight:700;color:#066ba9;">${fmt(avg, 2)}/20</div></div>
-          <div><div style="font-size:0.8em;color:#027ecb;">Note Max</div><div style="font-weight:700;color:#066ba9;">${fmt(max, 2)}/20</div></div>
-          <div><div style="font-size:0.8em;color:#027ecb;">Note Min</div><div style="font-weight:700;color:#066ba9;">${fmt(min, 2)}/20</div></div>
+          <div><div style="font-size:0.8em;color:#027ecb;">Moyenne</div><div style="font-weight:700;color:#066ba9;">${fmt(avg, 2)}/${fmt(_sx)}</div></div>
+          <div><div style="font-size:0.8em;color:#027ecb;">Note Max</div><div style="font-weight:700;color:#066ba9;">${fmt(max, 2)}/${fmt(_sx)}</div></div>
+          <div><div style="font-size:0.8em;color:#027ecb;">Note Min</div><div style="font-weight:700;color:#066ba9;">${fmt(min, 2)}/${fmt(_sx)}</div></div>
         </div>
         <p style="font-size:0.8em;color:#64748b;margin-top:8px;text-align:center;">Basé sur ${classNotes.length} note(s) numérique(s)</p>
       </div>`;
@@ -6375,10 +6418,10 @@ function renderProfViewForPeriod(studentId,periodKey){
    // Évaluation de classe sans résultat pour cet élève (affichée uniquement avec le filtre « Résultats non saisis »)
    tr.className="";
    const mk=(html,css)=>{ const td=document.createElement("td"); if(html!==undefined) td.innerHTML=html; if(css) td.style.cssText=css; return td; };
-   const eye=item.hideFromStudent?'<span class="hidden-icon" title="Masqué pour l\'élève">👁️</span>':"";
+   const eye=item.hideFromStudent?'<span class="hidden-icon" title="Masqué pour l\'élève">'+ICO_EYE+'</span>':"";
    const lab=escHtml(item.label||"");
    tr.appendChild(mk(""));
-   tr.appendChild(mk(eye+'<span title="Résultat non saisi" style="margin-right:4px;">⚠️</span>'+(item.type==='virtual_comp'?'<span style="border-left:4px solid #109ef5;padding-left:6px;display:inline-block;">'+lab+'</span>':lab)));
+   tr.appendChild(mk(eye+'<span title="Résultat non saisi" style="margin-right:4px;">'+ICO_WARN+'</span>'+(item.type==='virtual_comp'?'<span style="border-left:4px solid #109ef5;padding-left:6px;display:inline-block;">'+lab+'</span>':lab)));
    tr.appendChild(mk(escHtml(item.dateJJMMAA||"")));
    tr.appendChild(mk("Non saisi","color:var(--danger);font-style:italic;"));
    if(item.type==='virtual_note'){
@@ -6410,16 +6453,26 @@ function renderProfViewForPeriod(studentId,periodKey){
    if(n.hideFromStudent) {
     const eye = document.createElement("span");
     eye.className = "hidden-icon";
-    eye.textContent = "👁️"; 
+    eye.innerHTML = ICO_EYE; 
     eye.title = "Masqué pour l'élève";
     tdLabel.appendChild(eye);
    }
    // Attention icon ONLY if individual evaluation and NOT fully evaluated
-   const isClassNote=(clsObjRef?.evals||[]).some(e=>e.id===n.classNoteId);
+   const isClassNote=!!n.classCommon||(clsObjRef?.evals||[]).some(e=>e.id===n.classNoteId);
+   /* Évaluation de classe/groupe : le panneau n'apparaît QUE si le résultat de cet élève est non saisi ou partiellement saisi
+      (note absente, compétences sans couleur ou en nombre inférieur au modèle). Une éval individuelle garde la règle habituelle. */
+   let _incompleteW;
+   if(isClassNote){
+    const _srcW=[clsObjRef,...grpEns().filter(g=>(g.memberIds||[]).includes(studentId))].filter(Boolean);
+    let _tplW=[]; for(const c of _srcW){ const e=(c.evals||[]).find(x=>x.id===n.classNoteId); if(e){ _tplW=e.compTemplate||e.template||[]; break; } }
+    const _linkedW=(DATA.competencies||[]).filter(c=>c.studentId===studentId&&(c.noteId===n.id||(n.classNoteId&&c.groupId===n.classNoteId)));
+    const _hasNoteW=(typeof n.note==='number'&&!isNaN(n.note))||isSpecial(n);
+    _incompleteW=!_hasNoteW||_linkedW.some(c=>!c.color)||(_tplW.length>0&&_linkedW.filter(c=>c.color).length<_tplW.length);
+   } else _incompleteW=!isFullyEvaluated(n,null,studentId);
 
-   if(!isClassNote && !isFullyEvaluated(n,null,studentId)){
+   if(_incompleteW){
     const warn = document.createElement("span");
-    warn.textContent = "⚠️";
+    warn.innerHTML = ICO_WARN;
     warn.title = "Évaluation incomplète";
     warn.style.marginRight = "4px";
     tdLabel.appendChild(warn);
@@ -6430,7 +6483,7 @@ function renderProfViewForPeriod(studentId,periodKey){
    if(linked.length>0){
     const badge=document.createElement("span");
     Object.assign(badge.style,{marginLeft:"8px",padding:"2px 6px",borderRadius:"10px",background:"#eef9ff",border:"1px solid #0080d0",color:"#007ac6",fontSize:"12px",fontWeight:"600"});
-    badge.textContent="Compétences associées";
+    badge.textContent="Compétences";
     tdLabel.appendChild(badge);
    }
    
@@ -6482,10 +6535,13 @@ function renderProfViewForPeriod(studentId,periodKey){
 
    const tdLabelC=document.createElement("td"); 
    let labelHtmlC = "";
-   if(g.hideFromStudent) labelHtmlC += `<span class="hidden-icon" title="Masqué pour l'élève">👁️</span>`;
-   // Only individual evals get ⚠️ in Prof View
+   if(g.hideFromStudent) labelHtmlC += `<span class="hidden-icon" title="Masqué pour l'élève">${ICO_EYE}</span>`;
+   // Attention : seulement si des résultats manquent
    const isClassGrp=(clsObjRef?.compEvals||[]).some(e=>e.id===g.id)||(clsObjRef?.evals||[]).some(e=>e.id===g.id);
-   if(!isClassGrp && !isFullyEvaluated(g,null,studentId)) labelHtmlC += `<span title="Évaluation incomplète" style="margin-right:4px;">⚠️</span>`;
+   /* éval de compétences de classe/groupe : attention seulement si des compétences de cet élève n'ont pas de résultat */
+   const _tplG=(()=>{ for(const c of [clsObjRef,...grpEns().filter(x=>(x.memberIds||[]).includes(studentId))].filter(Boolean)){ const e=(c.compEvals||[]).find(x=>x.id===g.id); if(e) return e.template||e.compTemplate||[]; } return []; })();
+   const _incG=(g.items||[]).some(c=>!c.color)||(_tplG.length>0&&(g.items||[]).filter(c=>c.color).length<_tplG.length);
+   if(isClassGrp ? _incG : !isFullyEvaluated(g,null,studentId)) labelHtmlC += `<span title="Évaluation incomplète" style="margin-right:4px;">${ICO_WARN}</span>`;
    labelHtmlC += `<span style="border-left:4px solid #109ef5;padding-left:6px;display:inline-block;">${g.label}</span>`;
    tdLabelC.innerHTML = labelHtmlC;
 
@@ -6500,7 +6556,7 @@ function renderProfViewForPeriod(studentId,periodKey){
      Object.assign(dot.style,{width:"16px",height:"16px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:"bold",fontSize:"10px",color:(!c.color)?'#ef4444':((c.color==='white'||c.color==='yellow'||c.color==='orange')?'#000':'#fff'),border:"1px solid rgba(0,0,0,0.1)"});
      const subDom=c.subDomain||c.level||"";
      dot.title=`${subDom}${c.domain?' - '+c.domain:''} : ${c.name}`;
-     dot.textContent=(!c.color) ? "⚠️" : (titlesMapC[c.color]||"");
+     dot.innerHTML=(!c.color) ? ICO_WARN : (titlesMapC[c.color]||"");
      dotsContainerC.appendChild(dot);
    });
    tdNoteC.appendChild(dotsContainerC);
@@ -6638,7 +6694,7 @@ function renderEleveViewForPeriod(studentId,periodKey){
     pill.innerHTML=`<div style="display:flex;gap:4px;">${group.items.map(c=>{
       const subDom=c.subDomain||c.level||"";
       const colorClass = c.color || 'white';
-      const warnIcon = !c.color ? '<span style="color:#ef4444;font-size:10px;font-weight:bold;">⚠️</span>' : '';
+      const warnIcon = !c.color ? '<span style="font-size:12px;line-height:0;">'+ICO_WARN+'</span>' : '';
       return `<div class="color-dot ${colorClass}" style="width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;" title="${subDom}${c.domain?' - '+c.domain:''} : ${c.name}">${warnIcon}</div>`
     }).join("")}</div>`;
     pill.addEventListener("click",()=>{
@@ -6719,7 +6775,7 @@ function renderEleveViewForPeriod(studentId,periodKey){
     }
     btn.addEventListener("click",()=>showNoteDetailByObj(n,studentId));
     notesWrap.appendChild(btn);
-    if(!isSpecial(n)){sum+=(n.note/n.outof*20)*n.coef;coefSum+=n.coef;}
+    if(!isSpecial(n)&&!n.hideFromStudent){sum+=(n.note/n.outof*20)*n.coef;coefSum+=n.coef;}
    }
   });
   const subjectCoef=getSubjectCoef(subject);
@@ -8457,7 +8513,7 @@ function renderGroupNoteCompEditor(){
  } else {
   body.innerHTML=`
    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-    <strong>Compétences associées</strong>
+    <strong>Compétences</strong>
     ${hasTemplate?'':`<button type="button" class="btn" id="groupNoteCompAddInlineBtn">Associer compétences</button>`}
    </div>
    <div style="display:flex;flex-direction:column;gap:8px;">
@@ -8923,7 +8979,8 @@ function showNoteDetailByObj(n, studentId){
     const base=fmt(n.note);
     const out=fmt(n.outof);
     const equiv20=n.outof&&n.outof!==20?fmt(n.note/n.outof*20,2):null;
-    displayed=n.coef===0?`(${base}${n.outof!==20?` / ${out}`:""})`:`${base} / ${out}${equiv20?` (${equiv20}/20)`:""}`;
+    displayed=`${base} / ${out}${equiv20?` (${equiv20}/20)`:""}`;
+    if(n.coef===0) displayed+=' <span class="tl-note-nonsig">non significative</span>';
   }
 
   // Rendu du détail barème
@@ -8965,16 +9022,17 @@ function showNoteDetailByObj(n, studentId){
   if(n.classCommon && n.classId && n.classNoteId){
     const cls=classLike(n.classId);
     if(cls){
-      const classNotes=(cls.memberIds||[]).map(id=>(DATA.notes[id]||[]).find(m=>m.classCommon&&m.classId===n.classId&&m.classNoteId===n.classNoteId)).filter(m=>m&&!isSpecial(m)&&typeof m.note==='number').map(m=>m.note/m.outof*20);
+      const _sx=(Number(n.outof)>0?Number(n.outof):20);   /* barème de l'évaluation : les statistiques sont exprimées sur ce barème */
+      const classNotes=(cls.memberIds||[]).map(id=>(DATA.notes[id]||[]).find(m=>m.classCommon&&m.classId===n.classId&&m.classNoteId===n.classNoteId)).filter(m=>m&&!isSpecial(m)&&typeof m.note==='number'&&!m.hideFromStudent).map(m=>m.note/m.outof*_sx);
       if(classNotes.length){
         const avg=classNotes.reduce((a,b)=>a+b,0)/classNotes.length;
         const max=Math.max(...classNotes);
         const min=Math.min(...classNotes);
         classStatsHtml=`<div style="margin-top:12px;padding:12px;background:#f1faff;border-radius:10px;border:1px solid #bfe6ff;">
           <div style="display:flex;justify-content:space-around;text-align:center;">
-            <div><div style="font-size:0.8em;color:#027ecb;">Moyenne</div><div style="font-weight:700;color:#066ba9;">${fmt(avg,2)}/20</div></div>
-            <div><div style="font-size:0.8em;color:#027ecb;">Note Max</div><div style="font-weight:700;color:#066ba9;">${fmt(max,2)}/20</div></div>
-            <div><div style="font-size:0.8em;color:#027ecb;">Note Min</div><div style="font-weight:700;color:#066ba9;">${fmt(min,2)}/20</div></div>
+            <div><div style="font-size:0.8em;color:#027ecb;">Moyenne</div><div style="font-weight:700;color:#066ba9;">${fmt(avg,2)}/${fmt(_sx)}</div></div>
+            <div><div style="font-size:0.8em;color:#027ecb;">Note Max</div><div style="font-weight:700;color:#066ba9;">${fmt(max,2)}/${fmt(_sx)}</div></div>
+            <div><div style="font-size:0.8em;color:#027ecb;">Note Min</div><div style="font-weight:700;color:#066ba9;">${fmt(min,2)}/${fmt(_sx)}</div></div>
           </div>
         </div>`;
       }
@@ -9202,7 +9260,7 @@ function openClass(clsId){
   const L=[...(cls.evals||[]),...(cls.compEvals||[])].filter(ev=>(per==="YEAR"||(ev.period||"YEAR")===per)&&(!subj||ev.subject===subj));
   return {miss:L.some(ev=>!isFullyEvaluated(ev,clsId)),hid:L.some(ev=>ev.hideFromStudent)};
  };
- const opt=(v,label,f,sel)=>`<option value="${escHtml(v)}"${sel?" selected":""}${f.miss?' style="color:var(--danger)"':(f.hid?' style="color:var(--primary)"':"")}${f.hid?' class="opt-hid"':""}>${escHtml(label)}${f.miss?" ⚠":""}${f.hid?" 👁":""}</option>`;
+ const opt=(v,label,f,sel)=>`<option value="${escHtml(v)}"${sel?" selected":""}${f.miss?' style="color:var(--danger)"':(f.hid?' style="color:var(--primary)"':"")}${f.hid?' class="opt-hid"':""}>${escHtml(label)}${f.miss?" (incomplet)":""}${f.hid?" (masqué)":""}</option>`;
 
  const fillBar=()=>{
   const prev=isPrev(), names=clsSubjectNames(cls);
@@ -9334,7 +9392,7 @@ function renderClassBySubject(classId){
 
  const COMPEV_IDS=new Set((cls.compEvals||[]).map(e=>e.id));
  const isCE=ev=>COMPEV_IDS.has(ev.id);   // évaluation de compétences « pure » (sans note)
- const evals=[...(cls.evals||[]),...(cls.compEvals||[])].filter(ev=>(ALL?clsSubjectNames(cls).includes(ev.subject):ev.subject===active)&&(period==="YEAR"||(ev.period||"YEAR")===period)).sort((a,b)=>(ALL?clsSubjectNames(cls).indexOf(a.subject)-clsSubjectNames(cls).indexOf(b.subject):0)||dateKey(a)-dateKey(b));
+ const evals=[...(cls.evals||[]),...(cls.compEvals||[])].filter(ev=>(ALL?clsSubjectNames(cls).includes(ev.subject):ev.subject===active)&&(period==="YEAR"||(ev.period||"YEAR")===period)).sort((a,b)=>(ALL?clsSubjectNames(cls).indexOf(a.subject)-clsSubjectNames(cls).indexOf(b.subject):0)||evOrderCmp(a,b));
  const students=(cls.memberIds||[]).map(id=>DATA.students.find(s=>s.id===id)).filter(Boolean)
    .sort((a,b)=>a.last.localeCompare(b.last)||a.first.localeCompare(b.first));
  if(!evals.length){ host.innerHTML='<div class="cls-empty">Aucune évaluation dans cette matière '+(period==="YEAR"?"sur l'année.":"pour ce trimestre. Utilisez « Nouvelle évaluation » pour en créer une.")+'</div>'; return; }
@@ -9380,7 +9438,7 @@ function renderClassBySubject(classId){
  const rankTxt=(sid,rk)=>rk.m[sid]?String(rk.m[sid]):"—";
 
  const head=evals.map(ev=>`<th class="bys-head${isCE(ev)?" bys-head-comp":""}${isFullyEvaluated(ev,classId)?"":" bys-incomplete"}${ev.hideFromStudent?" bys-hidden":""}" data-evid="${ev.id}" title="${escHtml(ev.label||"(sans libellé)")} — Modifier l'évaluation">
-   <div class="bys-label">${escHtml(ev.label||"(sans libellé)")}${ev.hideFromStudent?" 👁️":""}</div>
+   <div class="bys-label">${escHtml(ev.label||"(sans libellé)")}${ev.hideFromStudent?' <span class="hidden-icon" title="Masqué pour l’élève">'+ICO_EYE+'</span>':""}</div>
    ${ALL?`<div class="bys-meta bys-subj">${escHtml(ev.subject||"")}</div>`:""}${isCE(ev)?"":`<div class="bys-meta">Coef ${fmtCoef(ev.coef)}</div>
    <div class="bys-meta">/${fmt(ev.outof)}</div>`}
    <div class="bys-meta">${formatDateAAAA(ev.dateJJMMAA)}</div>
@@ -9401,7 +9459,7 @@ function renderClassBySubject(classId){
   return `<tr><td class="bys-stu bys-stu-click" data-stu-id="${stu.id}" title="Statistiques et classement de l'élève" style="width:${NAME_W}px">${escHtml(stu.last)} ${escHtml(stu.first)}</td><td class="bys-avg" data-avg-stu="${stu.id}" style="left:${NAME_W}px;width:${AVG_W}px">${fmtAvg(avgOf(stu.id))}</td><td class="bys-rank" data-rank-stu="${stu.id}" style="left:${NAME_W+AVG_W}px;width:${RANK_W}px" title="Classement sur ${RK0.n} élève(s) noté(s)">${rankTxt(stu.id,RK0)}</td>${cells}</tr>`;
  }).join("");
 
- const classAvgEv=ev=>{ const v=students.map(s=>findNote(s.id,ev)).filter(n=>n&&!isSpecial(n)&&typeof n.note==="number"&&!isNaN(n.note)).map(n=>n.note); return v.length?v.reduce((a,b)=>a+b,0)/v.length:null; };
+ const classAvgEv=ev=>{ const v=students.map(s=>findNote(s.id,ev)).filter(n=>n&&!isSpecial(n)&&typeof n.note==="number"&&!isNaN(n.note)&&!n.hideFromStudent).map(n=>n.note); return v.length?v.reduce((a,b)=>a+b,0)/v.length:null; };
  const classAvgAll=()=>{ const v=students.map(s=>avgOf(s.id)).filter(x=>typeof x==="number"&&!isNaN(x)); return v.length?v.reduce((a,b)=>a+b,0)/v.length:null; };
  const avgRow=`<tr class="bys-classavg"><td class="bys-stu bys-cavg-lab" style="width:${NAME_W}px">Moyenne de classe</td><td class="bys-avg" data-cavg-all="1" style="left:${NAME_W}px;width:${AVG_W}px">${fmtAvg(classAvgAll())}</td><td class="bys-rank bys-rank-foot" style="left:${NAME_W+AVG_W}px;width:${RANK_W}px"></td>${evals.map(ev=>`<td class="bys-cavg" data-cavg-ev="${ev.id}">${fmtAvg(classAvgEv(ev))}</td>`).join("")}</tr>`;
  host.innerHTML=`<div class="bys-scroll" style="overflow:auto;max-height:75vh;"><table class="bys-table" style="width:${NAME_W+AVG_W+RANK_W+TOTAL_COLS_W}px"><colgroup><col style="width:${NAME_W}px"><col style="width:${AVG_W}px"><col style="width:${RANK_W}px">${evals.map(ev=>`<col style="width:${colW(ev)}px">`).join("")}</colgroup><thead><tr><th class="bys-stu bys-corner">Élève</th><th class="bys-avg-head" style="left:${NAME_W}px" title="Moyenne pondérée (sur 20) de la matière">Moyenne</th><th class="bys-rank-head" style="left:${NAME_W+AVG_W}px" title="Classement selon la moyenne (1 = meilleure moyenne)">Rang</th>${head}</tr>${subHead}</thead><tbody>${rows}${avgRow}</tbody></table></div>
@@ -9523,28 +9581,28 @@ function renderClassPeriod(classId,periodKey){
   let subjectList=(cls.subjects||[]).filter(x=>window.edOkCls(classId,typeof x==="object"?x.name:x));
   if(!subjectList.includes("Compétences")) subjectList=[...subjectList,"Compétences"];
   const subjectsHTML=subjectList.map(s=>{
-  const evals=(cls.evals||[]).filter(ev=>ev.subject===s&&(ev.period||"YEAR")===periodKey).sort((a,b)=>dateKey(a)-dateKey(b));
-  const compEvals=(cls.compEvals||[]).filter(ev=>ev.subject===s&&(ev.period||"YEAR")===periodKey).sort((a,b)=>dateKey(a)-dateKey(b));
+  const evals=(cls.evals||[]).filter(ev=>ev.subject===s&&(ev.period||"YEAR")===periodKey).sort(evOrderCmp);
+  const compEvals=(cls.compEvals||[]).filter(ev=>ev.subject===s&&(ev.period||"YEAR")===periodKey).sort(evOrderCmp);
   const isCompRub=s==="Compétences";
   const evalsHTML=evals.map(ev=>{
    const incomplete=!isFullyEvaluated(ev,classId);
-   const hiddenIcon = ev.hideFromStudent ? '<span class="hidden-icon" title="Masqué pour l\'élève" style="margin-right:4px;">👁️</span>' : '';
+   const hiddenIcon = ev.hideFromStudent ? '<span class="hidden-icon" title="Masqué pour l\'élève" style="margin-right:4px;">'+ICO_EYE+'</span>' : '';
    return `<div style="display:flex;align-items:center;gap:8px;margin:0;">
     <button class="eval-pill${incomplete?' empty-eval':''}" data-evid="${ev.id}" title="${incomplete?'Évaluation incomplète':''}${ev.hideFromStudent?' - Masqué pour l\'élève':''}" style="${ev.hideFromStudent?'border-style:dashed;':''}">
      ${hiddenIcon}
      ${ev.label||'(sans libellé)'} - ${formatDateAAAA(ev.dateJJMMAA)}${ev.defaultImportant?' ⭐':""}
     </button>
    </div>`;
-  }).join("");
+  });
   const compEvalsHTML=compEvals.map(ev=>{
    const incomplete=!isFullyEvaluated(ev,classId);
-   const hiddenIcon = ev.hideFromStudent ? '<span class="hidden-icon" title="Masqué pour l\'élève" style="margin-right:4px;">👁️</span>' : '';
+   const hiddenIcon = ev.hideFromStudent ? '<span class="hidden-icon" title="Masqué pour l\'élève" style="margin-right:4px;">'+ICO_EYE+'</span>' : '';
    
     if(isCompRub){
      return `<div class="eval-row-item" style="display:flex; justify-content:space-between; align-items:center; padding:2px 12px; background:#eef9ff; border:1px solid #b9e2fc; border-radius:8px; margin:0; width:100%;">
       <div style="display:flex; align-items:center; gap:8px;">
        ${hiddenIcon}
-       ${incomplete?'<span title="Évaluation incomplète" style="color:#f59e0b;">⚠️</span>':''}
+       ${incomplete?'<span title="Évaluation incomplète">'+ICO_WARN+'</span>':''}
        <span style="font-weight:600; color:#0471b5;">${ev.label||'(sans libellé)'}</span>
        <span style="color:#64748b; font-size:0.9em;">- ${formatDateAAAA(ev.dateJJMMAA)}</span>
       </div>
@@ -9561,19 +9619,21 @@ function renderClassPeriod(classId,periodKey){
      ${ev.label||'(sans libellé)'} - ${formatDateAAAA(ev.dateJJMMAA)}
     </button>
    </div>`;
-  }).join("");
+  });
+  const mixedHTML=evals.map((ev,i)=>({ev,h:evalsHTML[i]})).concat(compEvals.map((ev,i)=>({ev,h:compEvalsHTML[i]}))).sort((x,y)=>evOrderCmp(x.ev,y.ev)).map(x=>x.h).join("");
+  const compOnlyHTML=compEvalsHTML.join("");
 
   if(isCompRub){
     return `
     <div class="matiere-line" style="grid-template-columns:200px 1fr; background:var(--blueBox);">
      <div class="matiere-name" style="font-size:1.1em; letter-spacing:0.5px;">${s}</div>
-     <div class="notes-list">${compEvalsHTML || '<span style="color:#64748b;">Aucune évaluation</span>'}</div>
+     <div class="notes-list">${compOnlyHTML || '<span style="color:#64748b;">Aucune évaluation</span>'}</div>
     </div>`;
   }
 
   return `<div class="matiere-line" style="grid-template-columns:200px 1fr auto;">
    <div class="matiere-name">${s}</div>
-   <div class="notes-list">${(evalsHTML+compEvalsHTML)||'<span style="color:#64748b;">Aucune évaluation</span>'}</div>
+   <div class="notes-list">${mixedHTML||'<span style="color:#64748b;">Aucune évaluation</span>'}</div>
    <div style="display:flex;gap:4px;">
     <button class="btn btn-primary" data-add-eval="${s}" ${locked?'disabled title="Saisie bloquée par verrou"':""}>+</button>
    </div>
@@ -10194,9 +10254,10 @@ function getOrCreateClassNoteIdForStudent(classId,evalId,stuId){
 
 function updateClassStats(classId,classNoteId){
  const cls=classLike(classId); if(!cls) return;
- const classNotes=(cls.memberIds||[]).map(id=>(DATA.notes[id]||[]).find(m=>m.classCommon&&m.classId===classId&&m.classNoteId===classNoteId)).filter(m=>m&&!isSpecial(m)&&typeof m.note==='number').map(m=>m.note/m.outof*20);
+ const _ev0=(cls.evals||[]).find(e=>e.id===classNoteId), _sx=(Number(_ev0&&_ev0.outof)>0?Number(_ev0.outof):20);
+ const classNotes=(cls.memberIds||[]).map(id=>(DATA.notes[id]||[]).find(m=>m.classCommon&&m.classId===classId&&m.classNoteId===classNoteId)).filter(m=>m&&!isSpecial(m)&&typeof m.note==='number'&&!m.hideFromStudent).map(m=>m.note/m.outof*_sx);
  const statsDiv=document.getElementById("classStats"); if(!statsDiv) return;
- if(classNotes.length){const avg=classNotes.reduce((a,b)=>a+b,0)/classNotes.length;statsDiv.textContent=`Statistiques : moy. ${fmt(avg,2)}/20 — max ${fmt(Math.max(...classNotes),2)}/20 — min ${fmt(Math.min(...classNotes),2)}/20`;}
+ if(classNotes.length){const avg=classNotes.reduce((a,b)=>a+b,0)/classNotes.length;statsDiv.textContent=`Statistiques : moy. ${fmt(avg,2)}/${fmt(_sx)} — max ${fmt(Math.max(...classNotes),2)}/${fmt(_sx)} — min ${fmt(Math.min(...classNotes),2)}/${fmt(_sx)}`;}
  else statsDiv.textContent="Aucune note numérique saisie.";
 }
 
@@ -10783,7 +10844,7 @@ window.saveAppreciationInput=function(el){if(!CURRENT_APP_STUDENT) return;saveAp
 function getStudentAverageForSubject(sid,subject,period){
  const all=DATA.notes[sid]||[];
  let notes=period==="YEAR"?all:all.filter(n=>(n.period||"YEAR")===period);
- notes=notes.filter(n=>n.subject===subject&&!isSpecial(n)&&typeof n.note==='number');
+ notes=notes.filter(n=>n.subject===subject&&!isSpecial(n)&&typeof n.note==='number'&&!n.hideFromStudent);
  if(!notes.length) return null;
  let sum=0,coef=0; notes.forEach(n=>{sum+=(n.note/n.outof*20)*n.coef;coef+=n.coef;});
  return coef>0?sum/coef:null;
@@ -11320,7 +11381,7 @@ function handleProfBatchAction(action, studentIdArg){
 
 /* ── Statistiques (pop-up) : onglet Classe + onglet Groupes ── */
 function statsSubjAvg(sid, subject, periodKey){
- const notes=(DATA.notes[sid]||[]).filter(n=>n.subject===subject&&(periodKey==="YEAR"||(n.period||"YEAR")===periodKey)&&!isSpecial(n));
+ const notes=(DATA.notes[sid]||[]).filter(n=>n.subject===subject&&(periodKey==="YEAR"||(n.period||"YEAR")===periodKey)&&!isSpecial(n)&&!n.hideFromStudent&&typeof n.note==="number");
  let sum=0, coefSum=0;
  notes.forEach(n=>{ sum+=(n.note/n.outof*20)*n.coef; coefSum+=n.coef; });
  return coefSum>0?sum/coefSum:null;
@@ -11329,7 +11390,7 @@ function statsGenAvg(sid, periodKey){
  const all=DATA.notes[sid]||[];
  const notes=periodKey==="YEAR"?all:all.filter(n=>(n.period||"YEAR")===periodKey);
  const bySub={};
- notes.forEach(n=>{ if(!isSpecial(n)){ if(!bySub[n.subject]) bySub[n.subject]={sum:0,coef:0}; bySub[n.subject].sum+=(n.note/n.outof*20)*n.coef; bySub[n.subject].coef+=n.coef; } });
+ notes.forEach(n=>{ if(!isSpecial(n)&&!n.hideFromStudent&&typeof n.note==="number"){ if(!bySub[n.subject]) bySub[n.subject]={sum:0,coef:0}; bySub[n.subject].sum+=(n.note/n.outof*20)*n.coef; bySub[n.subject].coef+=n.coef; } });
  let gSum=0, gCoef=0;
  Object.entries(bySub).forEach(([sub,d])=>{ if(d.coef>0){ const sc=getSubjectCoef(sub); gSum+=(d.sum/d.coef)*sc; gCoef+=sc; } });
  return gCoef>0?gSum/gCoef:null;
@@ -12099,7 +12160,7 @@ function updateTabWarningIndicators(){
   const appWarn = document.getElementById("appreciationWarning");
   if(appWarn) {
     appWarn.style.display = lockedMissA.length ? "block" : "none";
-    appWarn.textContent = "⚠️ Trimestre verrouillé alors que des appréciations sont manquantes (" + lockedMissA.map(p => p === "YEAR" ? "Année" : p).join(", ") + ").";
+    appWarn.innerHTML = ICO_WARN + " Trimestre verrouillé alors que des appréciations sont manquantes (" + lockedMissA.map(p => p === "YEAR" ? "Année" : p).join(", ") + ").";
   }
 
   // Sous-onglets Élève
@@ -12179,7 +12240,9 @@ function sanitizeOnlineQuestion(question){
   id: question?.id || makeUid("otq"),
   type: question?.type || "qcu",
   prompt: String(question?.prompt||"").trim(),
-  points: Number(question?.points) > 0 ? Number(question.points) : 1
+  points: Number(question?.points) > 0 ? Number(question.points) : 1,
+  /* temps imparti à cette question (secondes, 0 = aucun) ; ignoré si le test a un temps global */
+  timeLimitSeconds: Number(question?.timeLimitSeconds) > 0 ? Math.floor(Number(question.timeLimitSeconds)) : 0
  };
  if(base.type==="written"){
   base.expectedAnswers = normalizeOnlineAnswers(question?.expectedAnswers);
@@ -12229,7 +12292,7 @@ function sanitizeOnlineTest(test){
   intro: String(meta.intro||"").trim(),
   conclusion: String(meta.conclusion||"").trim(),
   defaultPoints: Number(meta.defaultPoints)>0 ? Number(meta.defaultPoints) : 1,
-  questions: (meta.questions||[]).map(sanitizeOnlineQuestion),
+  questions: (meta.questions||[]).map(q=>{ const x=sanitizeOnlineQuestion(q); if(timed) x.timeLimitSeconds=0; return x; }),
   createdAt: meta.createdAt || new Date().toISOString(),
   updatedAt: new Date().toISOString()
  };
@@ -12292,10 +12355,11 @@ function formatOnlineTestDate(value){
 function countPendingForOnlineTest(testId){
  if(AUTH.role!=="prof") return 0;
  ensureHomeworkStore();
- const test=getHomeworkTest(testId); if(!test || test.options?.trainingMode) return 0;
+ const test=getHomeworkTest(testId); if(!test) return 0;
  let n=0;
  (DATA.homework||[]).forEach(hw=>{
   if(!(hw.testIds||[]).includes(testId)) return;
+  if(hwIsTraining(hw,test)) return;
   if(!window.edHwOk(hw.classId,hw.subject)) return;
   const cls=homeworkClassById(hw.classId);
   (cls?.memberIds||[]).forEach(studentId=>{
@@ -12468,10 +12532,7 @@ function applyOnlineTestMetaToForm(meta){
  document.getElementById("onlineTestTimed").checked=!!data.options?.timed;
  document.getElementById("onlineTestTimeLimitMinutes").value=data.options?.timed ? duration.minutes : "";
  document.getElementById("onlineTestTimeLimitSeconds").value=data.options?.timed ? duration.seconds : "";
- document.getElementById("onlineTestTrainingMode").checked=!!data.options?.trainingMode;
   document.getElementById("onlineTestFocusMode").checked=!!data.options?.focusMode;
- document.getElementById("onlineTestHideGrade").checked=!!data.options?.hideGrade;
- document.getElementById("onlineTestHideCorrection").checked=!!data.options?.hideCorrection;
  document.getElementById("onlineTestIntroInput").value=data.intro||"";
  document.getElementById("onlineTestConclusionInput").value=data.conclusion||"";
  document.getElementById("onlineTestDefaultPoints").value=data.defaultPoints||1;
@@ -12488,11 +12549,10 @@ function readOnlineTestMetaFromForm(){
    shuffleQuestions: document.getElementById("onlineTestShuffleQuestions").checked,
    timed: document.getElementById("onlineTestTimed").checked,
    timeLimitSeconds: parseOnlineTestDurationToSeconds(document.getElementById("onlineTestTimeLimitMinutes").value, document.getElementById("onlineTestTimeLimitSeconds").value),
-   trainingMode: document.getElementById("onlineTestTrainingMode").checked,
-   manualReviewRequired: !document.getElementById("onlineTestTrainingMode").checked,
+   trainingMode: !!ONLINE_TEST_DRAFT.meta?.options?.trainingMode,   /* hérité d'anciens tests ; se règle désormais dans le devoir */
+   manualReviewRequired: !ONLINE_TEST_DRAFT.meta?.options?.trainingMode,
    focusMode: document.getElementById("onlineTestFocusMode").checked,
-   hideGrade: document.getElementById("onlineTestHideGrade").checked,
-   hideCorrection: document.getElementById("onlineTestHideCorrection").checked
+   hideCorrection: false
   },
   intro: document.getElementById("onlineTestIntroInput").value,
   conclusion: document.getElementById("onlineTestConclusionInput").value,
@@ -12502,15 +12562,13 @@ function readOnlineTestMetaFromForm(){
  });
 }
 function syncOnlineTestSetupDependencies(){
- const training=document.getElementById("onlineTestTrainingMode").checked;
+ const training=false;
  const timed=document.getElementById("onlineTestTimed").checked;
- const manualReview=!training;
+ const manualReview=true;
  const focus=document.getElementById("onlineTestFocusMode");
- const hideGrade=document.getElementById("onlineTestHideGrade");
  const timeLimitMinutes=document.getElementById("onlineTestTimeLimitMinutes");
  const timeLimitSeconds=document.getElementById("onlineTestTimeLimitSeconds");
  const focusWrap=document.getElementById("onlineTestFocusWrap");
- const hideGradeWrap=document.getElementById("onlineTestHideGradeWrap");
  const hint=document.getElementById("onlineTestSetupHint");
  timeLimitMinutes.disabled=!timed;
  timeLimitSeconds.disabled=!timed;
@@ -12520,26 +12578,16 @@ function syncOnlineTestSetupDependencies(){
  }
  focus.disabled=training;
  if(training) focus.checked=false;
- hideGrade.disabled=training || manualReview;
- if(manualReview) hideGrade.checked=true;
- else if(training) hideGrade.checked=false;
  focusWrap?.classList.toggle("is-disabled",focus.disabled);
- hideGradeWrap?.classList.toggle("is-disabled",hideGrade.disabled);
- if(manualReview) hint.textContent="Le test rendu est toujours corrigé par le professeur : l’élève voit sa note une fois la correction validée et les notes saisies.";
- else if(training) hint.textContent="Le mode entraînement désactive automatiquement le mode Focus et l’option de note masquée, et coche « ne pas afficher la correction » (modifiable).";
+ if(false) hint.textContent="Le test rendu est toujours corrigé par le professeur : l’élève voit sa note une fois la correction validée et les notes saisies.";
  else if(timed) hint.textContent="Le chronomètre s’appliquera uniquement au test lui-même, pas aux messages d’introduction et de conclusion.";
- else hint.textContent="Certaines options se désactivent automatiquement selon le mode choisi.";
+ else hint.textContent="Le mode entraînement se règle au moment de la création du devoir.";
 }
-["onlineTestTrainingMode","onlineTestTimed"].forEach(id=>{
+["onlineTestTimed"].forEach(id=>{
  document.getElementById(id)?.addEventListener("change",syncOnlineTestSetupDependencies);
 });
 // Mode entraînement : « ne pas afficher la correction » est cochée automatiquement (reste modifiable ensuite)
-document.getElementById("onlineTestTrainingMode")?.addEventListener("change",e=>{
- if(e.target.checked){
-  const hc=document.getElementById("onlineTestHideCorrection");
-  if(hc) hc.checked=true;
- }
-});
+
 
 function startOnlineTestFlow(existingTest=null){
  ensureOnlineTestsStore();
@@ -12579,34 +12627,32 @@ function renderBasicRows(){
    ${r.type==="written"?`<div class="obt-n" style="grid-column:span 2;opacity:.8"><span>Réponse saisie par l’élève · correction manuelle</span></div>`:`<div class="obt-n"><button type="button" data-act="minus" aria-label="Retirer une proposition">−</button><span>${r.n} prop.</span><button type="button" data-act="plus" aria-label="Ajouter une proposition">+</button></div>
    <div class="obt-chips">${Array.from({length:r.n},(_,k)=>`<button type="button" class="obt-chip${r.correct.includes(k)?" on":""}" data-act="chip" data-k="${k}" title="Marquer comme bonne réponse">${basicLabel(k)}</button>`).join("")}</div>`}
    <label class="obt-pts"><input type="number" min="0.25" step="0.25" value="${r.points}" data-act="points"> pt</label>
+   <label class="obt-pts obt-time" title="${$obt("obtTimed").checked?"Indisponible : temps global défini":"Temps imparti à la question (secondes, 0 = aucun)"}"><input type="number" min="0" step="5" value="${r.time||0}" data-act="qtime" ${$obt("obtTimed").checked?"disabled":""}> s</label>
    <button type="button" class="btn btn-danger obt-del" data-act="del" aria-label="Supprimer la question">×</button>
   </div>`).join("");
  document.getElementById("onlineBasicCount").value=BASIC_TEST.rows.length||"";
 }
 const $obt=id=>document.getElementById(id);
 function obtSync(){
- const training=$obt("obtTraining").checked, timed=$obt("obtTimed").checked;
+ const training=false, timed=$obt("obtTimed").checked;
  $obt("obtMin").disabled=!timed; $obt("obtSec").disabled=!timed;
  if(!timed){ $obt("obtMin").value=""; $obt("obtSec").value=""; }
- const focus=$obt("obtFocus"), hg=$obt("obtHideGrade");
+ try{ renderBasicRows(); }catch(_){}
+ const focus=$obt("obtFocus");
  focus.disabled=training; if(training) focus.checked=false;
- hg.disabled=true; hg.checked=!training;
  $obt("obtFocusWrap")?.classList.toggle("is-disabled",focus.disabled);
- $obt("obtHideGradeWrap")?.classList.toggle("is-disabled",true);
  const hint=$obt("obtHint");
  if(!training) hint.textContent="Le test rendu est toujours corrigé par le professeur : l’élève voit sa note une fois la correction validée et les notes saisies.";
- else hint.textContent="Le mode entraînement désactive automatiquement le mode Focus et coche « ne pas afficher la correction » (modifiable).";
+ else hint.textContent="Le mode entraînement désactive automatiquement le mode Focus.";
 }
-["obtTraining","obtTimed"].forEach(id=>$obt(id)?.addEventListener("change",obtSync));
-$obt("obtTraining")?.addEventListener("change",e=>{ if(e.target.checked) $obt("obtHideCorrection").checked=true; });
+["obtTimed"].forEach(id=>$obt(id)?.addEventListener("change",obtSync));
+
 function obtApplyMeta(m){
  const o=m?.options||{}; const d=splitOnlineTestDuration(o.timeLimitSeconds||0);
  $obt("obtShuffle").checked=!!o.shuffleQuestions;
  $obt("obtTimed").checked=!!o.timed;
  $obt("obtMin").value=o.timed?d.minutes:""; $obt("obtSec").value=o.timed?d.seconds:"";
- $obt("obtTraining").checked=!!o.trainingMode;
  $obt("obtFocus").checked=!!o.focusMode;
- $obt("obtHideCorrection").checked=!!o.hideCorrection;
  $obt("obtIntro").value=m?.intro||""; $obt("obtConclusion").value=m?.conclusion||"";
  obtSync();
 }
@@ -12616,6 +12662,7 @@ function openBasicOnlineTest(existing){
  const choices=getOnlineTestSubjectChoices();
  sel.innerHTML='<option value="">Matière (facultatif)</option>'+choices.map(n=>`<option value="${escHtml(n)}">${escHtml(n)}</option>`).join("");
  BASIC_TEST.editId=existing?existing.id:null;
+ BASIC_TEST.legacyTraining=false;
  BASIC_TEST.createdAt=existing?existing.createdAt:null;
  $obt("onlineBasicHeading").textContent=existing?"Modifier un test basique":"Créer un test basique";
  $obt("onlineBasicForm").querySelector('button[type="submit"]').textContent=existing?"Enregistrer les modifications":"Créer le test";
@@ -12626,8 +12673,9 @@ function openBasicOnlineTest(existing){
   const firstCh=(existing.questions.find(q=>q.choices&&q.choices.length)?.choices||[])[0];
   $obt("onlineBasicLabels").value=(firstCh&&String(firstCh.text).trim()==="1")?"num":"abc";
   $obt("onlineBasicPoints").value=existing.defaultPoints||1;
+  BASIC_TEST.legacyTraining=!!existing.options?.trainingMode;
   BASIC_TEST.rows=existing.questions.map(q=>({
-   id:q.id, type:q.type==="fillblank"?"written":q.type, points:q.points||1,
+   id:q.id, type:q.type==="fillblank"?"written":q.type, points:q.points||1, time:q.timeLimitSeconds||0,
    n:q.choices?basicClampN(q.choices.length):4,
    correct:q.choices?q.choices.map((c,k)=>c.correct?k:-1).filter(k=>k>=0&&k<10):[],
    choiceIds:q.choices?q.choices.map(c=>c.id):[]
@@ -12690,6 +12738,7 @@ document.getElementById("onlineBasicRows")?.addEventListener("change",e=>{
  const t=e.target; const row=t.closest(".obt-row"); const r=BASIC_TEST.rows[Number(row?.dataset.i)]; if(!r) return;
  if(t.dataset.act==="type"){ r.type=t.value; if(r.type==="qcu") r.correct=r.correct.slice(0,1); if(r.type==="written") r.correct=[]; renderBasicRows(); }
  else if(t.dataset.act==="points"){ r.points=basicPoints(t.value); renderBasicRows(); }
+ else if(t.dataset.act==="qtime"){ r.time=Math.max(0,Math.floor(Number(t.value)||0)); renderBasicRows(); }
 });
 document.getElementById("onlineBasicForm")?.addEventListener("submit",e=>{
  e.preventDefault();
@@ -12701,7 +12750,7 @@ document.getElementById("onlineBasicForm")?.addEventListener("submit",e=>{
  const dur=parseOnlineTestDurationToSeconds($obt("obtMin").value,$obt("obtSec").value);
  if(timed && !(dur>0)){ alert("Précise un temps imparti valide en minutes et/ou secondes."); return; }
  const anyCorrect=BASIC_TEST.rows.some(r=>r.correct.length);
- const training=$obt("obtTraining").checked;
+ const training=!!(BASIC_TEST.legacyTraining);
  const meta=defaultOnlineTestMeta();
  meta.id=BASIC_TEST.editId||undefined;
  meta.createdAt=BASIC_TEST.createdAt||undefined;
@@ -12714,10 +12763,10 @@ document.getElementById("onlineBasicForm")?.addEventListener("submit",e=>{
  meta.options={
   showGradeDirect:false, shuffleQuestions:$obt("obtShuffle").checked, timed, timeLimitSeconds:timed?dur:"",
   trainingMode:training, manualReviewRequired:!training, focusMode:$obt("obtFocus").checked&&!training,
-  hideGrade:!training, hideCorrection:$obt("obtHideCorrection").checked || !anyCorrect
+  hideGrade:!training, hideCorrection:!anyCorrect
  };
  meta.questions=BASIC_TEST.rows.map((r,i)=>({
-  id:r.id||makeUid("otq"), type:r.type, prompt:`Question n°${i+1}`, points:r.points,
+  id:r.id||makeUid("otq"), type:r.type, prompt:`Question n°${i+1}`, points:r.points, timeLimitSeconds:timed?0:(r.time||0),
   ...(r.type==="written"
    ? { expectedAnswers:[] }
    : { choices:Array.from({length:r.n},(_,k)=>({ id:(r.choiceIds&&r.choiceIds[k])||makeUid("choice"), text:basicLabel(k), correct:r.correct.includes(k) })) })
@@ -13480,7 +13529,8 @@ function readOpenQuestionFromForm(){
  const typeEl=document.getElementById("onlineQuestionType");
  if(!typeEl||!ONLINE_TEST_DRAFT.openId) return null;
  const type=typeEl.value;
- const question={ id: ONLINE_TEST_DRAFT.openId, type, prompt: document.getElementById("onlineQuestionPrompt").value, points: parseFloat(document.getElementById("onlineQuestionPoints").value) };
+ const question={ id: ONLINE_TEST_DRAFT.openId, type, prompt: document.getElementById("onlineQuestionPrompt").value, points: parseFloat(document.getElementById("onlineQuestionPoints").value),
+  timeLimitSeconds: ONLINE_TEST_DRAFT.meta?.options?.timed ? 0 : parseOnlineTestDurationToSeconds(document.getElementById("onlineQuestionMin")?.value, document.getElementById("onlineQuestionSec")?.value) };
  if(type==="written"){
   question.expectedAnswers=normalizeOnlineAnswers(JSON.parse(document.getElementById("onlineWrittenAnswerTarget")?.dataset.answers||"[]"));
  }else if(type==="fillblank"){
@@ -13543,6 +13593,9 @@ function renderOnlineQuestionsList(){
        <div><label>Type de question</label>
         <select id="onlineQuestionType"><option value="qcu">QCU</option><option value="qcm">QCM</option><option value="written">Réponse à écrire</option><option value="fillblank">Texte à trou</option></select></div>
        <div><label>Points</label><input id="onlineQuestionPoints" type="number" min="0.25" step="0.25"></div>
+       <div class="oq-time-box"><label>Temps imparti (facultatif)</label>
+        <span class="oq-time-fields"><input id="onlineQuestionMin" type="number" min="0" step="1" placeholder="Min" aria-label="Minutes"><span>min</span><input id="onlineQuestionSec" type="number" min="0" max="59" step="1" placeholder="Sec" aria-label="Secondes"><span>s</span></span>
+        <small id="onlineQuestionTimeNote" class="oq-time-note"></small></div>
       </div>
       <div class="oq-top-right">
        <label>Intitulé de la question</label>
@@ -13558,6 +13611,11 @@ function renderOnlineQuestionsList(){
   if(q){
    document.getElementById("onlineQuestionType").value=q.type;
    document.getElementById("onlineQuestionPoints").value=q.points;
+   { const gl=!!ONLINE_TEST_DRAFT.meta?.options?.timed, d=splitOnlineTestDuration(q.timeLimitSeconds||0);
+     const mi=document.getElementById("onlineQuestionMin"), se=document.getElementById("onlineQuestionSec"), nt=document.getElementById("onlineQuestionTimeNote");
+     mi.value=(!gl&&q.timeLimitSeconds)?d.minutes:""; se.value=(!gl&&q.timeLimitSeconds)?d.seconds:"";
+     mi.disabled=se.disabled=gl;
+     nt.textContent=gl?"Indisponible : un temps global est défini pour ce test.":"Passe automatiquement à la question suivante à la fin du temps."; }
    const ta=document.getElementById("onlineQuestionPrompt"); ta.value=q.prompt||""; oqAutosize(ta);
    renderOnlineQuestionTypeFields(q.type,q);
   }
@@ -14002,7 +14060,7 @@ window.downloadStudentReleve = function(studentId, period) {
         const allNotesForEval = [];
         DATA.students.filter(s => s.classId === cls.id).forEach(s => {
           const sn = (DATA.notes[s.id] || []).find(note => (note.classNoteId === evalId || note.evaluationId === evalId));
-          if (sn && typeof sn.note === 'number' && !isSpecial(sn)) {
+          if (sn && typeof sn.note === 'number' && !isSpecial(sn) && !sn.hideFromStudent) {
             allNotesForEval.push(sn.note / sn.outof * 20);
           }
         });
@@ -14278,6 +14336,8 @@ function initApp(){
    contentHtml: sanitizeHomeworkHtml(raw?.contentHtml || ""),
    isExam: !!raw?.isExam,
    testIds: Array.isArray(raw?.testIds) ? raw.testIds.filter(Boolean) : [],
+   /* tests de ce devoir proposés en mode entraînement (undefined = ancien devoir : on reprend le réglage historique du test) */
+   trainingIds: Array.isArray(raw?.trainingIds) ? raw.trainingIds.filter(Boolean) : undefined,
    locked: raw?.locked !== false,
    createdAt: raw?.createdAt || new Date().toISOString(),
    updatedAt: raw?.updatedAt || new Date().toISOString()
@@ -14311,16 +14371,29 @@ function initApp(){
   studs.forEach(s=>{ ((DATA.classes.find(x=>x.id===s.classId)||{}).subjects||[]).forEach(x=>{ const n=typeof x==="object"?x.name:x; if(n && !subs.includes(n)) subs.push(n); }); });
   return {id:g.id,name:g.name,subjects:subs,memberIds:studs.map(s=>s.id),isGroup:true};
  }
- function homeworkTargetOptionsHtml(sel){
-  /* « Élèves » : un devoir peut être (ré)assigné à un seul élève, comme à une classe ou à un groupe */
-  const selSid=isSoloId(sel)?String(sel).slice(SOLO_PFX.length):"";
-  const stuList=(DATA.students||[]).filter(x=>x.id===selSid || !x.classId || window.edOkCls(x.classId,null))
-   .slice().sort((a,b)=>((a.last||"")+" "+(a.first||"")).localeCompare((b.last||"")+" "+(b.first||""),"fr",{sensitivity:"base"}));
-  const solo=stuList.length?`<optgroup label="Élèves">${stuList.map(x=>{ const v=soloGrpId(x.id), cn=(DATA.classes.find(c=>c.id===x.classId)||{}).name||"";
-   return `<option value="${escHtml(v)}" ${v===sel?"selected":""}>${escHtml(((x.last||"")+" "+(x.first||"")).trim()+(cn?" ("+cn+")":""))}</option>`; }).join("")}</optgroup>`:"";
-  const gl=grpUi().slice().sort((a,b)=>a.name.localeCompare(b.name,"fr",{numeric:true,sensitivity:"base"}));
-  return homeworkSortedClasses().map(cls=>`<option value="${escHtml(cls.id)}" ${cls.id===sel?"selected":""}>${escHtml(cls.name)}</option>`).join("")
-   +(gl.length?`<optgroup label="Groupes">${gl.map(g=>`<option value="${escHtml(g.id)}" ${g.id===sel?"selected":""}>${escHtml(g.name)}</option>`).join("")}</optgroup>`:"")+solo;
+ function homeworkTargetKind(id){ if(!id) return ""; if(isSoloId(id)) return "stu"; return grpById(id)?"grp":"cls"; }
+ /* Options d'un des trois filtres du destinataire : kind = "cls" (classes) | "grp" (groupes) | "stu" (élèves). sel = valeur à présélectionner. */
+ function homeworkTargetOptionsHtml(sel,kind){
+  kind=kind||homeworkTargetKind(sel)||"cls";
+  if(homeworkTargetKind(sel)!==kind) sel="";
+  const ph=t=>`<option value="">${t}</option>`;
+  if(kind==="stu"){
+   const selSid=isSoloId(sel)?String(sel).slice(SOLO_PFX.length):"";
+   const stuList=(DATA.students||[]).filter(x=>x.id===selSid || !x.classId || window.edOkCls(x.classId,null))
+    .slice().sort((a,b)=>((a.last||"")+" "+(a.first||"")).localeCompare((b.last||"")+" "+(b.first||""),"fr",{sensitivity:"base"}));
+   return ph("Élève…")+stuList.map(x=>{ const v=soloGrpId(x.id), cn=(DATA.classes.find(c=>c.id===x.classId)||{}).name||"";
+    return `<option value="${escHtml(v)}" ${v===sel?"selected":""}>${escHtml(((x.last||"")+" "+(x.first||"")).trim()+(cn?" ("+cn+")":""))}</option>`; }).join("");
+  }
+  if(kind==="grp"){
+   const gl=grpUi().slice().sort((a,b)=>a.name.localeCompare(b.name,"fr",{numeric:true,sensitivity:"base"}));
+   return ph("Groupe…")+gl.map(g=>`<option value="${escHtml(g.id)}" ${g.id===sel?"selected":""}>${escHtml(g.name)}</option>`).join("");
+  }
+  return ph("Classe…")+homeworkSortedClasses().map(cls=>`<option value="${escHtml(cls.id)}" ${cls.id===sel?"selected":""}>${escHtml(cls.name)}</option>`).join("");
+ }
+ /* destinataire choisi dans l'éditeur : la première des trois listes renseignée */
+ function homeworkDraftTarget(){
+  for(const id of ["homeworkDraftClassSelect","homeworkDraftGroupSelect","homeworkDraftStudentSelect"]){ const v=document.getElementById(id)?.value; if(v) return v; }
+  return "";
  }
  function homeworkStudentById(studentId){
   return DATA.students.find(s=>s.id===studentId) || null;
@@ -14365,8 +14438,20 @@ function initApp(){
   ensureHomeworkStore();
   return DATA.homework.find(item=>item.id===homeworkId) || null;
  }
- function getHomeworkTest(testId){
-  return (DATA.onlineTests||[]).find(test=>test.id===testId) || null;
+ /* Entraînement : réglé dans le devoir (case sur la ligne du test). Ancien devoir sans réglage : réglage historique du test. */
+ function hwIsTraining(homework,test){
+  if(!homework||!test) return false;
+  if(Array.isArray(homework.trainingIds)) return homework.trainingIds.includes(test.id);
+  return !!test.options?.trainingMode;
+ }
+ function getHomeworkTest(testId,homeworkId){
+  const test=(DATA.onlineTests||[]).find(t=>t.id===testId) || null;
+  if(!test||!homeworkId) return test;
+  const hw=(DATA.homework||[]).find(h=>h.id===homeworkId);
+  if(!hw) return test;
+  const T=hwIsTraining(hw,test);
+  if(T===!!test.options?.trainingMode) return test;
+  return {...test, options:{...(test.options||{}), trainingMode:T, manualReviewRequired:!T, focusMode:!!test.options?.focusMode&&!T, hideGrade:!T}};
  }
  function homeworkStudentId(){
   return AUTH.role==="eleve" ? AUTH.studentId : "";
@@ -14405,7 +14490,7 @@ function initApp(){
   let n=0;
   (DATA.homework||[]).forEach(homework=>{
    (homework.testIds||[]).forEach(testId=>{
-    const test=getHomeworkTest(testId);
+    const test=getHomeworkTest(testId,homework.id);
     if(!test || test.options?.trainingMode) return;
     const cls=homeworkClassById(homework.classId);
     (cls?.memberIds||[]).forEach(studentId=>{
@@ -14817,6 +14902,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
  }
  function renderHomeworkAssignedTests(testIds, editable){
   if(!testIds.length) return "";
+  const _d=HOMEWORK_STATE.draft;
   return `<div class="homework-tests-list">${testIds.map(testId=>{
    const test=getHomeworkTest(testId);
    const total=test ? fmt(getOnlineTestTotalPoints(test),2).replace(/\.00$/,"") : "0";
@@ -14829,6 +14915,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
      </div>
      <div style="display:flex;align-items:center;gap:10px;">
       <span>${total} pts</span>
+      ${editable ? `<label class="hw-train-row" title="Mode entraînement : refaisable à volonté, ni rendu ni note enregistrés"><input type="checkbox" data-hw-action="toggle-training" data-test-id="${escHtml(testId)}" ${(_d&&hwIsTraining(_d,test))?"checked":""}><span>Entraînement</span></label>` : ""}
       ${editable ? `<button type="button" class="homework-test-remove" data-hw-action="remove-assigned-test" data-test-id="${escHtml(testId)}">×</button>` : ""}
      </div>
     </div>
@@ -14841,7 +14928,9 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
   const className=homeworkClassName(draft.classId);
   const titleHtml = HOMEWORK_STATE.editTitle ? `
       <div class="homework-title-edit">
-       <select id="homeworkDraftClassSelect" aria-label="Classe">${homeworkTargetOptionsHtml(draft.classId)}</select>
+       <select id="homeworkDraftClassSelect" aria-label="Classe">${homeworkTargetOptionsHtml(draft.classId,"cls")}</select>
+       <select id="homeworkDraftGroupSelect" aria-label="Groupe">${homeworkTargetOptionsHtml(draft.classId,"grp")}</select>
+       <select id="homeworkDraftStudentSelect" aria-label="Élève">${homeworkTargetOptionsHtml(draft.classId,"stu")}</select>
        <select id="homeworkDraftSubjectSelect" aria-label="Matière">${(()=>{ const subs=homeworkClassSubjects(draft.classId); if(draft.subject && !subs.includes(draft.subject)) subs.unshift(draft.subject); return subs.map(sub=>`<option value="${escHtml(sub)}" ${sub===draft.subject?"selected":""}>${escHtml(sub)}</option>`).join(""); })()}</select>
        <button type="button" class="homework-title-ok" data-hw-action="confirm-title" title="Valider le destinataire et la matière" aria-label="Valider le destinataire et la matière"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
       </div>` : `
@@ -14946,7 +15035,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
     <div class="homework-entry-body" contenteditable="false">${homework.contentHtml || '<span style="color:#94a3b8;">Aucun contenu.</span>'}</div>
     <div class="homework-tests-list">
      ${(homework.testIds||[]).map(testId=>{
-      const test=getHomeworkTest(testId);
+      const test=getHomeworkTest(testId,homework.id);
       if(!test) return "";
       const total=fmt(getOnlineTestTotalPoints(test),2).replace(/\.00$/,"");
       const state=getHomeworkStudentSubmissionState(homework,test);
@@ -15178,7 +15267,11 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
  function hwCorrectifHtml(submission,test){
   const nrm=normalizeOnlinePreviewText, pts=q=>fmt(q.points,2).replace(/\.00$/,"");
   const scores=(submission.review&&submission.review.questionScores)||{};
-  return hwAutoDetails(submission,test).map((d,i)=>{
+  const _fv=submission.manualOverride||(submission.review&&submission.review.finalScore)||(submission.autoResult&&submission.autoResult.earned)||"";
+  const _tt=fmt((submission.autoResult&&submission.autoResult.total)||getOnlineTestTotalPoints(test),2).replace(/\.00$/,"");
+  const _gc=String((submission.review&&submission.review.generalComment)||"").trim();
+  const _head=(_fv!==""?`<div class="hwc-notebar"><div class="online-preview-score">Note : ${escHtml(String(_fv))}${(typeof CLASS_SPECIAL_VALUES!=="undefined"&&CLASS_SPECIAL_VALUES.has(String(_fv)))?"":" / "+_tt}</div></div>`:"")+(_gc?`<div class="hwc-comment hwc-general"><b>Commentaire du professeur</b>${escHtml(_gc).replace(/\n/g,"<br>")}</div>`:"");
+  return _head+(hwAutoDetails(submission,test).map((d,i)=>{
    const q=d.question, ok=d.correct===true, s=scores[q.id];
    const scoreTxt=(s!=null&&s!=="") ? `${escHtml(String(s))} / ${pts(q)}` : `${pts(q)} pt${Number(q.points)>1?"s":""}`;
    let inner="";
@@ -15215,7 +15308,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
    const qc=String((submission.review&&submission.review.questionComments&&submission.review.questionComments[q.id])||"").trim();
    const qcHtml=qc?`<div class="hwc-comment"><b>Commentaire du professeur</b>${escHtml(qc).replace(/\n/g,"<br>")}</div>`:"";
    return `<section class="hwc-q ${ok?"is-ok":"is-ko"}"><div class="hwc-head"><strong>Question ${i+1}</strong><span class="hwc-pts">${scoreTxt}</span></div><div class="hwc-prompt">${escHtml(q.prompt||"").replace(/\n/g,"<br>")}</div>${inner}${qcHtml}</section>`;
-  }).join("") || '<div class="homework-empty">Aucune question.</div>';
+  }).join("") || '<div class="homework-empty">Aucune question.</div>');
  }
  function hwCorrectifModal(){
   let m=document.getElementById("homeworkCorrectifModal");
@@ -15230,7 +15323,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
   return m;
  }
  function hwOpenCorrectif(homeworkId,testId,studentId){
-  const test=getHomeworkTest(testId), sub=getHomeworkSubmission(homeworkId,testId,studentId);
+  const test=getHomeworkTest(testId,homeworkId), sub=getHomeworkSubmission(homeworkId,testId,studentId);
   if(!test||!sub) return;
   const m=hwCorrectifModal();
   m.querySelector("#homeworkCorrectifTitle").textContent="Correctif · "+(test.title||"Test");
@@ -15252,7 +15345,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
  };
  /* Fil d'actualite : onglet Test en ligne > pop-up du test (soumissions) > correction de l'eleve */
  window.hwOpenFeedCorrection=function(homeworkId,testId,studentId){
-  const test=getHomeworkTest(testId);
+  const test=getHomeworkTest(testId,homeworkId);
   if(!getHomeworkById(homeworkId) || !test) return false;
   if(test.options && test.options.trainingMode) return false;   /* test d'entrainement : pas de correction */
   openHomeworkReviewModal(testId);
@@ -15280,7 +15373,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
     const cls=classLike(n.classId); ev=cls&&(cls.evals||[]).find(e=>e.id===n.classNoteId);
    }
    if(!ev||!ev.hwId||!ev.hwTestId) return "";
-   const test=getHomeworkTest(ev.hwTestId);
+   const test=getHomeworkTest(ev.hwTestId,ev.hwId);
    if(!test||test.options?.trainingMode||test.options?.hideCorrection) return "";
    const sub=getHomeworkSubmission(ev.hwId,ev.hwTestId,studentId);
    if(!sub||!(AUTH.role==="prof" ? sub.submittedAt : sub.publishedAt)) return "";
@@ -15359,6 +15452,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
    `${total} point${Number(total)>1?"s":""}`
   ];
   if(test.options?.timed) badges.push(formatOnlineTestDuration(test.options.timeLimitSeconds||0));
+  else if((test.questions||[]).some(q=>Number(q.timeLimitSeconds)>0)) badges.push("Temps limité par question");
   if(test.options?.trainingMode) badges.push("Mode entraînement");
   if(test.options?.focusMode && !test.options?.trainingMode) badges.push("Mode Focus : ne quitte pas la page");
   if(otManual(test)) badges.push("Correction professeur");
@@ -15447,8 +15541,9 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
   const bar=document.getElementById("homeworkQuizBar");
   const timer=document.getElementById("homeworkQuizTimer");
   if(!HOMEWORK_STATE.quiz || !timer) return;
-  const remaining=Number(HOMEWORK_STATE.quiz.remainingSeconds);
-  const total=Number(HOMEWORK_STATE.quiz.totalSeconds);
+  let remaining=Number(HOMEWORK_STATE.quiz.remainingSeconds);
+  let total=Number(HOMEWORK_STATE.quiz.totalSeconds);
+  if(HOMEWORK_STATE.quiz.qLimit>0){ remaining=Number(HOMEWORK_STATE.quiz.qRemaining); total=Number(HOMEWORK_STATE.quiz.qLimit); }
   if(!(remaining>=0) || !(total>0)){
    timer.style.display="none";
    if(bar) bar.style.width="100%";
@@ -15466,6 +15561,7 @@ async function finishHomeworkQuiz(reason){
   if(!quiz || quiz.submitted) return;
   quiz.submitted=true;
   if(quiz.timerId) clearInterval(quiz.timerId);
+  if(quiz.qTimerId) clearInterval(quiz.qTimerId);
   saveHomeworkCurrentAnswer();
   const answers={};
   quiz.questions.forEach(question=>{
@@ -15500,7 +15596,7 @@ async function finishHomeworkQuiz(reason){
   });
  if(reason==="timeout") await cloudSleep(Math.random()*3000);   /* fin de chrono simultanée : on étale les envois */
  const bodyEl=document.getElementById("homeworkQuizBody");
- if(bodyEl && AUTH.role==="eleve") bodyEl.innerHTML='<div class="homework-quiz-card"><p class="online-preview-note">Envoi de ton test en cours… Ne ferme pas la page.</p></div>';
+ if(bodyEl && AUTH.role==="eleve") bodyEl.innerHTML='<div class="homework-quiz-card"><div class="hw-send-box"><span class="hw-send-spin" aria-hidden="true"></span><span>Envoi de ton test en cours… Ne ferme pas la page.</span></div></div>';
  let lastErr=null;
  for(let round=0; round<3; round++){
   try{
@@ -15522,6 +15618,10 @@ async function finishHomeworkQuiz(reason){
   return;
  }
  hwDraftClear(quiz);
+  if(bodyEl && AUTH.role==="eleve"){
+   const bx=bodyEl.querySelector(".hw-send-box");
+   if(bx){ bx.classList.add("is-sent"); bx.innerHTML='<span class="hw-send-ok" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span>Test envoyé !</span>'; await cloudSleep(1400); }
+  }
   syncHomeworkDirectGrades();
   try{ rebuildUI(); }catch(e){}
   renderHomeworkQuizResult(quiz.homework, quiz.test, persisted, result, reason);
@@ -15616,14 +15716,37 @@ async function finishHomeworkQuiz(reason){
     <div class="online-preview-prompt">${escHtml(question.prompt||"").replace(/\n/g,"<br>")}</div>
     ${renderHomeworkQuizInput(question)}
     <div class="homework-quiz-actions">
-     <button type="button" class="btn" data-hw-action="quiz-prev" ${quiz.currentIndex===0 ? "disabled" : ""}>←</button>
+     <button type="button" class="btn" data-hw-action="quiz-prev" ${(quiz.currentIndex===0||hwQuizPerQuestion(quiz)) ? "disabled" : ""}>←</button>
      ${isLast ? `<button type="button" class="btn btn-primary" data-hw-action="quiz-submit">Rendre</button>` : `<button type="button" class="btn btn-primary" data-hw-action="quiz-next">→</button>`}
     </div>
    </div>
   `;
   hydrateHomeworkQuizInputs(question);
+  hwQStartTimer();
   updateHomeworkQuizTimer();
  }
+ /* Temps imparti par question (uniquement si le test n'a pas de temps global) : à la fin, passage automatique à la suivante */
+ function hwQStartTimer(){
+  const quiz=HOMEWORK_STATE.quiz; if(!quiz) return;
+  if(quiz.qTimerId){ clearInterval(quiz.qTimerId); quiz.qTimerId=null; }
+  quiz.qLimit=0;
+  if(quiz.submitted || Number(quiz.totalSeconds)>0 || quiz.test?.options?.timed) return;
+  const q=quiz.questions[quiz.currentIndex], lim=Number(q&&q.timeLimitSeconds)||0;
+  if(!(lim>0)) return;
+  quiz.qLimit=lim; quiz.qRemaining=lim;
+  quiz.qTimerId=setInterval(()=>{
+   if(!HOMEWORK_STATE.quiz||HOMEWORK_STATE.quiz!==quiz||quiz.submitted){ clearInterval(quiz.qTimerId); return; }
+   quiz.qRemaining-=1;
+   updateHomeworkQuizTimer();
+   if(quiz.qRemaining<=0){
+    clearInterval(quiz.qTimerId); quiz.qTimerId=null;
+    saveHomeworkCurrentAnswer();
+    if(quiz.currentIndex>=quiz.questions.length-1) finishHomeworkQuiz("timeout");
+    else { quiz.currentIndex+=1; renderHomeworkQuizQuestion(); }
+   }
+  },1000);
+ }
+ function hwQuizPerQuestion(quiz){ return !!quiz && !(Number(quiz.totalSeconds)>0) && !quiz.test?.options?.timed && (quiz.questions||[]).some(q=>Number(q.timeLimitSeconds)>0); }
  function renderHomeworkPublishedCorrection(submission){
   const result=submission.autoResult;
   if(!result || !Array.isArray(result.details)) return "";
@@ -15699,7 +15822,7 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
 }
  function openHomeworkStudentTest(homeworkId,testId){
   const homework=getHomeworkById(homeworkId);
-  const test=getHomeworkTest(testId);
+  const test=getHomeworkTest(testId,homeworkId);
   const studentId=homeworkStudentId();
   if(!homework || !test || !studentId) return;
   const training=!!test.options?.trainingMode;
@@ -15868,7 +15991,7 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
   const list=[];
   (DATA.homework||[]).forEach(homework=>{
    (homework.testIds||[]).forEach(testId=>{
-    const test=getHomeworkTest(testId);
+    const test=getHomeworkTest(testId,homework.id);
     if(!test || test.options?.trainingMode) return;
     if(filterTestId && test.id!==filterTestId) return;
     const cls=homeworkClassById(homework.classId);
@@ -15924,7 +16047,7 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
  /* ── Évaluation automatique « Afficher directement dans École Directe » ───── */
  function homeworkDirectTests(homework){
   /* Tous les tests notés (hors mode entraînement) : chacun a son évaluation de classe/groupe automatique. */
-  return (homework.testIds||[]).map(getHomeworkTest).filter(t=>t && !t.options?.trainingMode);
+  return (homework.testIds||[]).map(id=>getHomeworkTest(id,homework.id)).filter(t=>t && !t.options?.trainingMode);
  }
  function isHomeworkDirectTest(test){
   return !!(test && test.options?.showGradeDirect && !test.options?.trainingMode && !otManual(test));
@@ -16153,7 +16276,7 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
       </div>
       <input class="homework-grade-input" data-hw-action="grade-input" data-homework-id="${escHtml(item.homework.id)}" data-test-id="${escHtml(item.test.id)}" data-student-id="${escHtml(stu.id)}" value="${escHtml(grade)}" placeholder="Note" title="Clic droit ou appui long : Abs, Disp, NE, X, EA…">
       <div style="display:flex;align-items:center;gap:8px;">
-       ${validated ? "" : '<span class="homework-review-warning" title="Note non validée">⚠</span>'}
+       ${validated ? "" : '<span class="homework-review-warning" title="Note non validée">${ICO_WARN}</span>'}
        <button type="button" class="btn" data-hw-action="open-correction" data-homework-id="${escHtml(item.homework.id)}" data-test-id="${escHtml(item.test.id)}" data-student-id="${escHtml(stu.id)}" ${done ? "" : "disabled"}>Corriger</button>
        <button type="button" class="btn homework-reset-btn" data-hw-action="reset-submission" data-homework-id="${escHtml(item.homework.id)}" data-test-id="${escHtml(item.test.id)}" data-student-id="${escHtml(stu.id)}" title="${done ? "Annuler la soumission (l'élève pourra refaire le test)" : "Retirer la note « "+escHtml(special||manualNum)+" » (l'élève pourra faire le test)"}" aria-label="Retenter" ${(done||special||manualNum) ? "" : "disabled"}>&#8635;</button>
       </div>
@@ -16178,7 +16301,7 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
  }
  function openHomeworkCorrection(homeworkId,testId,studentId){
   const homework=getHomeworkById(homeworkId);
-  const test=getHomeworkTest(testId);
+  const test=getHomeworkTest(testId,homeworkId);
   const student=homeworkStudentById(studentId);
   const submission=getHomeworkSubmission(homeworkId,testId,studentId);
   if(!homework || !test || !student || !submission){ alert("Aucune copie disponible pour cet élève."); return; }
@@ -16345,7 +16468,7 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
   const ctx=HOMEWORK_STATE.correction;
   if(!ctx) return;
   const submission=getHomeworkSubmission(ctx.homeworkId,ctx.testId,ctx.studentId);
-  const test=getHomeworkTest(ctx.testId);
+  const test=getHomeworkTest(ctx.testId,ctx.homeworkId);
   if(!submission || !test) return;
   const scores={};
   let total=0;
@@ -16483,7 +16606,7 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
   return "";
  }
  function hwToggleOnePublish(hid,tid,sid){
-  const sub=getHomeworkSubmission(hid,tid,sid), hw=getHomeworkById(hid), test=getHomeworkTest(tid);
+  const sub=getHomeworkSubmission(hid,tid,sid), hw=getHomeworkById(hid), test=getHomeworkTest(tid,hid);
   if(!hw||!test) return;
   const special=hwSpecialMark(hw,test,sid), manualNum=(!sub||!sub.submittedAt)?hwManualGrade(hw,test,sid):"";
   const entered=!!(sub&&sub.publishedAt)||!!special||!!manualNum;
@@ -16772,12 +16895,15 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
    renderHomeworkView();
    return;
   }
-  if(target.id==="homeworkDraftClassSelect"){
-   if(isSoloId(target.value)) ensureSoloGroup(String(target.value).slice(SOLO_PFX.length));
+  if(target.id==="homeworkDraftClassSelect"||target.id==="homeworkDraftGroupSelect"||target.id==="homeworkDraftStudentSelect"){
+   /* filtres distincts : choisir dans l'un vide les deux autres */
+   if(target.value) ["homeworkDraftClassSelect","homeworkDraftGroupSelect","homeworkDraftStudentSelect"].forEach(id=>{ if(id!==target.id){ const o=document.getElementById(id); if(o) o.value=""; } });
+   const tv=homeworkDraftTarget();
+   if(isSoloId(tv)) ensureSoloGroup(String(tv).slice(SOLO_PFX.length));
    const subSel=document.getElementById("homeworkDraftSubjectSelect");
-   if(subSel){
-    const subs=homeworkClassSubjects(target.value);
-    subSel.innerHTML=subs.map(sub=>`<option value="${escHtml(sub)}">${escHtml(sub)}</option>`).join("");
+   if(subSel && tv){
+    const keep=subSel.value, subs=homeworkClassSubjects(tv);
+    subSel.innerHTML=subs.map(sub=>`<option value="${escHtml(sub)}" ${sub===keep?"selected":""}>${escHtml(sub)}</option>`).join("");
    }
    return;
   }
@@ -16835,6 +16961,16 @@ function handleHomeworkActionClick(btn){
    renderHomeworkView();
    return;
   }
+  if(action==="toggle-training"){
+   if(!HOMEWORK_STATE.draft) return;
+   saveHomeworkDraftFromDom();
+   const d=HOMEWORK_STATE.draft, tid=btn.dataset.testId;
+   const cur=new Set(Array.isArray(d.trainingIds)?d.trainingIds:(d.testIds||[]).filter(id=>hwIsTraining(d,getHomeworkTest(id))));
+   if(btn.checked) cur.add(tid); else cur.delete(tid);
+   d.trainingIds=[...cur];
+   renderHomeworkView();
+   return;
+  }
   if(action==="toggle-done"){
    hwSetDone(btn.dataset.homeworkId, !!btn.checked);
    renderHomeworkView();
@@ -16859,7 +16995,7 @@ function handleHomeworkActionClick(btn){
   }
   if(action==="confirm-title"){
    if(!HOMEWORK_STATE.draft) return;
-   const classId=document.getElementById("homeworkDraftClassSelect")?.value || HOMEWORK_STATE.draft.classId;
+   const classId=homeworkDraftTarget() || HOMEWORK_STATE.draft.classId;
    const subject=document.getElementById("homeworkDraftSubjectSelect")?.value || HOMEWORK_STATE.draft.subject;
    if(!subject){ alert("Cette classe (ou ce groupe) n’a aucune matière : ajoute-en une d’abord."); return; }
    saveHomeworkDraftFromDom();
@@ -16913,7 +17049,7 @@ function handleHomeworkActionClick(btn){
   if(action==="start-quiz"){ if(btn.disabled||!HOMEWORK_STATE.quiz) return; startHomeworkQuiz(); return; }
   if(action==="restart-quiz"){
    const q=HOMEWORK_STATE.quiz;
-   if(q){ if(q.timerId) clearInterval(q.timerId); openHomeworkStudentTest(q.homework.id,q.test.id); }
+   if(q){ if(q.timerId) clearInterval(q.timerId); if(q.qTimerId) clearInterval(q.qTimerId); openHomeworkStudentTest(q.homework.id,q.test.id); }
    return;
   }
   if(action==="quiz-prev"){
@@ -16972,7 +17108,7 @@ function handleHomeworkActionClick(btn){
   const base=originalBuildCSVText();
   const extra=[];
   DATA.homework.forEach(item=>{
-   extra.push(["homework",item.id,item.dateISO,item.classId,escapeCsv(item.subject||""),escapeCsv(item.contentHtml||""),item.isExam?1:0,item.locked?1:0,escapeCsv(JSON.stringify(item.testIds||[])),item.createdAt||"",item.updatedAt||""].join(";"));
+   extra.push(["homework",item.id,item.dateISO,item.classId,escapeCsv(item.subject||""),escapeCsv(item.contentHtml||""),item.isExam?1:0,item.locked?1:0,escapeCsv(JSON.stringify(item.testIds||[])),item.createdAt||"",item.updatedAt||"",Array.isArray(item.trainingIds)?escapeCsv(JSON.stringify(item.trainingIds)):""].join(";"));
   });
   DATA.homeworkSubmissions.forEach(item=>{
    extra.push(["homeworkSubmission",item.id,item.homeworkId,item.testId,item.studentId,escapeCsv(JSON.stringify(item.answers||{})),escapeCsv(JSON.stringify(item.autoResult||null)),item.submittedAt||"",escapeCsv(JSON.stringify(item.review||{})),item.validatedAt||"",item.publishedAt||"",escapeCsv(item.manualOverride||""),item.noteId||""].join(";"));
@@ -17011,6 +17147,7 @@ function handleHomeworkActionClick(btn){
      isExam: cols[6]==="1",
      locked: cols[7]!=="0",
      testIds,
+     trainingIds: (()=>{ try{ const v=cols[11]?JSON.parse(unescapeCsv(cols[11])):undefined; return Array.isArray(v)?v:undefined; }catch(e){ return undefined; } })(),
      createdAt: cols[9]||"",
      updatedAt: cols[10]||""
     }));
@@ -17403,6 +17540,7 @@ function renderSchedule(){
   T.textContent=frD(days[0],{day:"numeric",month:"long"})+" – "+frD(days[days.length-1],{day:"numeric",month:"long",year:"numeric"}); }
  const set=new Set(days.map(isoD)), vis=ev.filter(e=>set.has(e.date));
  let h0=7,h1=19; vis.forEach(e=>{ h0=Math.min(h0,Math.floor(tmin(e.start)/60)); h1=Math.max(h1,Math.ceil(tmin(e.end)/60)); });
+ try{ vsSanSlots().filter(o=>set.has(o.date)).forEach(o=>{ h0=Math.min(h0,Math.floor(tmin(o.start)/60)); h1=Math.max(h1,Math.ceil(o.endMin/60)); }); }catch(x){}
  const gt=`grid-template-columns:50px repeat(${days.length},1fr)`;
  html=`<div class="sch-row sch-hd" style="${gt}"><div style="border:0"></div>${days.map(d=>`<div data-d="${isoD(d)}" class="${isoD(d)===todayS?"today":""}">${frD(d,{weekday:"short",day:"numeric"})}</div>`).join("")}</div>`;
  html+=`<div class="sch-row" style="${gt}"><div class="sch-hours">${Array.from({length:h1-h0},(_,i)=>`<div>${h0+i}h</div>`).join("")}</div>`;
@@ -17439,7 +17577,7 @@ function schDetFill(){
   `<div style="background:${bg};color:${ink};border:1px solid ${e.cancelled?"#cbd5e1":"rgba(0,0,0,.15)"};border-radius:8px;padding:10px 12px;margin-bottom:8px"><b style="font-size:16px${e.cancelled?";text-decoration:line-through":""}">${escHtml(String(e.subject).toUpperCase())}</b>${e.cancelled?'<div><b>Annulé</b></div>':""}</div>`
   +row("Jour",escHtml(dt))+row("Horaire",hmF(e.start)+" - "+hmF(e.end))+row("Salle",e.room?escHtml(e.room):"—")
   +row("Professeur",escHtml(evProfShort(e)))+row("Classe(s)",escHtml(cl||"—"))
-  +(e.changed?row("Info",'<b>⚠ Ce cours a été modifié.</b>'):"");
+  +(e.changed?row("Info",'<b>'+ICO_WARN+' Ce cours a été modifié.</b>'):"");
 }
 function schDetail(id){ schDetId=id; schDetFill(); if(!schDetId) return; schDet.classList.add("open"); schDet.setAttribute("aria-hidden","false"); }
 document.getElementById("schDetailClose").onclick=schDetClose;
@@ -17497,7 +17635,9 @@ document.getElementById("schWarnBtn").onclick=()=>{
  e.changed=!e.changed; if(!e.changed) delete e.changed;
  schWarnPaint(!!e.changed); saveData(); renderSchedule(); if(typeof schDetId!=="undefined"&&schDetId) schDetFill();
 };
-function schSyncAppels(){ const ok=new Set(schEns().events.filter(x=>!x.cancelled).map(x=>x.id)); const V=vsEns(), n=V.appels.length; V.appels=V.appels.filter(a=>ok.has(a.eventId)); return V.appels.length!==n; }
+function schSyncAppels(){ const ok=new Set(schEns().events.filter(x=>!x.cancelled).map(x=>x.id)); const V=vsEns(), n=V.appels.length;
+ V.sanctions.forEach(x=>{ if(x.level!=="J"&&x.d&&x.d.day&&x.d.start) ok.add("colle|"+x.d.day+"|"+x.d.start+"|"+colleEndStr(x)); });   /* appels de retenue : conservés tant que la retenue existe */
+ V.appels=V.appels.filter(a=>ok.has(a.eventId)); return V.appels.length!==n; }
 function schCommit(){ schSyncAppels(); saveData(); renderSchedule(); schClose(); if(schDetId) schDetFill(); }
 document.getElementById("schAdd").onclick=()=>schOpen(null);
 document.getElementById("schAddEvt").onclick=()=>schOpen(null,true);
@@ -17635,7 +17775,7 @@ document.getElementById("schSigNo").onclick=()=>schSignal(false);
   draw(); show(m); m.querySelector("#grpName").focus();
  }
  window.grpOpenEditor=editOpen; window.grpOpenList=listOpen; window.grpDelete=delGroup;
- document.getElementById("schGroups").onclick=listOpen;
+ { const _gb=document.getElementById("schGroups"); if(_gb) _gb.onclick=listOpen; }
 })();
 
 /* — Onglets Classes / Groupes (colonne de gauche des Notes Communes) — */
@@ -17712,11 +17852,8 @@ const nowHM=()=>{const n=new Date();return p2(n.getHours())+":"+p2(n.getMinutes(
 const SAN={J:{n:"Colle jaune",c:"#eab308"},V:{n:"Colle verte",c:"#16a34a"},R:{n:"Colle rouge",c:"#dc2626"}};
 const minToHM=m=>p2(Math.floor(m/60)%24)+":"+p2(m%60);
 
-function avatarSvg(sex){
- const face='<ellipse cx="50" cy="40" rx="19" ry="23" fill="#fff" stroke="#111" stroke-width="3.5"/>';
- if(sex==="F") return '<svg viewBox="0 0 100 100"><path d="M22 66C12 34 24 6 50 6s38 28 28 60c-6-2-10-5-12-10H34c-2 5-6 8-12 10z" fill="#111"/><path d="M8 100c0-18 14-27 30-31l12 16 12-16c16 4 30 13 30 31z" fill="#111"/><path d="M41 62h18v8l-9 11-9-11z" fill="#fff" stroke="#111" stroke-width="3"/>'+face+'<path d="M30 40c10-2 18-8 22-16 5 8 12 13 19 16 2-24-8-30-21-30S28 16 30 40z" fill="#111"/></svg>';
- return '<svg viewBox="0 0 100 100"><path d="M6 100c0-18 14-26 32-31h24c18 5 32 13 32 31z" fill="#111"/><path d="M40 62h20v10c-6 6-14 6-20 0z" fill="#fff" stroke="#111" stroke-width="3"/><ellipse cx="30" cy="42" rx="4" ry="7" fill="#fff" stroke="#111" stroke-width="3"/><ellipse cx="70" cy="42" rx="4" ry="7" fill="#fff" stroke="#111" stroke-width="3"/>'+face+'<path d="M29 42C24 14 38 6 52 8c14-2 25 8 19 34-1-12-5-17-21-17-12 0-19 5-21 17z" fill="#111"/></svg>';
-}
+const AV_IMG={M:"data:image/jpeg;base64,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",F:"data:image/jpeg;base64,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"};
+function avatarSvg(sex){ return '<img class="ap-av" alt="" draggable="false" src="'+(sex==="F"?AV_IMG.F:AV_IMG.M)+'">'; }
 function vsPop(title,html,btns){
  let m=document.getElementById("vsPop");
  if(!m){ m=document.createElement("div"); m.id="vsPop"; m.className="modal"; m.style.zIndex=130; document.body.appendChild(m); }
@@ -17731,7 +17868,14 @@ const vsRow=(k,v)=>'<div style="display:flex;gap:10px;margin:6px 0"><span style=
 /* ---------- Feuille d'appel (prof) ---------- */
 const AP={evId:"",absent:new Set(),late:{},sent:false,mode:"call",peek:null};
 const AP_EYE='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
-function apEvents(){ const t=isoD(new Date()); return schEns().events.filter(e=>e.date===t&&!e.cancelled&&evIsMine(e)).sort((a,b)=>tmin(a.start)-tmin(b.start)); }
+function apEvents(){ const t=isoD(new Date()); return schEns().events.filter(e=>e.date===t&&!e.cancelled&&evIsMine(e)).concat(vsSanSlots().filter(x=>x.date===t).map(colleEv)).sort((a,b)=>tmin(a.start)-tmin(b.start)); }
+/* retenues (colles vertes/rouges) : un « cours » fictif par tranche horaire, regroupant tous les élèves concernés */
+function colleEv(x){ return {id:"colle|"+x.key,subject:colleTitle(x),date:x.date,start:x.start,end:x.end,classIds:[],colle:true,sids:x.sids.slice(),lv:Object.assign({},x.lv)}; }
+function apEvFind(id){
+ const e=schEns().events.find(x=>x.id===id); if(e) return e;
+ const m=/^colle\|(\d{4}-\d\d-\d\d)\|(\d\d:\d\d)\|(\d\d:\d\d)$/.exec(String(id||"")); if(!m) return null;
+ const x=vsSanSlots().find(y=>y.date===m[1]&&y.start===m[2]&&y.end===m[3]); return x?colleEv(x):null;
+}
 function apFind(ev){ return vsEns().appels.find(a=>a.eventId===ev.id&&a.date===ev.date); }
 function apLoad(ev){ const r=apFind(ev); AP.evId=ev.id;
  AP.absent=new Set(r?r.absent:[]); AP.late=Object.assign({},r?r.late:{}); AP.sent=!!r; AP.mode=r?"idle":"call"; }
@@ -17744,7 +17888,7 @@ function apPrevAbsent(ev){
  return prev;
 }
 function apPersist(){
- const ev=schEns().events.find(e=>e.id===AP.evId); if(!ev) return;
+ const ev=apEvFind(AP.evId); if(!ev) return;
  let r=apFind(ev);
  if(!r){ r={id:vsUid("ap"),eventId:ev.id,date:ev.date,start:ev.start,end:ev.end,subject:ev.subject,classIds:[...(ev.classIds||[])]}; vsEns().appels.push(r); }
  r.absent=[...AP.absent]; r.late=Object.assign({},AP.late); r.sentAt=new Date().toISOString();
@@ -17760,18 +17904,18 @@ function renderAppel(){
   const n=nowHM(); const pick=evs.find(e=>e.start<=n&&n<e.end)||evs.find(e=>e.start>n)||evs[evs.length-1]; apLoad(pick);
  }
  const ev=evs.find(e=>e.id===AP.evId);
- const cn=e=>(e.classIds||[]).map(id=>targetName(id)).filter(Boolean).join(", ");
+ const cn=e=>e.colle?"retenue":(e.classIds||[]).map(id=>targetName(id)).filter(Boolean).join(", ");
  ctl.innerHTML='<select id="apSel" class="btn">'+evs.map(e=>'<option value="'+e.id+'"'+(e.id===AP.evId?" selected":"")+'>'+hmF(e.start)+' - '+hmF(e.end)+' · '+escHtml(e.subject)+' ('+escHtml(cn(e))+')</option>').join("")+'</select> '
   +(AP.sent?'<span class="ap-sent">✔ Appel envoyé</span> <button class="btn'+(AP.mode==="correct"?" btn-primary":"")+'" id="apCorr">Corriger l\'appel</button> <button class="btn'+(AP.mode==="late"?" btn-primary":"")+'" id="apLate">Déclarer un retard</button>'
    :'<button class="btn btn-primary" id="apSend">Envoyer</button>')+' '+eye;
  const prev=apPrevAbsent(ev), multi=(ev.classIds||[]).length>1;
  let html=AP.mode==="late"?'<div class="ap-hint">Cliquez sur un élève absent pour déclarer son retard.</div>':AP.mode==="correct"?'<div class="ap-hint">Cliquez sur un élève pour modifier son statut.</div>':"";
- (ev.classIds||[]).forEach(cid=>{
-  const list=targetStudents(cid).sort(cmpStu); if(!list.length) return;
-  if(multi) html+='<h3 class="ap-cls">'+escHtml(targetName(cid)||"")+'</h3>';
+ (ev.colle?["_colle"]:(ev.classIds||[])).forEach(cid=>{
+  const list=(ev.colle?DATA.students.filter(x=>(ev.sids||[]).includes(x.id)):targetStudents(cid)).sort(cmpStu); if(!list.length) return;
+  if(multi&&!ev.colle) html+='<h3 class="ap-cls">'+escHtml(targetName(cid)||"")+'</h3>';
   html+='<div class="ap-grid">'+list.map(s=>{
    const f=sexOf(s)==="F", ab=AP.absent.has(s.id), la=AP.late[s.id];
-   return '<div class="ap-card'+(prev.has(s.id)?" ap-prev":"")+'" data-sid="'+s.id+'">'+avatarSvg(sexOf(s))
+   return '<div class="ap-card'+(prev.has(s.id)?" ap-prev":"")+'" data-sid="'+s.id+'"'+(ev.colle&&ev.lv&&ev.lv[s.id]?' style="border-bottom:5px solid '+SAN[ev.lv[s.id]].c+'"':"")+'>'+avatarSvg(sexOf(s))
     +'<div class="ap-n"><b>'+escHtml(s.last)+'</b><br>'+escHtml(s.first)+'</div>'
     +(ab?'<div class="ap-veil">'+(f?"Absente":"Absent")+'</div>':la?'<div class="ap-veil ap-veil-late">Retard<small>'+hmF(la)+'</small></div>':"")+'</div>';
   }).join("")+'</div>';
@@ -17780,7 +17924,7 @@ function renderAppel(){
 }
 function apClick(sid){
  if(AP.peek){ if(AP.peek.absent.has(sid)) AP.peek.absent.delete(sid); else AP.peek.absent.add(sid); renderAppel(); return; }
- const ev=schEns().events.find(e=>e.id===AP.evId); if(!ev||AP.mode==="idle") return;
+ const ev=apEvFind(AP.evId); if(!ev||AP.mode==="idle") return;
  if(AP.mode==="late"){
   if(!AP.absent.has(sid)) return;
   const s=DATA.students.find(x=>x.id===sid);
@@ -17856,7 +18000,7 @@ document.getElementById("appelCtl").addEventListener("click",e=>{
  else if(id==="apCorr"){ AP.mode=AP.mode==="correct"?"idle":"correct"; renderAppel(); }
  else if(id==="apLate"){ AP.mode=AP.mode==="late"?"idle":"late"; renderAppel(); }
 });
-document.getElementById("appelCtl").addEventListener("change",e=>{ if(e.target.id==="apSel"){ const ev=schEns().events.find(x=>x.id===e.target.value); if(ev){ apLoad(ev); renderAppel(); } } });
+document.getElementById("appelCtl").addEventListener("change",e=>{ if(e.target.id==="apSel"){ const ev=apEvFind(e.target.value); if(ev){ apLoad(ev); renderAppel(); } } });
 
 /* ---------- Vie scolaire ---------- */
 const VS={cls:"",grp:"",sid:"",tab:"eleves",q:""};
@@ -17870,11 +18014,12 @@ function vsItems(sid){
  if(!window.edOkStu(sid,null)) return [];
  const V=vsEns(), out=[], abs={};
  V.appels.forEach(a=>{
+  if(String(a.eventId).indexOf("colle|")===0) return;   /* appel d'une retenue : jamais comptabilisé dans Absences / Retards (affiché sur la ligne de la sanction) */
   if((a.absent||[]).includes(sid)) (abs[a.date]=abs[a.date]||[]).push(a);
   if(a.late&&a.late[sid]) out.push({kind:"ret",key:"ret|"+sid+"|"+a.eventId,sid,date:a.date,time:a.late[sid],a,ts:a.date+"T"+a.late[sid]});
  });
  Object.keys(abs).forEach(d=>{ const l=abs[d].sort((x,y)=>x.start<y.start?-1:1); out.push({kind:"abs",key:"abs|"+sid+"|"+d,sid,date:d,list:l,ts:d+"T"+l[0].start}); });
- V.sanctions.filter(x=>x.sid===sid).forEach(x=>out.push({kind:"san",key:x.id,sid,s:x,date:x.date,ts:x.date+"T"+(x.time||"00:00")}));
+ V.sanctions.filter(x=>x.sid===sid).forEach(x=>out.push({kind:"san",key:x.id,sid,s:x,date:x.date,ts:x.date+"T"+(x.time||"00:00"),att:sanAtt(x,sid)}));
  return out.sort((a,b)=>a.ts<b.ts?1:-1);
 }
 /* fines bandes de couleur à gauche du nom : bleu = absence, orange = retard, rouge = sanction (cumulables) */
@@ -17887,7 +18032,9 @@ function vsBands(sid){
 function absDur(it){
  const st=DATA.students.find(s=>s.id===it.sid);
  const day=schEns().events.filter(e=>e.date===it.date&&!e.cancelled&&st&&studentInTargets(st,e.classIds||[]));
- return (day.length&&it.list.length>=day.length)?"1 jour":it.list.length+" cours";
+ const reg=it.list.filter(a=>String(a.eventId).indexOf("colle|")!==0), nc=it.list.length-reg.length;
+ const base=(day.length&&reg.length>=day.length)?"1 jour":(reg.length?reg.length+" cours":"");
+ return [base,nc?(nc>1?nc+" retenues":"retenue"):""].filter(Boolean).join(" + ");
 }
 function retMin(it){ return Math.max(0,tmin(it.time)-tmin(it.a.start)); }
 function vsTitle(it){
@@ -17901,7 +18048,7 @@ function vsContent(sid){
  const col={san:"#dc2626",abs:"#0080d0",ret:"#f97316"};
  let h=(prof?'<div class="vs-head"><h3 style="margin:0">'+escHtml(st.first+" "+st.last)+'</h3><button class="btn btn-danger" id="vsSanBtn">Mettre une sanction</button></div>':"")
   +'<div class="vs-sq"><div style="background:#0080d0"><b>'+n("abs")+'</b>absence'+(n("abs")>1?"s":"")+'</div><div style="background:#f97316"><b>'+n("ret")+'</b>retard'+(n("ret")>1?"s":"")+'</div><div style="background:#dc2626"><b>'+n("san")+'</b>sanction'+(n("san")>1?"s":"")+'</div></div>';
- h+=items.length?items.map(it=>'<div class="vs-row" data-k="'+escHtml(it.key)+'"><span class="vs-ic" style="background:'+col[it.kind]+'">'+VS_ICO[it.kind==="san"?"san":it.kind]+'</span><span class="vs-t">'+escHtml(vsTitle(it))+'</span>'+'</div>').join(""):'<div class="pl-empty">Rien à signaler.</div>';
+ h+=items.length?items.map(it=>'<div class="vs-row" data-k="'+escHtml(it.key)+'"><span class="vs-ic" style="background:'+col[it.kind]+'">'+VS_ICO[it.kind==="san"?"san":it.kind]+'</span><span class="vs-t">'+escHtml(vsTitle(it))+'</span>'+sanTag(it)+'</div>').join(""):'<div class="pl-empty">Rien à signaler.</div>';
  return h;
 }
 function renderVie(){
@@ -17923,11 +18070,15 @@ function vsDetail(sid,key){
  if(it.kind==="san"){
   const s=it.s, d=s.d||{}, L=SAN[s.level];
   const stuSan=DATA.students.find(x=>x.id===s.sid);
-  body=(prof&&stuSan ? vsRow("Élève","<b>"+escHtml(stuSan.first+" "+stuSan.last)+"</b>") : "")+vsRow("Sanction",'<b style="color:'+L.c+'">'+L.n+'</b>')+vsRow("Date",escHtml(dLong(s.date))+(s.time?" à "+hmF(s.time):""))+vsRow("Motif",escHtml(s.motif||"—"));
+  body=(prof&&stuSan ? vsRow("Élève","<b>"+escHtml(stuSan.first+" "+stuSan.last)+"</b>") : "")+vsRow("Sanction",'<b style="color:'+L.c+'">'+L.n+'</b>')+vsRow("Date",escHtml(dLong(s.date))+(s.time?" à "+hmF(s.time):""))+vsRow("Motif",escHtml(s.motif||"—"))+(s.level==="J"?vsRow("Statut",sanTag({kind:"san",s:s})):"");
   if(s.level==="J") body+=vsRow("Sanction appliquée","Travail à rendre pour le <b>"+escHtml(dLong(d.dueDate))+"</b> à "+hmF(d.dueTime))+vsRow("Travail",escHtml(d.work||"").replace(/\n/g,"<br>"));
   else body+=vsRow("Sanction appliquée","Retenue de <b>"+d.h+" h "+d.m+" min</b> le "+escHtml(dLong(d.day))+", de "+hmF(d.start)+" à "+hmF(minToHM(tmin(d.start)+d.h*60+d.m)))+(s.level==="R"?vsRow("Travail",escHtml(d.work||"").replace(/\n/g,"<br>")):"");
+  if(it.att) body+=vsRow("Présence",it.att.k==="abs"?"<b>Absent(e) à la retenue</b>":"<b>En retard de "+it.att.min+" minute"+(it.att.min>1?"s":"")+"</b>");
   body+=vsRow("Professeur",escHtml(s.prof||"—"));
   if(prof){
+   if(s.level==="J"){ const stt=sanStatus(s);
+    if(stt!=="refused") btns.unshift({label:"Refuser la colle",cls:"btn-danger",fn:()=>sanSetStatus(s.id,"refused")});
+    if(stt!=="accepted") btns.unshift({label:"Accepter la colle",cls:"btn-primary",fn:()=>sanSetStatus(s.id,"accepted")}); }
    btns.unshift({label:"Supprimer la sanction",cls:"btn-danger",fn:(mm)=>{ siteConfirm("Supprimer cette sanction ?",{ok:"Supprimer"}).then(ok=>{ if(!ok){ if(mm&&mm.classList) mm.classList.add("open"); return; } V.sanctions=V.sanctions.filter(x=>x.id!==key); saveData(); renderVie(); renderSchedule(); }); }});
    btns.unshift({label:"Modifier la sanction",cls:"btn-primary",fn:()=>vsSanForm(s.sid,s)});
   }
@@ -17955,6 +18106,8 @@ function vsSanForm(sid,ed){
    else { d.h=Math.max(0,parseInt(q("sH"))||0); d.m=Math.max(0,parseInt(q("sMin"))||0); d.day=q("sDay"); d.start=q("sStart");
     if(d.h*60+d.m<=0||!d.day||!d.start){ alert("Indiquez la durée, le jour et l'heure de début."); return false; }
     if(L==="R"){ d.work=q("sW").trim(); if(!d.work){ alert("Indiquez le travail à faire."); return false; } } }
+   if(L!=="J"){ const cf=colleConflict(sid,d); if(cf){ alert(cf); return false; } }
+   if(L==="J"&&ed&&ed.d&&ed.d.status){ d.status=ed.d.status; d.statusAt=ed.d.statusAt||""; }
    if(ed) Object.assign(ed,{level:L,date:q("sDate"),time:q("sTime"),motif:q("sMotif").trim(),d});
    else vsEns().sanctions.push({id:vsUid("sn"),sid,level:L,date:q("sDate"),time:q("sTime"),motif:q("sMotif").trim(),d,prof:profShort(),createdAt:new Date().toISOString()});
    saveData(); renderVie(); try{ renderSchedule(); }catch(e){} }}]);
@@ -17988,48 +18141,117 @@ document.getElementById("vieBody").addEventListener("input",e=>{
 });
 document.getElementById("vieBody").addEventListener("change",e=>{ if(e.target.id==="vsCls"||e.target.id==="vsGrp"){ if(e.target.id==="vsCls") VS.cls=e.target.value; else VS.grp=e.target.value; if(VS.sid){ const s=DATA.students.find(x=>x.id===VS.sid); const g=VS.grp?grpById(VS.grp):null; if(!s||(VS.cls&&s.classId!==VS.cls)||(VS.grp&&!(g&&(g.memberIds||[]).includes(s.id)))) VS.sid=""; } renderVie(); } });
 
-/* ---------- Sanctions dans l'emploi du temps ---------- */
-function vsSanSlots(){
- let l=vsEns().sanctions.filter(x=>window.edOkStu(x.sid,null)); if(AUTH.role==="eleve") l=l.filter(x=>x.sid===AUTH.studentId);
- return l.map(x=>{ const d=x.d||{}, st=DATA.students.find(s=>s.id===x.sid), nm=AUTH.role==="eleve"?"":(st?st.last+" "+st.first:"");
-  if(x.level==="J") return {id:x.id,L:x.level,date:d.dueDate,start:d.dueTime,end:minToHM(tmin(d.dueTime)+60),nm,sub:"Date limite"};
-  return {id:x.id,L:x.level,date:d.day,start:d.start,end:minToHM(tmin(d.start)+d.h*60+d.m),nm,sub:"Retenue"}; });
+/* ---------- Colles : statut, créneaux, emploi du temps ---------- */
+const SAN_ST={pending:{n:"En cours",c:"#b45309",bg:"#fef3c7"},accepted:{n:"Acceptée",c:"#166534",bg:"#dcfce7"},refused:{n:"Refusée",c:"#b91c1c",bg:"#fee2e2"}};
+function sanStatus(x){ const t=x&&x.d&&x.d.status; return t==="accepted"||t==="refused"?t:"pending"; }
+/* présence de l'élève à sa retenue (V/R), d'après l'appel fait sur cette retenue : {k:"abs"} | {k:"late",min} | null */
+function sanAtt(x,sid){
+ if(!x||x.level==="J"||!x.d||!x.d.day||!x.d.start) return null;
+ const id="colle|"+x.d.day+"|"+x.d.start+"|"+colleEndStr(x);
+ const a=vsEns().appels.find(y=>y.eventId===id&&y.date===x.d.day); if(!a) return null;
+ if((a.absent||[]).includes(sid)) return {k:"abs"};
+ const t=a.late&&a.late[sid]; if(t) return {k:"late",min:Math.max(0,tmin(t)-tmin(x.d.start))};
+ return null;
 }
+function sanTag(it){
+ if(it&&it.kind==="san"&&it.s&&it.s.level!=="J"){
+  const a=it.att||sanAtt(it.s,it.s.sid); if(!a) return "";
+  return a.k==="abs"?'<span class="vs-st" style="color:#0369a1;background:#e0f2fe">Absence</span>'
+   :'<span class="vs-st" style="color:#c2410c;background:#ffedd5">Retard de '+a.min+' minute'+(a.min>1?"s":"")+'</span>';
+ }
+ if(!it||it.kind!=="san"||!it.s||it.s.level!=="J") return ""; const o=SAN_ST[sanStatus(it.s)]; return '<span class="vs-st" style="color:'+o.c+';background:'+o.bg+'">'+o.n+'</span>'; }
+function sanSetStatus(id,st){
+ const x=vsEns().sanctions.find(y=>y.id===id); if(!x) return;
+ x.d=x.d||{}; x.d.status=st; x.d.statusAt=new Date().toISOString();
+ saveData(); try{ renderVie(); }catch(e){} try{ renderSchedule(); }catch(e){} try{ if(window.renderHomeTimeline) window.renderHomeTimeline(); }catch(e){}
+}
+/* colle jaune échue et pas encore jugée (notification du professeur) */
+function colleDue(){ const now=Date.now(); return vsEns().sanctions.filter(x=>x.level==="J"&&x.d&&x.d.dueDate&&sanStatus(x)==="pending"&&window.edOkStu(x.sid,null)&&new Date(x.d.dueDate+"T"+(x.d.dueTime||"00:00")+":00").getTime()<=now).length; }
+function colleEndStr(x){ const d=x.d||{}; return minToHM(Math.min(1439,tmin(d.start)+(d.h||0)*60+(d.m||0))); }
+/* une retenue ne peut pas tomber sur un cours (de l'élève ou du professeur) */
+function colleConflict(sid,d){
+ const st=DATA.students.find(x=>x.id===sid); if(!st||!d.day||!d.start) return "";
+ const a=tmin(d.start), b=a+d.h*60+d.m;
+ if(b>1440) return "La retenue ne peut pas dépasser minuit.";
+ const hit=schEns().events.filter(e=>!e.cancelled&&!e.evt&&e.date===d.day&&tmin(e.start)<b&&tmin(e.end)>a);
+ const stuH=hit.find(e=>studentInTargets(st,e.classIds||[])), mine=hit.find(e=>evIsMine(e)), e=stuH||mine; if(!e) return "";
+ return "Impossible : cette retenue tombe sur "+(stuH?"un cours de l'élève":"l'un de vos cours")+" ("+e.subject+", "+hmF(e.start)+" - "+hmF(e.end)+", le "+dLong(d.day)+"). Choisissez un autre créneau.";
+}
+/* retenues (V/R) regroupées par tranche horaire : élève = ses propres retenues, professeur = tous les élèves concernés */
+function vsSanSlots(){
+ let l=vsEns().sanctions.filter(x=>x.level!=="J"&&x.d&&x.d.day&&x.d.start&&window.edOkStu(x.sid,null));
+ if(AUTH.role==="eleve") l=l.filter(x=>x.sid===AUTH.studentId);
+ const g={}, out=[];
+ l.forEach(x=>{ const em=Math.min(1439,tmin(x.d.start)+(x.d.h||0)*60+(x.d.m||0)), end=minToHM(em), k=x.d.day+"|"+x.d.start+"|"+end;
+  let o=g[k]; if(!o){ o=g[k]={key:k,date:x.d.day,start:x.d.start,end:end,endMin:em,ids:[],sids:[],Ls:[],nms:[],lv:{}}; out.push(o); }
+  const st=DATA.students.find(y=>y.id===x.sid);
+  o.ids.push(x.id); o.sids.push(x.sid); if(o.Ls.indexOf(x.level)<0) o.Ls.push(x.level); o.lv[x.sid]=x.level; o.nms.push(st?st.last+" "+st.first:""); });
+ return out;
+}
+function colleTitle(o){ if(o.Ls.length>1) return "Colles verte et rouge"; if(o.ids.length>1) return o.Ls[0]==="V"?"Colles vertes":"Colles rouges"; return SAN[o.Ls[0]].n; }
+function colleColor(o){ return o.Ls.length>1?"linear-gradient(90deg,"+SAN.V.c+" 50%,"+SAN.R.c+" 50%)":SAN[o.Ls[0]].c; }
+function colleBorder(o,w){ return o.Ls.length>1?'border:'+w+'px solid transparent;background:linear-gradient(#fff,#fff) padding-box,'+colleColor(o)+' border-box':'background:#fff;border:'+w+'px solid '+SAN[o.Ls[0]].c; }
 const _renderSchedule=renderSchedule;
 renderSchedule=function(){
  _renderSchedule();
  const root=document.getElementById("scheduleBody"); if(!root) return;
  const slots=vsSanSlots(); if(!slots.length) return;
- const blk=(s,extra)=>'<div class="sch-ev vs-san" data-san="'+s.id+'" style="background:#fff;color:#000;border:3px solid '+SAN[s.L].c+';z-index:3;'+extra+'"><div class="sch-s"><b>'+SAN[s.L].n+'</b></div><div style="font-size:11px">'+s.sub+'</div>'+(s.nm?'<i>'+escHtml(s.nm)+'</i>':"")+'</div>';
+ const prof=AUTH.role!=="eleve";
+ const blk=(o,extra)=>'<div class="sch-ev vs-san" data-sang="'+o.key+'" style="color:#000;'+colleBorder(o,3)+';z-index:3;'+extra+'"><div class="sch-s"><b>'+colleTitle(o)+'</b></div><div style="font-size:11px">Retenue'+(prof&&o.ids.length>1?" · "+o.ids.length+" élèves":"")+'</div>'+(prof&&o.ids.length===1&&o.nms[0]?'<i>'+escHtml(o.nms[0])+'</i>':"")+'</div>';
  if(SCH.view==="month"){
   root.querySelectorAll("[data-goto]").forEach(sp=>{ const cell=sp.parentElement;
-   slots.filter(s=>s.date===sp.dataset.goto).forEach(s=>cell.insertAdjacentHTML("beforeend",'<div class="sch-chip" data-san="'+s.id+'" style="background:#fff;color:#000;border:2px solid '+SAN[s.L].c+'"><span>'+SAN[s.L].n+(s.nm?" "+escHtml(s.nm):"")+'</span></div>')); });
+   slots.filter(o=>o.date===sp.dataset.goto).forEach(o=>cell.insertAdjacentHTML("beforeend",'<div class="sch-chip" data-sang="'+o.key+'" style="color:#000;'+colleBorder(o,2)+'"><span>'+colleTitle(o)+(prof&&o.ids.length>1?" ("+o.ids.length+")":(prof&&o.nms[0]?" "+escHtml(o.nms[0]):""))+'</span></div>')); });
   return;
  }
  const cols=root.querySelectorAll(".sch-col"), h0=parseInt((root.querySelector(".sch-hours div")||{}).textContent)||7, cur=new Date(SCH.cur);
  const mon=new Date(cur); mon.setDate(cur.getDate()-((cur.getDay()+6)%7));
  cols.forEach((col,i)=>{ const d=new Date(SCH.view==="day"?cur:mon); if(SCH.view!=="day") d.setDate(mon.getDate()+i);
   const iso=isoD(d), H=parseFloat(col.style.height)||0;
-  const mine=slots.filter(s=>s.date===iso&&(tmin(s.start)-h0*60)*0.9>=0&&(tmin(s.start)-h0*60)*0.9<H); const n=mine.length;
-  mine.forEach((s,k)=>{ const top=(tmin(s.start)-h0*60)*0.9, ht=Math.max(34,(tmin(s.end)-tmin(s.start))*0.9-1);
-   col.insertAdjacentHTML("beforeend",blk(s,"top:"+top+"px;height:"+ht+"px;left:calc("+(k*(100/n))+"% + 1px);width:calc("+(100/n)+"% - 2px)")); });
+  const mine=slots.filter(o=>o.date===iso&&(tmin(o.start)-h0*60)*0.9>=0&&(tmin(o.start)-h0*60)*0.9<H);
+  schLay(mine).forEach(l=>{ const o=l.e, top=(tmin(o.start)-h0*60)*0.9, ht=Math.max(34,(o.endMin-tmin(o.start))*0.9-1);
+   col.insertAdjacentHTML("beforeend",blk(o,"top:"+top+"px;height:"+ht+"px;left:calc("+(l.c*100/l.n)+"% + 1px);width:calc("+(100/l.n)+"% - 2px)")); });
  });
 };
+/* clic sur une retenue : élève = détails de la sanction ; professeur = liste des élèves de la tranche + appel */
+function colleOpen(key){
+ const o=vsSanSlots().find(x=>x.key===key); if(!o) return;
+ if(AUTH.role==="eleve"){ vsDetail(AUTH.studentId,o.ids[0]); return; }
+ const rows=o.ids.map((id,k)=>'<div class="colle-it" data-sid="'+o.sids[k]+'" data-id="'+id+'" style="cursor:pointer;padding:7px 10px;border:1px solid var(--border);border-radius:8px;margin-bottom:6px"><b style="color:'+SAN[o.lv[o.sids[k]]].c+'">●</b> '+escHtml(o.nms[k])+' — '+SAN[o.lv[o.sids[k]]].n+'</div>').join("");
+ const ap=vsEns().appels.find(a=>a.eventId==="colle|"+o.key), today=o.date===isoD(new Date());
+ const info=ap?'<b style="color:#16a34a">✔ Appel effectué</b> — '+(ap.absent||[]).length+' absent'+((ap.absent||[]).length>1?"s":""):'<span style="color:#64748b">Appel non effectué</span>';
+ const btns=[{label:"Fermer"}];
+ if(today) btns.push({label:ap?"Voir / corriger l'appel":"Faire l'appel",cls:"btn-primary",fn:()=>{ AP.peek=null; apLoad(colleEv(o)); const t=document.querySelector('#mainTabs .tab-btn[data-target="appelView"]'); if(t) t.click(); try{ renderAppel(); }catch(e){} }});
+ else if(o.date<isoD(new Date())) btns.push({label:ap?"Voir / corriger l'appel":"Faire l'appel",cls:"btn-primary",fn:()=>hApOpen("colle|"+o.key)});
+ const m=vsPop(colleTitle(o),vsRow("Jour",escHtml(dLong(o.date)))+vsRow("Horaire",hmF(o.start)+" - "+hmF(o.end))+vsRow("Appel",info)+'<div style="margin-top:10px;color:#64748b;font-size:13px">Élèves (clic = détails de la sanction)</div><div style="margin-top:6px">'+rows+'</div>',btns);
+ m.querySelectorAll(".colle-it").forEach(el=>el.onclick=()=>{ m.classList.remove("open"); vsDetail(el.dataset.sid,el.dataset.id); });
+}
+/* pop-up de validation d'une colle jaune (notification du professeur) */
+function vsJudge(sid,key){
+ const x=vsEns().sanctions.find(y=>y.id===key), st=DATA.students.find(y=>y.id===sid); if(!x||!st) return;
+ const d=x.d||{};
+ vsPop("Colle jaune — validation",vsRow("Élève","<b>"+escHtml(st.first+" "+st.last)+"</b>")+vsRow("Motif",escHtml(x.motif||"—"))+vsRow("À rendre pour le","<b>"+escHtml(dLong(d.dueDate))+"</b> à "+hmF(d.dueTime))+vsRow("Travail",escHtml(d.work||"").replace(/\n/g,"<br>"))+vsRow("Statut",sanTag({kind:"san",s:x})),
+  [{label:"Fermer"},{label:"Refuser",cls:"btn-danger",fn:()=>sanSetStatus(key,"refused")},{label:"Accepter",cls:"btn-primary",fn:()=>sanSetStatus(key,"accepted")}]);
+}
 document.getElementById("scheduleBody").addEventListener("click",e=>{
- const b=e.target.closest("[data-san]"); if(!b) return;
- const x=vsEns().sanctions.find(s=>s.id===b.dataset.san); if(x) vsDetail(x.sid,x.id);
+ const b=e.target.closest("[data-sang]"); if(!b) return;
+ colleOpen(b.dataset.sang);
 });
 /* ===================== VIE SCOLAIRE : HISTORIQUE DES APPELS (prof) ===================== */
 const HIST={cur:new Date(),view:"week",evId:""};
+function hColleBlock(e,pos,chip){
+ const o=vsSanSlots().find(x=>"colle|"+x.key===e.id); if(!o) return "";
+ if(chip) return '<div class="sch-chip" data-sang="'+o.key+'" style="color:#000;'+colleBorder(o,2)+'"><span>'+hmF(o.start)+' '+colleTitle(o)+'</span></div>';
+ return '<div class="sch-ev vs-san" data-sang="'+o.key+'" style="color:#000;'+colleBorder(o,3)+';z-index:3;'+(pos||"")+'"><div class="sch-s"><b>'+colleTitle(o)+'</b></div><div style="font-size:11px">Retenue'+(o.ids.length>1?" · "+o.ids.length+" élèves":"")+'</div></div>';
+}
 function hBlock(e,pos,chip){
- let s=schBlock(e,pos,chip); const r=apFind(e);
- if(!r&&HMISS.has(e.id)) s=s.replace('class="sch-','class="hist-miss sch-').replace(/<\/div>$/,'<span class="hist-no">⚠ Appel manquant</span></div>');
+ let s=e.colle?hColleBlock(e,pos,chip):schBlock(e,pos,chip); const r=apFind(e);
+ if(!r&&HMISS.has(e.id)) s=s.replace('class="sch-','class="hist-miss sch-').replace(/<\/div>$/,'<span class="hist-no">'+ICO_WARN+' Appel manquant</span></div>');
  if(r){ const n=(r.absent||[]).length; s=s.replace(/<\/div>$/,'<span class="hist-ok" title="Appel effectué">✔'+(n?" "+n+" abs.":"")+'</span></div>'); }
  return s;
 }
 function histHtml(){
  HMISS=new Set(vsMissing().past.map(e=>e.id));
- const ev=schEns().events.filter(evIsMine), cur=new Date(HIST.cur), v=HIST.view, todayS=isoD(new Date());
+ const ev=schEns().events.filter(evIsMine).concat(vsSanSlots().map(colleEv)), cur=new Date(HIST.cur), v=HIST.view, todayS=isoD(new Date());
  const mon=new Date(cur); mon.setDate(cur.getDate()-((cur.getDay()+6)%7));
  let title="", html="";
  if(v==="month"){
@@ -18069,6 +18291,7 @@ document.getElementById("vieBody").addEventListener("click",e=>{
   renderVie(); return; }
  const hv=e.target.closest("[data-hv]"); if(hv){ HIST.view=hv.dataset.hv; renderVie(); return; }
  const g=e.target.closest("[data-hgoto]"); if(g){ HIST.cur=new Date(g.dataset.hgoto+"T12:00:00"); HIST.view="day"; renderVie(); return; }
+ const sg=e.target.closest(".hist-wrap [data-sang]"); if(sg){ colleOpen(sg.dataset.sang); return; }
  const b=e.target.closest(".hist-wrap [data-id]"); if(b) hEvOpen(b.dataset.id);
 });
 
@@ -18097,19 +18320,19 @@ function hEvFill(){
 /* ---------- pop-up appel (consultation / modification) ---------- */
 const HA={evId:"",absent:new Set(),late:{},mode:"view"};
 function hApOpen(evId){
- const e=schEns().events.find(x=>x.id===evId); if(!e) return; const r=apFind(e);
+ const e=apEvFind(evId); if(!e) return; const r=apFind(e);
  HA.evId=evId; HA.absent=new Set(r?r.absent:[]); HA.late=Object.assign({},r?r.late:{}); HA.mode=r?"view":"abs"; hApRender();
 }
 function hApRender(){
- const e=schEns().events.find(x=>x.id===HA.evId); if(!e) return;
+ const e=apEvFind(HA.evId); if(!e) return;
  const m=hModal("histAp",125), view=HA.mode==="view", prev=apPrevAbsent(e), multi=(e.classIds||[]).length>1;
  let tools="";
  if(view) tools='<button type="button" class="btn btn-primary" id="haEdit">Modifier</button>';
  else tools='<button type="button" class="btn'+(HA.mode==="abs"?" btn-primary":"")+'" id="haAbs">Corriger les absences</button><button type="button" class="btn'+(HA.mode==="late"?" btn-primary":"")+'" id="haLate">Déclarer un retard</button>';
  let grid=!view?'<div class="ap-hint">'+(HA.mode==="late"?"Cliquez sur un élève absent pour déclarer son retard.":"Cliquez sur un élève pour l'ajouter ou le retirer des absents.")+'</div>':"";
- (e.classIds||[]).forEach(cid=>{
-  const list=targetStudents(cid).sort(cmpStu); if(!list.length) return;
-  if(multi) grid+='<h3 class="ap-cls">'+escHtml(targetName(cid)||"")+'</h3>';
+ (e.colle?["_colle"]:(e.classIds||[])).forEach(cid=>{
+  const list=(e.colle?DATA.students.filter(x=>(e.sids||[]).includes(x.id)):targetStudents(cid)).sort(cmpStu); if(!list.length) return;
+  if(multi&&!e.colle) grid+='<h3 class="ap-cls">'+escHtml(targetName(cid)||"")+'</h3>';
   grid+='<div class="ap-grid ap-grid-s">'+list.map(s=>{ const f=sexOf(s)==="F", ab=HA.absent.has(s.id), la=HA.late[s.id];
    return '<div class="ap-card'+(prev.has(s.id)?" ap-prev":"")+(view?" ap-ro":"")+'" data-sid="'+s.id+'">'+avatarSvg(sexOf(s))+'<div class="ap-n"><b>'+escHtml(s.last)+'</b><br>'+escHtml(s.first)+'</div>'
     +(ab?'<div class="ap-veil">'+(f?"Absente":"Absent")+'</div>':la?'<div class="ap-veil ap-veil-late">Retard<small>'+hmF(la)+'</small></div>':"")+'</div>'; }).join("")+'</div>';
@@ -18136,7 +18359,7 @@ function hApRender(){
 }
 function hApClick(sid){
  if(HA.mode==="view") return;
- const e=schEns().events.find(x=>x.id===HA.evId); if(!e) return;
+ const e=apEvFind(HA.evId); if(!e) return;
  if(HA.mode==="late"){
   if(!HA.absent.has(sid)) return;
   const s=DATA.students.find(x=>x.id===sid);
@@ -18275,6 +18498,17 @@ function vsMissing(){
    if(e.date===today&&nm>=tmin(e.start)+5) out.now.push(e);
    if(e.date<today||nm>=tmin(e.end)) out.past.push(e);
   });
+ /* appels de retenue (colles vertes / rouges) non faits */
+ try{
+  const since=vsEns().since||"";
+  vsSanSlots().forEach(o=>{
+   if(o.date>today||(since&&o.date<since)) return;
+   const e=colleEv(o); if(apFind(e)) return;
+   if(o.date===today&&nm>=tmin(o.start)+5) out.now.push(e);
+   if(o.date<today||nm>=tmin(o.end)) out.past.push(e);
+  });
+  const cmp=(a,b)=>(a.date+a.start)<(b.date+b.start)?-1:1; out.now.sort(cmp); out.past.sort(cmp);
+ }catch(x){ console.warn("appels retenues:",x); }
  return out;
 }
 function setWn(btn,on,tip){ if(!btn) return; btn.classList.toggle("has-miss-call",!!on); if(on) btn.title=tip; else btn.removeAttribute("title"); }
@@ -18286,7 +18520,7 @@ function vsAlertUpdate(){
  const m=vsMissing();
  setWn(document.querySelector('.tab-btn[data-target="appelView"]'),m.now.length>0,"L'appel n'a pas été fait");
  setWn(document.querySelector('.tab-btn[data-target="vieView"]'),m.past.length>0,"Appel manquant");
- try{ const sig=m.now.concat(m.past).map(e=>e.id+"|"+e.date).join(","); if(window._appelSig!==sig){ window._appelSig=sig; if(window.renderHomeTimeline) window.renderHomeTimeline(); } }catch(x){}
+ try{ const sig=m.now.concat(m.past).map(e=>e.id+"|"+e.date).join(",")+"#"+colleDue(); if(window._appelSig!==sig){ window._appelSig=sig; if(window.renderHomeTimeline) window.renderHomeTimeline(); } }catch(x){}
  if(_lastMiss!==m.past.length){ _lastMiss=m.past.length; if(document.getElementById("vieView").classList.contains("active")) renderVie(); }
 }
 setInterval(vsAlertUpdate,20000);
@@ -18804,7 +19038,7 @@ function tlItems(){
    (DATA.homework||[]).forEach(h=>{
     if(!h||!h.dateISO||!window.hwMatchesStudent||!window.hwMatchesStudent(h)) return;
     (h.testIds||[]).forEach(tid=>{
-     const t=(DATA.onlineTests||[]).find(x=>x.id===tid); if(!t||(t.options&&t.options.trainingMode)) return;
+     const t=getHomeworkTest(tid,h.id); if(!t||(t.options&&t.options.trainingMode)) return;
      const sub=(DATA.homeworkSubmissions||[]).find(x=>x.homeworkId===h.id&&x.testId===tid&&x.studentId===sid);
      const done=!!(sub&&sub.submittedAt)||!!(window.hwSpecialFor&&window.hwSpecialFor(h,t,sid));   /* rendu, ou marque X/Abs/Disp/NE/EA par le prof = fait */
      /* Le test apparaît à la date d'assignation du devoir (et non au jour où le prof l'a créé), même si cette date est dans le futur */
@@ -18820,6 +19054,31 @@ function tlItems(){
    });
    tl.sort((a,b)=>b.ts-a.ts).forEach(r=>out.push(r));
   }catch(x){ console.warn("tests timeline:",x); }
+  /* Colles : jaune = à rendre à la date limite (en retard si dépassée, comme les tests) ; verte/rouge = dès leur saisie, toujours « nouvelles » */
+  try{
+   if(typeof vsEns==="function"){
+    const sid=AUTH.studentId, nowT=Date.now();
+    vsEns().sanctions.filter(x=>x.sid===sid&&x.d).forEach(x=>{
+     const d=x.d, L=SAN[x.level]; if(!L) return;
+     if(x.level==="J"){
+      if(!d.dueDate) return;
+      const stt=(d.status==="accepted"||d.status==="refused")?d.status:"pending";
+      const dueTs=new Date(d.dueDate+"T"+(d.dueTime||"23:59")+":00").getTime(); if(isNaN(dueTs)) return;
+      const over=stt==="pending"&&dueTs<nowT, todo=stt!=="accepted", late=over||stt==="refused";
+      const iso=over?today:d.dueDate, day=new Date(d.dueDate+"T12:00:00").toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
+      out.push({k:"j"+x.id,type:"colle",act:"colle",san:x.id,col:L.c,ts:dueTs,iso,today:todo,todo,late,tag:stt==="refused"?"Refusée":(over?"En retard":"À faire"),
+       title:"Colle jaune à rendre pour le "+day+" à "+hmF(d.dueTime||"00:00"),sub:String(d.work||"").replace(/\s+/g," ").slice(0,70)});
+     }else if(d.day&&d.start){
+      let ts=x.createdAt?new Date(x.createdAt).getTime():NaN; if(isNaN(ts)) ts=new Date((x.date||d.day)+"T12:00:00").getTime();
+      const iso=x.createdAt&&!isNaN(new Date(x.createdAt).getTime())?isoOf(new Date(x.createdAt)):(x.date||d.day);
+      const day=new Date(d.day+"T12:00:00").toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
+      const endTs=new Date(d.day+"T"+colleEndStr(x)+":00").getTime();
+      out.push({k:"c"+x.id,type:"colle",act:"colle",san:x.id,col:L.c,ts,iso,today:false,todo:false,alwaysNew:true,badge:endTs>=nowT,
+       title:L.n+" — retenue le "+day+" à "+hmF(d.start),sub:[(d.h||0)+" h "+p2(d.m||0)+" min",x.motif||""].filter(Boolean).join(" · ")});
+     }
+    });
+   }
+  }catch(x){ console.warn("colles timeline:",x); }
  }else{
   const subs=[];
   (DATA.homeworkSubmissions||[]).forEach(s=>{
@@ -18840,21 +19099,39 @@ function tlItems(){
    mm.now.concat(mm.past).forEach(e=>{ const k=e.id+"|"+e.date; if(!vus[k]){ vus[k]=1; miss.push(e); } });
    miss.sort((a,b)=>(b.date+b.start<a.date+a.start)?-1:1).slice(0,25).forEach(e=>{
     let ts=new Date(e.date+"T"+(e.start||"12:00")+":00").getTime(); if(isNaN(ts)) ts=new Date(e.date+"T12:00:00").getTime();
-    const cls=(e.classIds||[]).map(id=>{ try{ return targetName(id); }catch(x){ return ""; } }).filter(Boolean).join(", ");
-    out.push({k:"a"+e.id+e.date,type:"appel",act:"appel",ts,iso:e.date,today:e.date===today,evId:e.id,todo:true,tag:"À faire",
-     title:"Appel non fait",sub:[(e.start||"")+(e.end?"–"+e.end:""),e.subject,cls].filter(Boolean).join(" · ")});
+    const cls=e.colle?"Retenue":(e.classIds||[]).map(id=>{ try{ return targetName(id); }catch(x){ return ""; } }).filter(Boolean).join(", ");
+    /* la notification reste au jour d'aujourd'hui ; si la date du cours est dépassée : « En retard » + date réelle */
+    const dd=Math.max(0,Math.round((new Date(today+"T12:00:00")-new Date(e.date+"T12:00:00"))/864e5)), late=dd>0||ts<Date.now()-36e5;
+    const det=[(e.start||"")+(e.end?"–"+e.end:""),e.subject,cls].filter(Boolean).join(" · ");
+    out.push({k:"a"+e.id+e.date,type:"appel",act:"appel",ts:dd>0?Date.now()-dd*1000:ts,iso:today,today:true,evId:e.id,todo:true,late,tag:late?"En retard":"À faire",
+     title:"Appel non fait",lines:dd>0?[(dd===1?"Cours d'hier":"Cours du "+e.date.split("-").reverse().join("/")),det]:undefined,sub:det});
    });
   }catch(x){ console.warn("appels timeline:",x); }
+  /* Colles jaunes échues, pas encore jugées : notification à la date et à l'heure prévues du rendu */
+  try{
+   if(typeof vsEns==="function"){
+    const nowT=Date.now();
+    vsEns().sanctions.forEach(x=>{
+     if(x.level!=="J"||!x.d||!x.d.dueDate||sanStatus(x)!=="pending") return;
+     if(window.edOkStu&&!window.edOkStu(x.sid,null)) return;
+     const ts=new Date(x.d.dueDate+"T"+(x.d.dueTime||"00:00")+":00").getTime(); if(isNaN(ts)||ts>nowT) return;
+     out.push({k:"j"+x.id,type:"colle",act:"colle",san:x.id,stuId:x.sid,col:SAN.J.c,ts,iso:x.d.dueDate,today:true,todo:true,tag:"À valider",
+      title:"Colle jaune à valider — "+stuName(x.sid),sub:String(x.d.work||"").replace(/\s+/g," ").slice(0,70)});
+    });
+   }
+  }catch(x){ console.warn("colles prof timeline:",x); }
  }
  const groups={}, GMt=grpMap();
  unreadMessages().forEach(m=>{ const k=GMt[m.id]?"g:"+GMt[m.id]:(isStu()?stuThreadKey(m):m.sid); (groups[k]||(groups[k]=[])).push(m); });
  Object.keys(groups).forEach(sid=>{
   const l=groups[sid].sort((a,b)=>new Date(a.at)-new Date(b.at)), last=l[l.length-1], ts=new Date(last.at).getTime()||Date.now();
   const G=isGrp(sid)?grpInfo(grpId(sid)):null;
-  const who=isStu()?(stuProfOf(sid)?stuProfOf(sid).name:profName()):(G?"":stuName(sid)), iso=isoOf(new Date(ts));
-  out.push({k:"m"+sid,type:"msg",act:"msg",sid,ts,iso,today:iso===today,
+  const who=isStu()?(stuProfOf(sid)?stuProfOf(sid).name:profName()):(G?"":stuName(sid)), realIso=isoOf(new Date(ts)), iso=today;
+  /* non lu : la notification reste au jour d'aujourd'hui, avec la mention de l'ancienneté */
+  const dd=Math.max(0,Math.round((new Date(today+"T12:00:00")-new Date(realIso+"T12:00:00"))/864e5)), ago=dd<=0?"":(dd===1?"Reçu hier":"Reçu il y a "+dd+" jours"), prev=String(last.text||"").replace(/\s+/g," ").slice(0,70);
+  out.push({k:"m"+sid,type:"msg",act:"msg",sid,ts,iso,today:true,lines:ago?[ago,prev]:undefined,
    title:G?((l.length>1?l.length+" nouveaux messages dans « ":"Nouveau message dans « ")+G.subject+" »"):((l.length>1?l.length+" nouveaux messages de ":"Nouveau message de ")+who),
-   sub:String(last.text||"").replace(/\s+/g," ").slice(0,70)});
+   sub:prev});
  });
  out.forEach(it=>{ if(!isFinite(it.ts)) it.ts=0; });
  return out.sort((a,b)=>a.iso!==b.iso?(a.iso<b.iso?1:-1):(b.ts-a.ts));   // jours récents d'abord ; dans un jour : heure la plus récente en haut
@@ -18862,7 +19139,7 @@ function tlItems(){
 function updateHomeBadges(items){
  const b=$("homeTabBtn"); if(!b) return;
  const msgs=unreadMessages().length;
- const others=(items||[]).filter(it=>it.type==="grade"?it.today:((it.type==="sub"||it.type==="appel"||it.type==="hwt")?it.todo:false)).length;
+ const others=(items||[]).filter(it=>it.type==="grade"?it.today:((it.type==="sub"||it.type==="appel"||it.type==="hwt"||it.type==="colle")?(it.todo||!!it.badge):false)).length;
  const set=(cls,n)=>{
   let el=b.querySelector("."+cls);
   if(!n){ if(el) el.remove(); return; }
@@ -18880,14 +19157,15 @@ function renderTimeline(){
  let html='<div class="tl-list">', lastDay="";
  items.forEach(it=>{
   if(it.iso!==lastDay){ html+='<div class="tl-day">'+esc(dayLabel(it.iso))+'</div>'; lastDay=it.iso; }
-  const isNew=(it.type==="msg")?true:(it.type==="grade"?!!it.today:!!it.todo);
+  const isNew=(it.type==="msg"||it.alwaysNew)?true:(it.type==="grade"?!!it.today:!!it.todo);
   let dot;
   if(it.type==="grade") dot='<span class="tl-dot'+(isNew?" new":"")+'"><svg width="30" height="30" viewBox="0 0 24 24" aria-hidden="true"><text x="12" y="9.6" text-anchor="middle" font-size="10.5" font-weight="600" font-family="Arial,Helvetica,sans-serif" fill="currentColor">18</text><path d="M5 12.6h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><text x="12" y="22.8" text-anchor="middle" font-size="10.5" font-weight="600" font-family="Arial,Helvetica,sans-serif" fill="currentColor">20</text></svg></span>';
   else if(it.type==="sub") dot='<span class="tl-dot sub'+(isNew?" new":"")+'"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4M8 10l2.5 2.5L16 7"/></svg></span>';
   else if(it.type==="hwt") dot='<span class="tl-dot hwt'+(isNew?" new":"")+'"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4M8 10l2.5 2.5L16 7"/></svg></span>';
   else if(it.type==="appel") dot='<span class="tl-dot appel'+(isNew?" new":"")+'"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2.5"/><path d="M9 4V3h6v1M9 13l2 2 4-4"/></svg></span>';
+  else if(it.type==="colle") dot='<span class="tl-dot colle'+(isNew?" new":"")+'" style="--c:'+it.col+'"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2 21h20z"/><path d="M12 10v5M12 18v.5"/></svg></span>';
   else dot='<span class="tl-dot msg'+(isNew?" new":"")+'">'+ICON_MAIL+'</span>';
-  html+='<button type="button" class="tl-it" data-act="tl" data-kind="'+it.act+'" data-sid="'+esc(it.sid||"")+'" data-ev="'+esc(it.evId||"")+'" data-hw="'+esc(it.hwId||"")+'" data-test="'+esc(it.testId||"")+'" data-stu="'+esc(it.stuId||"")+'" data-day="'+esc(it.type==="grade"?it.iso:"")+'" data-subj="'+esc(it.type==="grade"?(it.subject||""):"")+'" data-per="'+esc(it.type==="grade"?(it.period||""):"")+'">'+dot
+  html+='<button type="button" class="tl-it" data-act="tl" data-kind="'+it.act+'" data-sid="'+esc(it.sid||"")+'" data-ev="'+esc(it.evId||"")+'" data-hw="'+esc(it.hwId||"")+'" data-test="'+esc(it.testId||"")+'" data-stu="'+esc(it.stuId||"")+'" data-san="'+esc(it.san||"")+'" data-day="'+esc(it.type==="grade"?it.iso:"")+'" data-subj="'+esc(it.type==="grade"?(it.subject||""):"")+'" data-per="'+esc(it.type==="grade"?(it.period||""):"")+'">'+dot
    +'<span class="tl-tx"><b>'+esc(it.title)+(it.todo?'<span class="tl-tag'+(it.late?" late":"")+'">'+esc(it.tag||"À corriger")+'</span>':"")+'</b>'+((it.lines&&it.lines.length)?it.lines.map(l=>'<small>'+esc(l)+'</small>').join(""):(it.sub?'<small>'+esc(it.sub)+'</small>':""))+'</span></button>';
  });
  host.innerHTML=html+'</div>';
@@ -19598,11 +19876,14 @@ $("homeView").addEventListener("click",e=>{
   }
   else if(k==="appel"){
    try{
-    const ev=(schEns().events||[]).find(x=>x.id===b.dataset.ev);
+    const ev=apEvFind(b.dataset.ev);
     if(ev&&ev.date===isoOf(new Date())){ apLoad(ev); goTab("appelView"); }
     else if(ev){ VS.tab="hist"; HIST.cur=new Date(ev.date+"T12:00:00"); HIST.view="day"; goTab("vieView"); try{ renderVie(); }catch(x){} }
     else goTab("appelView");
    }catch(x){ goTab("appelView"); }
+  }
+  else if(k==="colle"){
+   try{ if(isStu()){ goTab("vieView"); vsDetail(AUTH.studentId,b.dataset.san); } else vsJudge(b.dataset.stu,b.dataset.san); }catch(x){ console.warn("colle timeline:",x); }
   }
   else if(k==="msg"){ openThread(b.dataset.sid||"stu"); }
  }
@@ -19837,6 +20118,25 @@ body.prof-limited #addClassBtn, body.prof-limited #editClassBtn, body.prof-limit
 body.prof-limited #addGroupBtn, body.prof-limited #editGroupBtn,
 body.prof-limited #openAddStudentBtn, body.prof-limited #editStudentBtn, body.prof-limited #deleteStudentBtn,
 body.prof-limited #paramBtn, body.prof-limited .import-btn, body.prof-limited #schDetailEdit{ display:none!important }
+
+/* ── v9 : espacement des encadrés (jamais collés), durée par question, entraînement dans le devoir ── */
+#onlineTestSetupModal .online-checklist, #onlineBasicTestModal .online-checklist{ gap:12px !important }
+.online-check-item,.online-choice-row,.online-blank-row,.online-answer-target,.homework-test-line,.oq-row,.obt-row,.online-preview-option,.homework-quiz-option,.hwc-choice,.hwc-ans,.hwc-extra,.hwc-q,.hwc-comment,.online-preview-card,.homework-quiz-card,.online-modal-note,.hwc-top{ box-sizing:border-box }
+.hwc-ans+.hwc-ans,.hwc-ans+.hwc-extra,.hwc-extra+.hwc-extra,.hwc-choices+.hwc-ans,.hwc-choices+.hwc-extra,.hwc-ans+.hwc-choices,.hwc-extra+.hwc-comment,.hwc-ans+.hwc-comment{ margin-top:12px }
+.hwc-q+.hwc-q,.hwc-top+.hwc-q,.hwc-general+.hwc-q,.hwc-q+.hwc-general{ margin-top:14px }
+.online-preview-card+.online-preview-card,.homework-quiz-card+.homework-quiz-card,.online-preview-card+.online-modal-note,.online-modal-note+.online-preview-card,.hwc-notebar+.hwc-q,.online-preview-score+.online-preview-note,.online-preview-note+.online-preview-note{ margin-top:14px }
+.homework-entry-card+.homework-entry-card,.online-test-card+.online-test-card,.card+.card{ margin-top:14px }
+.homework-list>.homework-entry-card+.homework-entry-card,.online-tests-grid>.online-test-card+.online-test-card{ margin-top:0 }
+.homework-quiz-options,.online-preview-options,.hwc-choices,.homework-tests-list,.oq-list,.obt-rows{ gap:12px }
+.homework-quiz-blank-row{ margin-bottom:8px }
+.tl-it+.tl-it{ margin-top:6px }
+.homework-test-line{ gap:12px }
+.hw-train-row{ display:inline-flex; align-items:center; gap:6px; padding:5px 10px; border:1px solid #d5ecfb; border-radius:10px; background:#f4fbff; font-size:13px; font-weight:600; color:#0471b5; cursor:pointer; white-space:nowrap; margin:0 }
+.hw-train-row input{ width:16px; height:16px; margin:0 }
+.oq-time-fields{ display:flex; align-items:center; gap:6px; font-size:13px; color:#475569 }
+.oq-time-fields input{ width:64px !important; padding:6px 8px; text-align:center }
+.oq-time-note{ display:block; margin-top:4px; color:#64748b; font-size:12px; line-height:1.35 }
+.obt-time input{ width:64px }
 </style>
 <script id="ed-admin">
 (function(){
@@ -20213,6 +20513,174 @@ document.addEventListener("click",async ev=>{
  const _roleInit=window.edRoleInit; window.edRoleInit=function(j){ const r=_roleInit.apply(this,arguments); try{ filterSelects(); }catch(e){}
   if(lim()) ["renderStudentList","renderClassList","renderAppreciationStudentList","renderVie"].forEach(n=>{ try{ if(typeof window[n]==="function") window[n](); }catch(e){} });
   return r; };
+})();
+</script>
+
+<script id="ed-patch-script">
+(function(){
+ "use strict";
+ const $=id=>document.getElementById(id);
+ const norm=t=>String(t||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
+ const CK='<svg class="ed-ck" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>';
+ const CHEV='<svg class="cs-chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+ const esc=t=>String(t==null?"":t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+ /* panneau flottant (position fixe : jamais rogné par une fenêtre ou un conteneur) */
+ function place(pop,anchor){
+  const r=anchor.getBoundingClientRect(), vh=window.innerHeight, vw=window.innerWidth;
+  pop.style.minWidth=Math.max(r.width,160)+"px"; pop.style.maxWidth=Math.min(480,vw-16)+"px";
+  const below=vh-r.bottom-10, above=r.top-10;
+  const up=below<200&&above>below;
+  pop.style.maxHeight=Math.max(140,Math.min(290,up?above:below))+"px";
+  pop.style.left=Math.max(8,Math.min(r.left,vw-pop.offsetWidth-8))+"px";
+  if(up){ pop.style.top="auto"; pop.style.bottom=(vh-r.top+4)+"px"; } else { pop.style.bottom="auto"; pop.style.top=(r.bottom+4)+"px"; }
+ }
+ function mkPop(){ const d=document.createElement("div"); d.className="ed-pop"; d.hidden=true; d.setAttribute("role","listbox"); document.body.appendChild(d); return d; }
+
+ /* ═══ 1) Classes et groupes : deux filtres (classe / groupe) qui servent aussi de recherche ═══ */
+ function initClassFilters(){
+  const card=document.querySelector("#classesView .card"), hdr=card&&card.querySelector(".card-header");
+  if(!card||!hdr||$("clFilters")) return;
+  const bar=document.createElement("div"); bar.className="cl-filters"; bar.id="clFilters";
+  bar.innerHTML='<div class="cb" id="cbClasses"><input class="cb-in" type="text" id="cbClassesIn" placeholder="Classe : choisir ou rechercher…" autocomplete="off" role="combobox" aria-label="Filtrer par classe" aria-expanded="false"><button type="button" class="cb-x" tabindex="-1" aria-label="Effacer le filtre classe">×</button><span class="cb-ar">'+CHEV.replace("cs-chev","")+'</span></div>'
+   +'<div class="cb" id="cbGroups"><input class="cb-in" type="text" id="cbGroupsIn" placeholder="Groupe : choisir ou rechercher…" autocomplete="off" role="combobox" aria-label="Filtrer par groupe" aria-expanded="false"><button type="button" class="cb-x" tabindex="-1" aria-label="Effacer le filtre groupe">×</button><span class="cb-ar">'+CHEV.replace("cs-chev","")+'</span></div>';
+  hdr.insertAdjacentElement("afterend",bar);
+
+  const orig=window.clShowTab; let mode="classes";
+  const adjust=()=>{
+   const vis=(id,on)=>{ const b=$(id); if(b) b.style.display=on?"":"none"; };
+   vis("addClassBtn",true); vis("addGroupBtn",true);
+   vis("editClassBtn",mode==="classes"); vis("editGroupBtn",mode==="groups");
+   const p=$("classPlaceholder"); if(p&&p.style.display!=="none") p.textContent="Choisissez une classe ou un groupe dans les filtres ci-dessus pour voir ses matières et évaluations.";
+  };
+  if(typeof orig==="function"){
+   window.clShowTab=function(name,force){ const r=orig.apply(this,arguments); mode=name; adjust(); sync(); return r; };
+  }
+
+  const defs=[
+   {box:$("cbClasses"),inp:$("cbClassesIn"),sel:"classList",ui:"classListUI",kind:"classes"},
+   {box:$("cbGroups"),inp:$("cbGroupsIn"),sel:"groupList",ui:"groupListUI",kind:"groups"}
+  ];
+  const pop=mkPop(); let cur=null, hl=-1, shown=[], curQ="";
+  const selOf=d=>$(d.sel);
+  function items(d,q){
+   const sel=selOf(d); if(!sel) return [];
+   let o=[...sel.options].map(x=>({v:x.value,t:x.textContent,c:x.style.color||""}));
+   if(q){ const n=norm(q); o=o.filter(x=>norm(x.t).includes(n)); o.sort((a,b)=>(norm(b.t).startsWith(n)?1:0)-(norm(a.t).startsWith(n)?1:0)); }
+   return o;
+  }
+  function draw(d,q){
+   shown=items(d,q); const sel=selOf(d), cv=sel?sel.value:"";
+   if(!shown.length){ pop.innerHTML='<div class="ed-empty">'+(q?"Aucun résultat":(d.kind==="groups"?"Aucun groupe":"Aucune classe"))+'</div>'; hl=-1; return; }
+   if(hl<0||hl>=shown.length) hl=q?0:Math.max(0,shown.findIndex(x=>x.v===cv));
+   pop.innerHTML=shown.map((x,i)=>'<div class="ed-it'+(x.v===cv?" on":"")+(i===hl?" hl":"")+'" role="option" data-i="'+i+'"'+(x.c?' style="color:'+esc(x.c)+'"':"")+'><span>'+esc(x.t)+'</span>'+CK+'</div>').join("");
+   const h=pop.querySelector(".hl"); if(h&&h.scrollIntoView) h.scrollIntoView({block:"nearest"});
+  }
+  function open(d,typed){ cur=d; hl=-1; curQ=typed?d.inp.value:""; draw(d,curQ); pop.hidden=false; place(pop,d.box); d.inp.setAttribute("aria-expanded","true"); }
+  function close(){ if(!cur) return; cur.inp.setAttribute("aria-expanded","false"); pop.hidden=true; const d=cur; cur=null; sync(true); return d; }
+  function pick(d,v){
+   if(typeof window.clShowTab==="function") window.clShowTab(d.kind);
+   const sel=selOf(d), ui=$(d.ui); if(!sel) return;
+   sel.value=v; if(ui) ui.dataset.sel=v;
+   sel.dispatchEvent(new Event("change",{bubbles:true}));
+   close(); d.inp.blur(); sync();
+  }
+  function clear(d){
+   if(typeof window.clShowTab==="function") window.clShowTab(d.kind,true);
+   sync();
+  }
+  function sync(force){
+   defs.forEach(d=>{
+    const sel=selOf(d); if(!sel) return;
+    const v=sel.value, o=[...sel.options].find(x=>x.value===v&&v!=="");
+    d.box.classList.toggle("has",!!o);
+    if(force||document.activeElement!==d.inp) d.inp.value=o?o.textContent:"";
+   });
+  }
+  defs.forEach(d=>{
+   d.inp.addEventListener("focus",()=>{ d.inp.select(); open(d,false); });
+   d.inp.addEventListener("click",()=>{ if(cur!==d) open(d,false); });
+   d.inp.addEventListener("input",()=>{ if(cur!==d) open(d,true); else { curQ=d.inp.value; hl=0; draw(d,curQ); place(pop,d.box); } });
+   d.inp.addEventListener("keydown",e=>{
+    if(e.key==="ArrowDown"||e.key==="ArrowUp"){ e.preventDefault(); if(cur!==d) open(d,false); const n=shown.length; if(!n) return; hl=(hl+(e.key==="ArrowDown"?1:-1)+n)%n; draw(d,curQ); }
+    else if(e.key==="Enter"){ e.preventDefault(); if(cur===d&&shown[hl]) pick(d,shown[hl].v); }
+    else if(e.key==="Escape"){ close(); d.inp.blur(); }
+   });
+   d.inp.addEventListener("blur",()=>{ setTimeout(()=>{ if(cur===d) close(); else sync(); },120); });
+   d.box.querySelector(".cb-x").addEventListener("mousedown",e=>{ e.preventDefault(); clear(d); });
+  });
+  pop.addEventListener("mousedown",e=>{ e.preventDefault(); const it=e.target.closest(".ed-it"); if(it&&cur&&shown[+it.dataset.i]) pick(cur,shown[+it.dataset.i].v); });
+  window.addEventListener("resize",()=>{ if(cur) place(pop,cur.box); });
+  document.addEventListener("scroll",e=>{ if(cur&&!pop.contains(e.target)) place(pop,cur.box); },true);
+  adjust(); sync();
+  setInterval(sync,500);
+ }
+
+ /* ═══ 2) Listes déroulantes modernes (vision prof et fenêtres de saisie) ═══ */
+ const CS_IDS=["profSubjectFilter","noteStudentSelect","noteSubject","notePeriod","groupNoteSubject","groupNotePeriod",
+  "profBatchEditSubject","profBatchEditPeriod","studentCompSubject","studentCompPeriod","compCycleSelect","compDomainSelect","compSubDomainSelect",
+  "editCompCycleFilter","editCompDomainFilter","editCompSubDomainFilter","classSelect","classSubject","classEvalPeriod","classCompSetupSubject"];
+ const CS_SEL=CS_IDS.map(i=>"#"+i).join(",");
+ const inst=new Set();
+ const descV=Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype,"value");
+ const descI=Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype,"selectedIndex");
+ let openCS=null;
+ const csPop=mkPop();
+ function closeCS(){ if(!openCS) return; openCS.w.classList.remove("open"); csPop.hidden=true; openCS=null; }
+ function enhance(sel){
+  if(sel.dataset.cs==="1") return; sel.dataset.cs="1";
+  const st=sel.style, w=document.createElement("div"); w.className="cs";
+  if(st.flex) w.style.flex=st.flex;
+  if(st.width&&st.width!=="100%"){ w.style.width=st.width; w.classList.add("cs-inl"); }
+  if(st.minWidth) w.style.minWidth=st.minWidth;
+  if(st.maxWidth) w.style.maxWidth=st.maxWidth;
+  if(st.marginBottom) w.style.marginBottom=st.marginBottom;
+  sel.parentNode.insertBefore(w,sel); w.appendChild(sel);
+  sel.classList.add("cs-native"); sel.tabIndex=-1; sel.setAttribute("aria-hidden","true");
+  const btn=document.createElement("button"); btn.type="button"; btn.className="cs-btn"; btn.setAttribute("aria-haspopup","listbox");
+  const lab=sel.id&&document.querySelector('label[for="'+sel.id+'"]'); if(lab) btn.setAttribute("aria-label",lab.textContent.trim());
+  btn.innerHTML='<span class="cs-txt"></span>'+CHEV; w.appendChild(btn);
+  const txt=btn.querySelector(".cs-txt"); const I={sel,w,btn,txt,hl:-1,list:[]};
+  I.label=()=>{
+   const o=sel.options[sel.selectedIndex];
+   txt.textContent=o?o.textContent:""; txt.classList.toggle("cs-ph",!o||o.value==="");
+   btn.disabled=!!sel.disabled; w.classList.toggle("dis",!!sel.disabled);
+   if(openCS===I) I.draw();
+  };
+  I.draw=()=>{
+   I.list=[...sel.options];
+   csPop.innerHTML=I.list.length?I.list.map((o,i)=>'<div class="ed-it'+(i===sel.selectedIndex?" on":"")+(i===I.hl?" hl":"")+'" role="option" data-i="'+i+'"'+(o.disabled?' style="opacity:.45;pointer-events:none"':"")+(o.style.color?' style="color:'+esc(o.style.color)+'"':"")+'><span>'+esc(o.textContent)+'</span>'+CK+'</div>').join(""):'<div class="ed-empty">Aucun choix</div>';
+   const h=csPop.querySelector(".hl,.on"); if(h&&h.scrollIntoView) h.scrollIntoView({block:"nearest"});
+  };
+  I.open=()=>{ if(sel.disabled) return; closeCS(); openCS=I; I.hl=sel.selectedIndex; I.draw(); csPop.hidden=false; w.classList.add("open"); place(csPop,btn); };
+  I.pick=i=>{ if(i<0||i>=I.list.length) return; sel.selectedIndex=i; I.label(); sel.dispatchEvent(new Event("input",{bubbles:true})); sel.dispatchEvent(new Event("change",{bubbles:true})); closeCS(); btn.focus(); };
+  btn.addEventListener("click",()=>{ if(openCS===I) closeCS(); else I.open(); });
+  btn.addEventListener("keydown",e=>{
+   if(e.key==="ArrowDown"||e.key==="ArrowUp"){ e.preventDefault(); if(openCS!==I){ I.open(); return; } const n=I.list.length; if(!n) return; I.hl=(I.hl+(e.key==="ArrowDown"?1:-1)+n)%n; I.draw(); }
+   else if(e.key==="Enter"&&openCS===I){ e.preventDefault(); I.pick(I.hl); }
+   else if(e.key==="Escape"&&openCS===I){ e.preventDefault(); e.stopPropagation(); closeCS(); }
+  });
+  /* le <select> reste la source de données : toute modification de code est répercutée sur l'affichage */
+  Object.defineProperty(sel,"value",{configurable:true,get(){ return descV.get.call(this); },set(v){ descV.set.call(this,v); I.label(); }});
+  Object.defineProperty(sel,"selectedIndex",{configurable:true,get(){ return descI.get.call(this); },set(v){ descI.set.call(this,v); I.label(); }});
+  sel.addEventListener("change",I.label);
+  try{ new MutationObserver(I.label).observe(sel,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:["disabled","selected"]}); }catch(e){}
+  inst.add(I); I.label();
+ }
+ csPop.addEventListener("mousedown",e=>{ e.preventDefault(); const it=e.target.closest(".ed-it"); if(it&&openCS) openCS.pick(+it.dataset.i); });
+ document.addEventListener("mousedown",e=>{ if(openCS&&!openCS.w.contains(e.target)&&!csPop.contains(e.target)) closeCS(); },true);
+ window.addEventListener("resize",closeCS);
+ document.addEventListener("scroll",e=>{ if(openCS&&!csPop.contains(e.target)) closeCS(); },true);
+ let pend=false;
+ function scan(){
+  pend=false;
+  document.querySelectorAll(CS_SEL).forEach(s=>{ try{ enhance(s); }catch(e){ console.warn("liste déroulante",e); } });
+  inst.forEach(I=>{ if(!document.body.contains(I.w)){ if(openCS===I) closeCS(); inst.delete(I); } });
+  initClassFilters();
+ }
+ const ask=()=>{ if(!pend){ pend=true; requestAnimationFrame(scan); } };
+ try{ new MutationObserver(ask).observe(document.body,{childList:true,subtree:true}); }catch(e){}
+ if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",scan); else scan();
 })();
 </script>
 </body>
