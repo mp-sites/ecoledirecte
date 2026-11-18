@@ -3052,6 +3052,8 @@ button.hw-note-ico:hover{ background:#eef2f7 }
     <label>Identifiant de connexion</label><input id="editLogin" autocomplete="off">
     <label>Mot de passe de connexion</label><input id="editPwd" autocomplete="off">
     <div class="hint">L'élève utilise ces identifiants pour consulter ses notes. Il ne peut pas les modifier. Les deux champs vides = pas de compte.</div>
+    <button type="button" class="ed-lockbtn" id="editLockBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9.5" rx="2.2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span class="lt">Bloquer le compte</span></button>
+    <div class="ed-lockinfo" id="editLockNote"></div>
     <div class="modal-actions">
      <button type="button" class="btn" id="editStudentCancel">Annuler</button>
      <button type="submit" class="btn btn-primary">Valider</button>
@@ -10352,7 +10354,7 @@ function openEditStudentModal(){
  document.getElementById("editFirst").value=stu.first; document.getElementById("editLast").value=stu.last; document.querySelectorAll('input[name="editSex"]').forEach(r=>r.checked=(r.value===(stu.sex==="F"?"F":"M")));
  document.getElementById("editClassSelect").innerHTML='<option value="">-</option>'+DATA.classes.map(c=>`<option value="${c.id}">${c.name}</option>`).join("");
  document.getElementById("editClassSelect").value=stu.classId||"";
- document.getElementById("editLogin").value=ACCOUNTS[id]?.login||""; document.getElementById("editPwd").value=ACCOUNTS[id]?.pwd||"";
+ document.getElementById("editLogin").value=ACCOUNTS[id]?.login||""; document.getElementById("editPwd").value=ACCOUNTS[id]?.pwd||""; try{edLockRefresh(id);}catch(e){}
  editStudentModal.classList.add("open");editStudentModal.setAttribute("aria-hidden","false");
 }
 function closeEditStudentModal(){editStudentModal.classList.remove("open");editStudentModal.setAttribute("aria-hidden","true");}
@@ -10369,7 +10371,7 @@ document.getElementById("editStudentForm").addEventListener("submit",e=>{
  const newLogin=document.getElementById("editLogin").value.trim(), newPwd=document.getElementById("editPwd").value;
  if((newLogin&&!newPwd)||(!newLogin&&newPwd)){alert("Renseignez l'identifiant ET le mot de passe (ou laissez les deux vides).");return;}
  if(newLogin){const e2=checkStudentLogin(newLogin,id); if(e2){alert(e2);return;}}
- if(newLogin) ACCOUNTS[id]={login:newLogin,pwd:newPwd}; else delete ACCOUNTS[id];
+ if(newLogin){ const o=ACCOUNTS[id]; ACCOUNTS[id]={login:newLogin,pwd:newPwd,bloque:!!(o&&o.bloque),auto:!!(o&&o.auto&&o.pwd===newPwd)}; } else delete ACCOUNTS[id];
  if(stu.classId!==newClass){
   const oldCls=DATA.classes.find(c=>c.id===stu.classId); if(oldCls) oldCls.memberIds=oldCls.memberIds.filter(mid=>mid!==stu.id);
   const newClsObj=DATA.classes.find(c=>c.id===newClass); if(newClsObj&&!newClsObj.memberIds.includes(stu.id)) newClsObj.memberIds.push(stu.id);
@@ -11516,7 +11518,7 @@ window.onbeforeunload = function(e) {
 const CLOUD_URL = "https://script.google.com/macros/s/AKfycbziu6cd7ODL18lWRDKQjV5xJ4ch7qGgh9A-dRTERzwUPI63eI5Z-EpKdzMMeyE1YS6N/exec";
 const CLOUD = { enabled:true, ready:false, timer:null, saving:false, again:false, rev:0, srev:null, stale:false, lastTry:null, lastCheck:0, lastSnap:null, retryAt:0, polling:false };
 function cloudSnapshot(csv){
- try{ return (csv==null?buildCSVText():csv)+"\n#ACCOUNTS#"+JSON.stringify(DATA.students.map(s=>[s.id,ACCOUNTS[s.id]?.login||"",ACCOUNTS[s.id]?.pwd||""])); }
+ try{ return (csv==null?buildCSVText():csv)+"\n#ACCOUNTS#"+JSON.stringify(DATA.students.map(s=>[s.id,ACCOUNTS[s.id]?.login||"",ACCOUNTS[s.id]?.pwd||"",ACCOUNTS[s.id]?.bloque?1:0])); }
  catch(e){ return null; }
 }
 // Mode « Consultation » : cette page est ouverte dans le cadre de l'onglet Consultation du professeur
@@ -11551,7 +11553,7 @@ async function gzipB64(str){
 }
 // Délai maximal + nouvelles tentatives automatiques (serveur occupé, réseau coupé, requête trop longue)
 async function api(action,extra){
- const EDX=(typeof EDC!=="undefined"&&EDC&&EDC.ro)?{ro:1,snap:EDC.snap||""}:{};
+ const EDX=(typeof EDC!=="undefined"&&EDC&&EDC.ro)?{ro:1,snap:EDC.snap||"",au:EDC.au||"",ap:EDC.ap||""}:{};
  let payload=JSON.stringify(Object.assign({action,user:AUTH.user,pass:AUTH.pass},EDX,extra||{}));
  if(extra && payload.length>12000 && typeof CompressionStream!=="undefined"){
   try{
@@ -11574,6 +11576,7 @@ async function api(action,extra){
    const r=await fetch(CLOUD_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:payload,signal:ctl?ctl.signal:undefined});
    const j=await r.json();
    if(to) clearTimeout(to);
+   if(j && j.blocked && AUTH.role==="eleve" && !EDC){ edBlockedKick(); return j; }
    if(j && j.ok===false && j.error==="busy" && essai<maxTry-1){ await cloudSleep(attente(essai)); continue; }
    return j;
   }catch(e){
@@ -11650,7 +11653,7 @@ async function cloudPull(){
  if(j.role==="admin"){ AUTH.role="admin"; window.edAdminBoot&&edAdminBoot(j); return j; }
  if(window.edSetEtab) edSetEtab(j.etabName);
  CLOUD.rev=j.rev; CLOUD.srev=(j.srev!=null?j.srev:null); CLOUD.stale=false; if(j.profInfo) Object.assign(PROF_INFO,j.profInfo); if(j.role==="eleve") PROF_INFO.first=""; AUTH.role=j.role; AUTH.studentId=j.studentId||""; try{ window.edRoleInit&&edRoleInit(j); }catch(x){ console.error("rôle:",x); }
- ACCOUNTS={}; (j.accounts||[]).forEach(a=>{ACCOUNTS[a.id]={login:a.login,pwd:a.pwd};});
+ ACCOUNTS={}; (j.accounts||[]).forEach(a=>{ACCOUNTS[a.id]={login:a.login,pwd:a.pwd,bloque:!!a.bloque,auto:!!a.auto};});
  if(j.lines && j.lines.length>1){
   importCSV(j.lines.join("\n"));
   ensureSubjectRegistry(); backfillClassSubjectsFromRegistry();
@@ -11700,7 +11703,7 @@ async function tryLogin(user,pass,remember){
   console.error("login:",e);
   AUTH.user=AUTH.pass=AUTH.role="";
   const m=String(e.message||e);
-  return /identifiants/.test(m) ? "Identifiant ou mot de passe incorrect." : "Connexion impossible ("+m+"). Vérifiez votre connexion internet.";
+  return /bloqu/.test(m) ? "Compte temporairement bloqué. Contactez votre professeur." : /trop de tentatives/.test(m) ? "Trop de tentatives échouées : réessayez dans quelques minutes." : /identifiants/.test(m) ? "Identifiant ou mot de passe incorrect." : "Connexion impossible ("+m+"). Vérifiez votre connexion internet.";
  }
 }
 
@@ -11724,6 +11727,7 @@ async function bootAuth(){
   authClear();
   showLoginError(/incorrect/.test(err)?"Votre session a expiré, reconnectez-vous.":err);
  }
+ try{ if(sessionStorage.getItem("ed_blocked")){ sessionStorage.removeItem("ed_blocked"); showLoginError("Compte temporairement bloqué. Contactez votre professeur."); } }catch(e){}
  document.getElementById("loginUser")?.focus();
 }
 
@@ -11785,7 +11789,7 @@ async function cloudPush(force){
   const csv=buildCSVText();                 // construit une seule fois (avant : 3 fois par enregistrement)
   const snap=cloudSnapshot(csv);
   const lines=csvToLogicalLines(csv);
-  const accounts=DATA.students.filter(s=>ACCOUNTS[s.id]).map(s=>({id:s.id,login:ACCOUNTS[s.id].login,pwd:ACCOUNTS[s.id].pwd}));
+  const accounts=DATA.students.filter(s=>ACCOUNTS[s.id]).map(s=>({id:s.id,login:ACCOUNTS[s.id].login,pwd:ACCOUNTS[s.id].pwd,bloque:!!ACCOUNTS[s.id].bloque}));
   const cancelled=[...(window.HW_CANCELLED_SUBS||[])];
   const deletedMsgs=[...(window.HW_DELETED_MSGS||[])];   // messages supprimés par le professeur (le serveur ne doit pas les ré-ajouter)
   // Identifiant de requête : réutilisé UNIQUEMENT pour renvoyer exactement les mêmes données après un échec réseau
@@ -20175,7 +20179,7 @@ window.addEventListener("message",e=>{
 });
 function mountFrame(box,p,snap){
  box.innerHTML=""; const f=document.createElement("iframe");
- f.name="ED_CONSULT:"+JSON.stringify({u:p.user,p:p.pass,ro:1,snap:snap||""});
+ f.name="ED_CONSULT:"+JSON.stringify({u:p.user,p:p.pass,ro:1,snap:snap||"",au:AUTH.user,ap:AUTH.pass});
  f.className="ad-frame"; f.src=location.href.split("#")[0]; box.appendChild(f);
 }
 
@@ -20682,6 +20686,50 @@ document.addEventListener("click",async ev=>{
  try{ new MutationObserver(ask).observe(document.body,{childList:true,subtree:true}); }catch(e){}
  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",scan); else scan();
 })();
+</script>
+<style>
+/* ── Blocage de compte (fiche élève) ── */
+.ed-lockbtn{display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:10px 16px;border:2px solid #dc2626;border-radius:10px;background:#dc2626;color:#fff;font:700 14px inherit;font-family:inherit;cursor:pointer;transition:background .15s,color .15s,box-shadow .15s}
+.ed-lockbtn:hover{background:#b91c1c;border-color:#b91c1c;box-shadow:0 2px 8px rgba(220,38,38,.3)}
+.ed-lockbtn.is-locked{background:#fff;color:#dc2626}
+.ed-lockbtn.is-locked:hover{background:#fef2f2}
+.ed-lockbtn:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+.ed-lockinfo{margin-top:8px;font-size:13px;color:#b91c1c;min-height:0}
+.ed-lockinfo:empty{display:none}
+/* ── Barres de recherche modernes (vision prof) ── */
+#studentSearch,#classSearch,#groupSearch,#appreciationSearch,#compSearchInput,#editCompSearchInput,#profEvalSearch,#grpSearch,#vsQ,.ap-q,.ch-search{
+ -webkit-appearance:none!important;appearance:none!important;box-sizing:border-box;width:100%;height:42px;padding:0 14px 0 42px!important;margin-bottom:0;
+ border:1px solid transparent!important;border-radius:999px!important;font-size:14px;color:var(--text);text-align:left!important;
+ background:#f1f5f9 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3.5-3.5'/%3E%3C/svg%3E") no-repeat 15px center!important;
+ transition:background-color .15s,border-color .15s,box-shadow .15s}
+#profEvalSearch{max-width:260px}
+.ch-search{width:calc(100% - 24px)!important}
+#studentSearch:hover,#classSearch:hover,#groupSearch:hover,#appreciationSearch:hover,#compSearchInput:hover,#editCompSearchInput:hover,#profEvalSearch:hover,#grpSearch:hover,#vsQ:hover,.ap-q:hover,.ch-search:hover{background-color:#e8eef5!important}
+#studentSearch:focus,#classSearch:focus,#groupSearch:focus,#appreciationSearch:focus,#compSearchInput:focus,#editCompSearchInput:focus,#profEvalSearch:focus,#grpSearch:focus,#vsQ:focus,.ap-q:focus,.ch-search:focus{
+ outline:none!important;background-color:#fff!important;border-color:#4db5f5!important;box-shadow:0 0 0 4px rgba(1,128,207,.14)}
+#studentSearch::placeholder,#classSearch::placeholder,#groupSearch::placeholder,#appreciationSearch::placeholder,#compSearchInput::placeholder,#editCompSearchInput::placeholder,#profEvalSearch::placeholder,#grpSearch::placeholder,#vsQ::placeholder,.ap-q::placeholder,.ch-search::placeholder{color:#94a3b8}
+#consultSearch{border-radius:999px;background-color:#f1f5f9;border-color:transparent;box-shadow:none}
+#consultSearch:focus{background-color:#fff}
+#consultSearch.open{border-radius:22px 22px 0 0;background-color:#fff}
+</style>
+<script>
+/* Blocage de compte : état du bouton dans « Modifier élève » + éjection d'un élève déjà connecté */
+function edLockRefresh(id){
+ const b=document.getElementById("editLockBtn"), n=document.getElementById("editLockNote"); if(!b||!n) return;
+ const a=ACCOUNTS[id], on=!!(a&&a.bloque);
+ b.disabled=!a; b.classList.toggle("is-locked",on);
+ b.querySelector(".lt").textContent=on?"Débloquer le compte":"Bloquer le compte";
+ n.textContent=(a&&a.auto)?"Compte bloqué automatiquement après 10 tentatives échouées : changez son mot de passe pour le débloquer.":(on?"Compte bloqué : l'élève ne peut plus se connecter.":(a?"":"Créez d'abord l'identifiant et le mot de passe pour pouvoir bloquer le compte."));
+}
+document.getElementById("editLockBtn")?.addEventListener("click",()=>{
+ const id=document.getElementById("studentList").value, a=ACCOUNTS[id]; if(!id||!a) return;
+ a.bloque=!a.bloque; edLockRefresh(id);
+ try{ saveData(); }catch(e){ console.error(e); }
+});
+function edBlockedKick(){
+ try{ sessionStorage.setItem("ed_blocked","1"); }catch(e){}
+ authClear(); AUTH.user=AUTH.pass=AUTH.role=""; location.reload();
+}
 </script>
 </body>
 </html>
