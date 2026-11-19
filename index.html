@@ -20000,6 +20000,7 @@ $("paramTabs")?.addEventListener("click",e=>{ const b=e.target.closest("[data-p]
 #etabName:empty{display:none}
 #adminRoot{display:none}
 body.admin-mode #adminRoot{display:block}
+body.admin-mode #settingsBtn.sa-btn{display:inline-flex!important}
 body.admin-mode .topbar,body.admin-mode .container,body.admin-mode #locksBar,body.admin-mode #settingsBtn,body.admin-mode #saveActions,body.admin-mode #saveStatusBanner,body.admin-mode #carnetSub{display:none!important}
 .ad-wrap{max-width:1200px;margin:18px auto;padding:0 12px}
 /* onglets : même mise en forme que sur les comptes (.tabs / .tab-btn) */
@@ -20270,6 +20271,30 @@ async function call(a,x){
   if(j.registry){ S.reg=j.registry; S.snaps=j.snaps||[]; } return j; }
  catch(e){ alert("Erreur réseau : "+(e.message||e)); return null; }
 }
+/* ── engrenage de l'en-tête (admin) : changer le mot de passe administrateur ── */
+function adminPassPopup(){
+ const f=(id,l)=>'<label class="ad-lab">'+l+'</label><input class="ad-in" id="'+id+'" type="password" autocomplete="off" style="width:100%">';
+ const m=modal("Mot de passe administrateur",
+  '<p class="ad-note" style="margin-top:0">Identifiant : <strong>'+E(AUTH.user)+'</strong></p>'+f("adpOld","Mot de passe actuel")+f("adpNew","Nouveau mot de passe")+f("adpNew2","Confirmer le nouveau mot de passe"),
+  "Enregistrer",async mm=>{
+   const o=mm.querySelector("#adpOld").value, n=mm.querySelector("#adpNew").value, n2=mm.querySelector("#adpNew2").value;
+   if(o!==AUTH.pass) return "Le mot de passe actuel est incorrect.";
+   if(n.length<4) return "Le nouveau mot de passe doit faire au moins 4 caractères.";
+   if(n!==n2) return "Les deux mots de passe ne correspondent pas.";
+   if(n===o) return "Le nouveau mot de passe est identique à l'ancien.";
+   try{ const j=await api("adminSetPass",{newPass:n}); if(!j.ok) return j.error||"Erreur"; }
+   catch(x){ return "Échec : "+(x.message||x); }
+   AUTH.pass=n; authSave(AUTH.user,AUTH.pass,false);
+   setTimeout(()=>siteAlert("Mot de passe administrateur modifié."),50);
+   return "";
+  },460);
+ setTimeout(()=>{ const i=m.querySelector("#adpOld"); if(i) i.focus(); },30);
+}
+document.addEventListener("click",e=>{
+ if(!document.body.classList.contains("admin-mode")) return;
+ const b=e.target.closest&&e.target.closest("#settingsBtn"); if(!b) return;
+ e.preventDefault(); e.stopImmediatePropagation(); adminPassPopup();
+},true);
 function render(){
  const root=$("adminRoot"); if(!root||!S.reg) return;
  const cur=S.reg.etabs.find(e=>e.id===S.tab);
