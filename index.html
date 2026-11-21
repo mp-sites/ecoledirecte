@@ -1491,8 +1491,6 @@ html{ -webkit-text-size-adjust:100%; touch-action:manipulation }
 #paramPane_rooms .rm-edit{flex:1;min-width:0;height:36px;box-sizing:border-box;padding:0 10px;border:1.5px solid #4db5f5;border-radius:9px;font:inherit;box-shadow:0 0 0 3px rgba(1,128,207,.14);outline:none}
 .rm-empty{padding:18px;text-align:center;color:var(--muted);border:1px dashed var(--border);border-radius:12px}
 /* ── Carnet : aperçu par élève ── */
-.pv-cell{display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-width:0}
-.pv-lbl{max-width:120px;font-size:11px;line-height:1.1;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cls-mode .cls-mode-btn{white-space:nowrap}
 @media(max-width:560px){.cls-mode{flex-wrap:wrap;border-radius:18px}.cls-mode .cls-mode-btn{padding:6px 12px;font-size:13px}}
 /* ── Liste déroulante avec recherche (élèves) ── */
@@ -5906,10 +5904,7 @@ function renderClassPreviewStu(classId){
         else alert(`Pas de note saisie pour ${stu.first} ${stu.last} (${ev.label || "-"})`);
       });
 
-      const cell = document.createElement("div"); cell.className = "pv-cell";
-      const lbl = document.createElement("div"); lbl.className = "pv-lbl"; lbl.textContent = ev.label || "-"; lbl.title = btn.title;
-      cell.appendChild(lbl); cell.appendChild(btn);
-      notesWrap.appendChild(cell);
+      notesWrap.appendChild(btn);
     });
 
     // Gauche : nom de l'élève ; droite : moyenne (pondérée par les coefficients ; sans pondération si tous les coefficients sont à 0)
