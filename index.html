@@ -1475,6 +1475,47 @@ html{ -webkit-text-size-adjust:100%; touch-action:manipulation }
 #paramPane_pwd .cs-clear[hidden]{display:none}
 #paramPane_pwd .cs-clear:hover{background:#e2e8f0;color:#0f172a}
 
+/* ── Paramétrage > Salles ── */
+.rm-form{display:flex;gap:8px;max-width:520px;margin:0 0 14px}
+.rm-form input{flex:1;min-width:0;box-sizing:border-box;height:46px;padding:0 14px;border:1.5px solid var(--border);border-radius:12px;background:#fff;font:inherit;font-size:15px;box-shadow:0 1px 2px rgba(16,24,40,.04);transition:border-color .15s,box-shadow .15s}
+.rm-form input:hover{border-color:#b9d9ee}
+.rm-form input:focus{outline:none;border-color:#4db5f5;box-shadow:0 0 0 4px rgba(1,128,207,.14)}
+.rm-form .pw-btn{height:46px}
+.rm-list{max-width:520px;max-height:340px;overflow:auto;display:flex;flex-direction:column;gap:6px}
+#paramPane_rooms .sch-room{display:flex;align-items:center;gap:4px;padding:8px 8px 8px 14px;border:1px solid var(--border);border-radius:12px;background:#fff;transition:border-color .15s,background .15s}
+#paramPane_rooms .sch-room:hover{border-color:#b9d9ee;background:#f7fbff}
+#paramPane_rooms .rm-name{flex:1;min-width:0;font-weight:600;overflow-wrap:anywhere}
+#paramPane_rooms .sch-x{width:34px;height:34px;padding:0;border:0;border-radius:9px;background:transparent;color:#64748b;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:inherit}
+#paramPane_rooms .sch-x:hover{background:#e8f4fc;color:var(--primary)}
+#paramPane_rooms .rm-del:hover{background:#fdecea;color:#b42318}
+#paramPane_rooms .rm-edit{flex:1;min-width:0;height:36px;box-sizing:border-box;padding:0 10px;border:1.5px solid #4db5f5;border-radius:9px;font:inherit;box-shadow:0 0 0 3px rgba(1,128,207,.14);outline:none}
+.rm-empty{padding:18px;text-align:center;color:var(--muted);border:1px dashed var(--border);border-radius:12px}
+/* ── Carnet : aperçu par élève ── */
+.pv-cell{display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-width:0}
+.pv-lbl{max-width:120px;font-size:11px;line-height:1.1;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cls-mode .cls-mode-btn{white-space:nowrap}
+@media(max-width:560px){.cls-mode{flex-wrap:wrap;border-radius:18px}.cls-mode .cls-mode-btn{padding:6px 12px;font-size:13px}}
+/* ── Liste déroulante avec recherche (élèves) ── */
+.ss-btn{display:inline-flex;align-items:center;justify-content:space-between;gap:8px;box-sizing:border-box;width:100%;min-width:200px;max-width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:#fff;color:var(--text);font:inherit;text-align:left;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.ss-btn:hover{border-color:#b9d9ee}
+.ss-btn:focus-visible,.ss-btn[aria-expanded="true"]{outline:none;border-color:#4db5f5;box-shadow:0 0 0 3px rgba(1,128,207,.15)}
+.ss-btn .ss-val{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ss-btn .ss-ph{color:var(--muted)}
+.ss-btn svg{flex:none;width:16px;height:16px;fill:none;stroke:#64748b;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.ss-panel{position:fixed;z-index:9999;display:flex;flex-direction:column;background:#fff;border:1px solid #4db5f5;border-radius:12px;box-shadow:0 12px 30px rgba(16,24,40,.18);overflow:hidden}
+.ss-search{position:relative;padding:8px;border-bottom:1px solid var(--border);flex:none}
+.ss-in{width:100%;box-sizing:border-box;height:38px;padding:0 12px 0 36px;border:1.5px solid var(--border);border-radius:9px;font:inherit;font-size:14.5px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3.5-3.5'/%3E%3C/svg%3E") no-repeat 11px center}
+.ss-in:focus{outline:none;border-color:#4db5f5;box-shadow:0 0 0 3px rgba(1,128,207,.14)}
+.ss-list{overflow-y:auto;overscroll-behavior:contain}
+.ss-grp{padding:7px 14px 4px;font-size:11.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:#0471b5;background:#f6fafd;position:sticky;top:0}
+.ss-it{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 14px;cursor:pointer;font-size:14.5px}
+.ss-it + .ss-it{border-top:1px solid #eff8fe}
+.ss-it.act{background:#eef9ff}
+.ss-it.sel{font-weight:700;color:#0471b5}
+.ss-it.dis{opacity:.45;cursor:not-allowed}
+.ss-it.ss-none{color:var(--muted)}
+.ss-empty{padding:16px;text-align:center;color:var(--muted);font-size:14px}
+
 /* ── Paramétrage > Mots de passe : fiche élève moderne ── */
 .pw-card{border:1px solid #d6e6f2;border-radius:16px;padding:18px;background:linear-gradient(180deg,#fff,#f7fbff);box-shadow:0 4px 18px rgba(16,24,40,.06);max-width:560px;box-sizing:border-box}
 .pw-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
@@ -2480,7 +2521,7 @@ button.hw-note-ico:hover{ background:#eef2f7 }
  </section>
 <section id="scheduleView" class="view">
  <div class="card"><div class="card-body" style="padding:14px">
-  <div class="sch-bar sch-prof-only"><button class="btn btn-primary" id="schAdd">Ajouter un cours</button><button class="btn btn-primary" id="schAddEvt">Ajouter un événement</button><button class="btn" id="schHol">Ajouter congés</button><button class="btn" id="schRooms">Salles</button></div>
+  <div class="sch-bar sch-prof-only"><button class="btn btn-primary" id="schAdd">Ajouter un cours</button><button class="btn btn-primary" id="schAddEvt">Ajouter un événement</button><button class="btn" id="schHol">Ajouter congés</button></div>
   <div class="sch-nav"><button class="btn" id="schToday">Aujourd'hui</button><button class="btn" id="schPrev">‹</button><button class="btn" id="schNext">›</button><span class="sch-title" id="schTitle"></span>
    <label id="schMineWrap" style="display:none;align-items:center;gap:6px;margin-left:10px;font-size:0.9em;cursor:pointer"><input type="checkbox" id="schMine"> Mon emploi du temps uniquement</label>
    <div class="sch-views"><button class="btn" data-v="day">Jour</button><button class="btn" data-v="week">Semaine</button><button class="btn" data-v="month">Mois</button></div></div>
@@ -2700,10 +2741,7 @@ button.hw-note-ico:hover{ background:#eef2f7 }
  <div class="modal-card" style="width:420px"><div class="modal-header"><h3 id="schDetTitle">Détail du cours</h3><button class="modal-close" id="schDetailClose">×</button></div>
  <div class="modal-body"><div id="schDetailBody"></div>
   <div class="modal-actions"><button type="button" class="btn" id="schDetailOk">Fermer</button><button type="button" class="btn btn-primary sch-prof-only" id="schDetailEdit">Modifier</button></div></div></div></div>
-<div id="schRoomsModal" class="modal" aria-hidden="true" style="z-index:40">
- <div class="modal-card" style="width:400px"><div class="modal-header"><h3>Salles</h3><button class="modal-close" id="schRoomsClose">×</button></div>
- <div class="modal-body"><form id="schRoomForm" style="display:flex;gap:8px"><input id="schRoomInput" placeholder="Nom de la salle" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:8px"><button class="btn btn-primary" type="submit">Valider</button></form>
- <div id="schRoomList" style="margin-top:10px;max-height:300px;overflow:auto"></div></div></div></div>
+
 <div id="schSignalModal" class="modal" aria-hidden="true" style="z-index:400">
  <div class="modal-card" style="width:380px"><div class="modal-body" style="padding:20px"><p style="margin:0 0 14px;font-weight:600">Voulez-vous signaler ces modifications ?</p>
  <div class="modal-actions"><button class="btn" id="schSigNo">NON</button><button class="btn btn-primary" id="schSigYes">OUI</button></div></div></div></div>
@@ -3193,7 +3231,8 @@ button.hw-note-ico:hover{ background:#eef2f7 }
     <button type="button" class="subtab-btn" data-p="comp">Compétences</button>
     <button type="button" class="subtab-btn" data-p="imp">Importation</button>
     <button type="button" class="subtab-btn" data-p="lock">Verrouillage trimestres</button>
-    <button type="button" class="subtab-btn" data-p="pwd">Mots de passe</button>
+    <button type="button" class="subtab-btn" data-p="rooms">Salles</button>
+     <button type="button" class="subtab-btn" data-p="pwd">Mots de passe</button>
    </div>
    <div id="paramPane_subj">
    <div id="subjectsEmptyInside" class="import-banner" style="display:none;">
@@ -3230,6 +3269,14 @@ button.hw-note-ico:hover{ background:#eef2f7 }
      <div class="cs-list" id="pwdList" role="listbox" hidden></div>
     </div>
     <div id="pwdCard" style="margin-top:14px"></div>
+   </div>
+   <div id="paramPane_rooms" hidden>
+    <p class="ad-note" style="margin-top:0">Les salles proposées quand vous créez un cours dans l'emploi du temps. Renommer une salle met à jour les cours qui l'utilisent.</p>
+    <form id="schRoomForm" class="rm-form" autocomplete="off">
+     <input id="schRoomInput" placeholder="Nom de la salle (ex. B204)" maxlength="60" autocomplete="off" spellcheck="false" aria-label="Nom de la salle">
+     <button type="submit" class="pw-btn pw-primary">Ajouter</button>
+    </form>
+    <div id="schRoomList" class="rm-list"></div>
    </div>
    <div id="paramPane_comp" hidden>
    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px;">
@@ -5769,6 +5816,132 @@ function openPreviewClass(classId){
   if(content) {
     const previewBtn = content.querySelector('.subtab-btn[data-sub="classPreview"]');
     if(previewBtn) previewBtn.click();
+  }
+}
+
+/* Aperçu par élève : 1 ligne = 1 élève, avec toutes ses notes (selon le trimestre et la matière choisis) */
+function renderClassPreviewStu(classId){
+  const cls = classLike(classId);
+  if(!cls) return;
+  CURRENT_PREVIEW_CLASS_ID = classId;
+  const container = document.getElementById("classPreviewContent");
+  if(!container) return;
+  container.innerHTML = "";
+
+  let evals = (cls.evals || []).filter(ev => {
+    const pMatch = CURRENT_PREVIEW_PERIOD === "YEAR" || ev.period === CURRENT_PREVIEW_PERIOD;
+    const sMatch = CURRENT_PREVIEW_SUBJECT === "__ALL__" || ev.subject === CURRENT_PREVIEW_SUBJECT;
+    return pMatch && sMatch && window.edOkCls(classId, ev.subject);
+  });
+  evals.sort((a, b) => dateKey(a) - dateKey(b));
+  if(evals.length === 0){
+    container.innerHTML = '<div style="color:#64748b; padding:20px; text-align:center;">Aucune évaluation pour cette sélection.</div>';
+    return;
+  }
+  const students = (cls.isGroup
+                      ? DATA.students.filter(s => (cls.memberIds || []).includes(s.id))
+                      : DATA.students.filter(s => s.classId === classId))
+                    .sort((a, b) => a.last.localeCompare(b.last) || a.first.localeCompare(b.first));
+  if(!students.length){
+    container.innerHTML = '<div style="color:#64748b; padding:20px; text-align:center;">Aucun élève dans cette classe.</div>';
+    return;
+  }
+
+  const lines = document.createElement("div"); lines.className = "eleveLines"; container.appendChild(lines);
+  let totalSum = 0, totalCount = 0;
+
+  students.forEach(stu => {
+    const allNotes = DATA.notes[stu.id] || [];
+    const line = document.createElement("div"); line.className = "matiere-line";
+    const notesWrap = document.createElement("div"); notesWrap.className = "notes-list";
+
+    let sum = 0, wsum = 0, cnt = 0, hasEA = false, given = 0;
+    evals.forEach(ev => {
+      const note = allNotes.find(n => n.classCommon && n.classNoteId === ev.id);
+      const btn = document.createElement("button");
+      btn.type = "button"; btn.className = "note-pill"; btn.style.cssText = "background:#fff;";
+      const empty = !note || isSpecial(note);
+      if(empty) btn.classList.add("empty-eval");
+      if(note && note.noteText === "EA"){ btn.classList.add("red"); hasEA = true; }
+      if(note && isNewNote(note, note.dateJJMMAA, note.isoDate)) btn.classList.add("today");
+      if(note && !!note.important) btn.classList.add("important");
+      if(!empty && (note.note/note.outof*20) < 10) btn.classList.add("red");
+      btn.title = `${ev.label || "-"} — ${formatDateAAAA(ev.dateJJMMAA)} — Coef. ${fmtCoef(ev.coef)}`;
+
+      if(empty){
+        btn.textContent = note ? note.noteText : "NE";
+      } else {
+        given++;
+        const zeroCoef = note.coef === 0;
+        const base = fmt(note.note);
+        btn.textContent = zeroCoef ? `(${base}` : base;
+        if(note.outof !== 20){
+          const sub = document.createElement("sub"); sub.textContent = `/${fmt(note.outof)}`; btn.appendChild(sub);
+        }
+        if(zeroCoef) btn.appendChild(document.createTextNode(")"));
+        if(note.coef !== 1 && !zeroCoef){
+          const sup = document.createElement("sup"); sup.style.marginLeft = "1px"; sup.textContent = `(${fmtCoef(note.coef)})`; btn.appendChild(sup);
+        }
+        if(!note.hideFromStudent){
+          const v = note.note/note.outof*20, w = (typeof note.coef === "number" && isFinite(note.coef)) ? note.coef : 1;
+          sum += v*w; wsum += w; cnt++;
+        }
+      }
+      if(note){
+        const linkedC = (DATA.competencies||[]).filter(c => c.noteId === note.id && c.studentId === stu.id && !!c.color);
+        if(linkedC.length){
+          const dotsWrap = document.createElement("div");
+          dotsWrap.style.cssText = "display:flex;gap:2px;margin-left:4px;align-items:center;line-height:1;";
+          btn.appendChild(dotsWrap);
+          linkedC.forEach(c => {
+            const dot = document.createElement("div");
+            dot.className = `color-dot ${c.color}`;
+            dot.style.cssText = "width:14px;height:14px;border-radius:50%;flex-shrink:0;margin-bottom:1px;";
+            dotsWrap.appendChild(dot);
+          });
+        }
+      }
+      btn.addEventListener("click", () => {
+        if(note) showNoteDetailByObj(note, stu.id);
+        else alert(`Pas de note saisie pour ${stu.first} ${stu.last} (${ev.label || "-"})`);
+      });
+
+      const cell = document.createElement("div"); cell.className = "pv-cell";
+      const lbl = document.createElement("div"); lbl.className = "pv-lbl"; lbl.textContent = ev.label || "-"; lbl.title = btn.title;
+      cell.appendChild(lbl); cell.appendChild(btn);
+      notesWrap.appendChild(cell);
+    });
+
+    // Gauche : nom de l'élève ; droite : moyenne (pondérée par les coefficients ; sans pondération si tous les coefficients sont à 0)
+    let avg = null;
+    if(cnt > 0){
+      if(wsum > 0) avg = sum / wsum;
+      else {
+        let s2 = 0, c2 = 0;
+        evals.forEach(ev => { const n = allNotes.find(x => x.classCommon && x.classNoteId === ev.id); if(n && !isSpecial(n) && !n.hideFromStudent){ s2 += n.note/n.outof*20; c2++; } });
+        avg = c2 ? s2 / c2 : null;
+      }
+    }
+    const info = document.createElement("div"); info.className = "matiere-title";
+    info.innerHTML = `<div class="matiere-name">${escHtml(stu.last)} ${escHtml(stu.first)}</div><div class="matiere-coef">${given} note${given>1?"s":""} sur ${evals.length}</div>`;
+    const avgBox = document.createElement("div"); avgBox.className = "avg-box";
+    if(avg !== null){
+      avgBox.innerHTML = `<div class="avg-value"${hasEA?' style="color:var(--danger)"':""}>${fmt(avg, 2)}/20</div>`;
+      totalSum += avg; totalCount++;
+    } else avgBox.innerHTML = `<div class="avg-value">--</div>`;
+    const head = document.createElement("div"); head.className = "matiere-head";
+    head.appendChild(info); head.appendChild(avgBox);
+    line.appendChild(head); line.appendChild(notesWrap);
+    lines.appendChild(line);
+  });
+
+  if(totalCount > 0){
+    const genLine = document.createElement("div"); genLine.className = "general-line";
+    const genBox = document.createElement("div"); genBox.className = "general-box"; genBox.style.cursor = "pointer";
+    genBox.title = "Voir les statistiques globales de la classe pour cette sélection";
+    genBox.innerHTML = `<div class="avg-label">Moyenne de la classe</div><div class="avg-value">${fmt(totalSum/totalCount, 2)}/20</div>`;
+    genBox.addEventListener("click", e => { e.stopPropagation(); openGeneralStatsForClass(cls.id, CURRENT_PREVIEW_PERIOD, CURRENT_PREVIEW_SUBJECT); });
+    genLine.appendChild(genBox); container.appendChild(genLine);
   }
 }
 
@@ -9298,14 +9471,15 @@ function openClass(clsId){
  const cls=classLike(clsId);
  if(!cls){placeholder.style.display="block";content.style.display="none";content.innerHTML="";return;}
  placeholder.style.display="none"; content.style.display="block";
- if(CLASS_VIEW_MODE!=="classPreview") CLASS_VIEW_MODE="classBySubject";
+ if(CLASS_VIEW_MODE!=="classPreview"&&CLASS_VIEW_MODE!=="classPreviewStu") CLASS_VIEW_MODE="classBySubject";
 
  content.innerHTML=`
  <div class="cls-bar">
   <span class="cls-count">Élèves: ${(cls.memberIds||[]).length}</span>
   <div class="cls-mode" role="tablist" aria-label="Mode d'affichage">
    <button type="button" class="subtab-btn cls-mode-btn" data-sub="classBySubject" role="tab">Gestion</button>
-   <button type="button" class="subtab-btn cls-mode-btn" data-sub="classPreview" role="tab">Aperçu</button>
+   <button type="button" class="subtab-btn cls-mode-btn" data-sub="classPreviewStu" role="tab">Aperçu par élève</button>
+    <button type="button" class="subtab-btn cls-mode-btn" data-sub="classPreview" role="tab">Aperçu par classe</button>
   </div>
   <select id="clsPeriodSel" class="modern-select cls-sel" aria-label="Trimestre"></select>
   <select id="clsSubjectSel" class="modern-select cls-sel" aria-label="Matière"></select>
@@ -9316,7 +9490,7 @@ function openClass(clsId){
 
  const modeBtns=content.querySelectorAll(".cls-mode-btn");
  const pSel=content.querySelector("#clsPeriodSel"), sSel=content.querySelector("#clsSubjectSel"), newBtn=content.querySelector("#clsNewEvalBtn");
- const isPrev=()=>CLASS_VIEW_MODE==="classPreview";
+ const isPrev=()=>CLASS_VIEW_MODE==="classPreview"||CLASS_VIEW_MODE==="classPreviewStu";
  const getP=()=>isPrev()?CURRENT_PREVIEW_PERIOD:LAST_ACTIVE_CLASS_PERIOD;
  const getS=()=>isPrev()?CURRENT_PREVIEW_SUBJECT:CLASS_BYSUBJECT_ACTIVE[clsId];
  const setP=v=>{ if(isPrev()) CURRENT_PREVIEW_PERIOD=v; else LAST_ACTIVE_CLASS_PERIOD=v; };
@@ -9352,15 +9526,16 @@ function openClass(clsId){
  const renderMain=()=>{
   if(isPrev()){
    if(!getP()||!getS()){ content.querySelector("#classPreviewContent").innerHTML='<div class="cls-empty">Sélectionnez un trimestre et une matière.</div>'; return; }
-   renderClassPreview(clsId);
+   if(CLASS_VIEW_MODE==="classPreviewStu") renderClassPreviewStu(clsId); else renderClassPreview(clsId);
   } else renderClassBySubject(clsId);
  };
 
  modeBtns.forEach(b=>b.addEventListener("click",e=>{
   const next=b.dataset.sub; if(next===CLASS_VIEW_MODE) return;
-  if(e.isTrusted){   // on garde le même trimestre / la même matière en basculant
-   if(next==="classPreview"){ if(LAST_ACTIVE_CLASS_PERIOD) CURRENT_PREVIEW_PERIOD=LAST_ACTIVE_CLASS_PERIOD; const sj=CLASS_BYSUBJECT_ACTIVE[clsId]; if(sj) CURRENT_PREVIEW_SUBJECT=sj; }
-   else { if(CURRENT_PREVIEW_PERIOD) LAST_ACTIVE_CLASS_PERIOD=CURRENT_PREVIEW_PERIOD; if(CURRENT_PREVIEW_SUBJECT&&CURRENT_PREVIEW_SUBJECT!=="__ALL__") CLASS_BYSUBJECT_ACTIVE[clsId]=CURRENT_PREVIEW_SUBJECT; }
+  const fromPrev=isPrev(), toPrev=next!=="classBySubject";
+  if(e.isTrusted){   // on garde le même trimestre / la même matière en basculant (les deux aperçus partagent leur sélection)
+   if(toPrev&&!fromPrev){ if(LAST_ACTIVE_CLASS_PERIOD) CURRENT_PREVIEW_PERIOD=LAST_ACTIVE_CLASS_PERIOD; const sj=CLASS_BYSUBJECT_ACTIVE[clsId]; if(sj) CURRENT_PREVIEW_SUBJECT=sj; }
+   else if(!toPrev&&fromPrev){ if(CURRENT_PREVIEW_PERIOD) LAST_ACTIVE_CLASS_PERIOD=CURRENT_PREVIEW_PERIOD; if(CURRENT_PREVIEW_SUBJECT&&CURRENT_PREVIEW_SUBJECT!=="__ALL__") CLASS_BYSUBJECT_ACTIVE[clsId]=CURRENT_PREVIEW_SUBJECT; }
   }
   CLASS_VIEW_MODE=next; fillBar(); renderMain();
  }));
@@ -16374,7 +16549,7 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
       </div>
       <input class="homework-grade-input" data-hw-action="grade-input" data-homework-id="${escHtml(item.homework.id)}" data-test-id="${escHtml(item.test.id)}" data-student-id="${escHtml(stu.id)}" value="${escHtml(grade)}" placeholder="Note" title="Clic droit ou appui long : Abs, Disp, NE, X, EA…">
       <div style="display:flex;align-items:center;gap:8px;">
-       ${validated ? "" : '<span class="homework-review-warning" title="Note non validée">${ICO_WARN}</span>'}
+       ${validated ? "" : `<span class="homework-review-warning" title="Note non validée">${ICO_WARN}</span>`}
        <button type="button" class="btn" data-hw-action="open-correction" data-homework-id="${escHtml(item.homework.id)}" data-test-id="${escHtml(item.test.id)}" data-student-id="${escHtml(stu.id)}" ${done ? "" : "disabled"}>Corriger</button>
        <button type="button" class="btn homework-reset-btn" data-hw-action="reset-submission" data-homework-id="${escHtml(item.homework.id)}" data-test-id="${escHtml(item.test.id)}" data-student-id="${escHtml(stu.id)}" title="${done ? "Annuler la soumission (l'élève pourra refaire le test)" : "Retirer la note « "+escHtml(special||manualNum)+" » (l'élève pourra faire le test)"}" aria-label="Retenter" ${(done||special||manualNum) ? "" : "disabled"}>&#8635;</button>
       </div>
@@ -17898,13 +18073,13 @@ document.getElementById("schSigNo").onclick=()=>schSignal(false);
 })();
 
 /* — popup salles — */
-const roomModal=document.getElementById("schRoomsModal");
+const RM_PEN='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>';
+const RM_BIN='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>';
 function renderRooms(){
+ const host=document.getElementById("schRoomList"); if(!host) return;
  const l=[...schEns().rooms].sort((a,b)=>a.localeCompare(b,"fr",{numeric:true,sensitivity:"base"}));
- document.getElementById("schRoomList").innerHTML=l.length?l.map(r=>`<div class="sch-room"><button class="sch-x sch-pen" title="Renommer" data-redit="${escHtml(r)}">✏️</button><span style="flex:1">${escHtml(r)}</span><button class="sch-x" title="Supprimer" data-room="${escHtml(r)}">×</button></div>`).join(""):"<div class='hint'>Aucune salle.</div>";
+ host.innerHTML=l.length?l.map(r=>`<div class="sch-room"><span class="rm-name">${escHtml(r)}</span><button type="button" class="sch-x sch-pen" title="Renommer" aria-label="Renommer la salle ${escHtml(r)}" data-redit="${escHtml(r)}">${RM_PEN}</button><button type="button" class="sch-x rm-del" title="Supprimer" aria-label="Supprimer la salle ${escHtml(r)}" data-room="${escHtml(r)}">${RM_BIN}</button></div>`).join(""):"<div class='rm-empty'>Aucune salle pour l’instant.</div>";
 }
-document.getElementById("schRooms").onclick=()=>{ renderRooms(); roomModal.classList.add("open"); roomModal.setAttribute("aria-hidden","false"); document.getElementById("schRoomInput").focus(); };
-document.getElementById("schRoomsClose").onclick=()=>{roomModal.classList.remove("open");roomModal.setAttribute("aria-hidden","true");};
 document.getElementById("schRoomForm").addEventListener("submit",ev=>{
  ev.preventDefault(); const i=document.getElementById("schRoomInput"), n=i.value.trim(), s=schEns();
  if(!n||s.rooms.some(r=>r.toLowerCase()===n.toLowerCase())){ i.value=""; return; }
@@ -17921,8 +18096,8 @@ function roomRename(old,nv){
 }
 document.getElementById("schRoomList").addEventListener("click",ev=>{
  const pen=ev.target.closest("[data-redit]");
- if(pen){ const old=pen.dataset.redit, row=pen.parentElement, sp=row.querySelector("span");
-  const inp=document.createElement("input"); inp.value=old; inp.style.cssText="flex:1;padding:4px 8px;border:1px solid var(--border);border-radius:6px;min-width:0";
+ if(pen){ const old=pen.dataset.redit, row=pen.parentElement, sp=row.querySelector(".rm-name");
+  const inp=document.createElement("input"); inp.value=old; inp.className="rm-edit";
   sp.replaceWith(inp); inp.focus(); inp.select(); let done=false;
   const fin=ok=>{ if(done) return; done=true; if(ok&&!roomRename(old,inp.value)){ done=false; inp.focus(); return; } renderRooms(); };
   inp.addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); fin(true); } else if(e.key==="Escape"){ e.preventDefault(); fin(false); } });
@@ -20043,7 +20218,7 @@ document.addEventListener("keydown",e=>{
 /* ───────── Paramétrage : Matières + Compétences ───────── */
 function paramFixSize(){
  const body=document.querySelector("#manageSubjectsModal .modal-body"); if(!body) return;
- const panes=["subj","comp","imp","lock","year","pwd"].map(k=>$("paramPane_"+k)).filter(Boolean);
+ const panes=["subj","comp","imp","lock","rooms","year","pwd"].map(k=>$("paramPane_"+k)).filter(Boolean);
  const was=panes.map(p=>p.hidden);
  body.style.height="";
  if(typeof renderCompHierarchyUI==="function") try{ renderCompHierarchyUI(); }catch(e){}
@@ -20053,11 +20228,12 @@ function paramFixSize(){
  body.style.height=Math.min(max,Math.round(window.innerHeight*0.7))+"px";
 }
 function paramShow(w){
- ["subj","comp","imp","lock","year","pwd"].forEach(k=>{
+ ["subj","comp","imp","lock","rooms","year","pwd"].forEach(k=>{
   const pane=$("paramPane_"+k); if(pane) pane.hidden=(k!==w);
   document.querySelector('#paramTabs [data-p="'+k+'"]')?.classList.toggle("active",k===w);
  });
  if(w==="comp"&&typeof renderCompHierarchyUI==="function") renderCompHierarchyUI();
+ if(w==="rooms"&&typeof renderRooms==="function"){ try{ renderRooms(); }catch(e){} }
 }
 $("paramBtn")?.addEventListener("click",()=>{ openManageSubjectsModal(); paramShow("subj"); paramFixSize(); });
 $("paramTabs")?.addEventListener("click",e=>{ const b=e.target.closest("[data-p]"); if(b) paramShow(b.dataset.p); });
@@ -20542,7 +20718,7 @@ document.addEventListener("click",async ev=>{
  const opts=[["schedule","Emploi du temps","Supprime tous les cours et les feuilles d'appel."],["groups","Groupes","Supprime les groupes et leurs notes globales. Les élèves sont conservés."],["classes","Classes","Supprime chaque classe en entier : élèves, notes, appréciations et toutes données associées."],["tests","Tests en ligne","Supprime les tests et les rendus des élèves."],["subjects","Matières","Vide le registre des matières."],["comps","Compétences","Supprime la hiérarchie des compétences et les évaluations de compétences."],["absences","Absences","Efface toutes les absences enregistrées dans les feuilles d'appel (les appels restent, sans absent)."],["retards","Retards","Efface tous les retards enregistrés dans les feuilles d'appel."],["sanctions","Sanctions","Supprime toutes les sanctions (retenues, travaux à rendre…)."],["notes","Toutes les notes","Supprime toutes les notes et toutes les évaluations (classes et groupes). Les élèves, classes et groupes sont conservés."],["appreciations","Appréciations","Supprime toutes les appréciations par matière et générales."],["homework","Devoirs","Supprime tous les devoirs du cahier de textes et les rendus associés."]];
  pane.innerHTML='<p class="ad-note" style="margin-top:0">Cochez ce que vous souhaitez réinitialiser. Une sauvegarde nommée est créée avant toute suppression.</p>'+opts.map(o=>'<label class="ad-chk"><input type="checkbox" value="'+o[0]+'"><span><strong>'+o[1]+'</strong><br><small>'+o[2]+'</small></span></label>').join("")+'<div class="ad-row"><button type="button" class="btn btn-danger" id="yearGo">Réinitialiser…</button></div>';
  tabs.parentNode.appendChild(pane);
- tabs.addEventListener("click",e=>{ const b=e.target.closest("[data-p]"); if(!b) return; const y=b.dataset.p==="year"; pane.hidden=!y; if(y){ tabs.querySelectorAll("[data-p]").forEach(x=>x.classList.toggle("active",x===b)); ["subj","comp","imp","lock"].forEach(k=>{ const p=$("paramPane_"+k); if(p) p.hidden=true; }); } },true);
+ tabs.addEventListener("click",e=>{ const b=e.target.closest("[data-p]"); if(!b) return; const y=b.dataset.p==="year"; pane.hidden=!y; if(y){ tabs.querySelectorAll("[data-p]").forEach(x=>x.classList.toggle("active",x===b)); ["subj","comp","imp","lock","rooms","pwd"].forEach(k=>{ const p=$("paramPane_"+k); if(p) p.hidden=true; }); } },true);
  $("paramBtn")?.addEventListener("click",()=>{ pane.hidden=true; });
  $("yearGo").addEventListener("click",async()=>{
   if(typeof EDC!=="undefined"&&EDC&&EDC.ro) return;
@@ -20717,7 +20893,7 @@ document.addEventListener("click",async ev=>{
   document.body.classList.toggle("prof-limited",lim());
  };
  /* garde-fous : toute action de gestion est bloquée avant même son gestionnaire */
- const BLOCK="#schAdd,#schAddEvt,#schHol,#schRooms,#schGroups,#addClassBtn,#editClassBtn,#deleteClassBtn,#addGroupBtn,#editGroupBtn,#openAddStudentBtn,#editStudentBtn,#deleteStudentBtn,#paramBtn,#schDetailEdit,#schDelete,#schCancelEv";
+ const BLOCK="#schAdd,#schAddEvt,#schHol,#schGroups,#addClassBtn,#editClassBtn,#deleteClassBtn,#addGroupBtn,#editGroupBtn,#openAddStudentBtn,#editStudentBtn,#deleteStudentBtn,#paramBtn,#schDetailEdit,#schDelete,#schCancelEv";
  document.addEventListener("click",e=>{ if(lim()&&e.target.closest&&e.target.closest(BLOCK)){ e.preventDefault(); e.stopImmediatePropagation(); } },true);
  /* emploi du temps : un non-responsable ne voit que ses cours */
  const _ev=schEvents; schEvents=function(){ const l=_ev.apply(this,arguments); return l; };
@@ -20991,6 +21167,106 @@ function edBlockedKick(){
  try{ sessionStorage.setItem("ed_blocked","1"); }catch(e){}
  authClear(); AUTH.user=AUTH.pass=AUTH.role=""; location.reload();
 }
+</script>
+
+<script id="ed-searchsel">
+/* ═══ Devoirs : les listes « Élève » deviennent des listes déroulantes avec recherche intégrée ═══
+   Le <select> d'origine reste dans la page (masqué) : le reste du code continue de lire sa valeur et d'écouter « change ». */
+(function(){
+ const IDS=["homeworkStudentSelect","homeworkDraftStudentSelect"];
+ const nrm=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+ const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+ const CHEV='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+ let cur=null;
+ function fermer(){
+  if(!cur) return;
+  const c=cur; cur=null;
+  c.panel.remove(); c.btn.setAttribute("aria-expanded","false");
+  document.removeEventListener("mousedown",c.onDown,true); window.removeEventListener("resize",c.onAway); window.removeEventListener("scroll",c.onScroll,true);
+ }
+ function entrees(sel){
+  const out=[];
+  Array.from(sel.children).forEach(n=>{
+   if(n.tagName==="OPTGROUP"){ out.push({g:true,text:n.label}); Array.from(n.children).forEach(o=>out.push({v:o.value,text:o.textContent,dis:o.disabled,grp:n.label})); }
+   else if(n.tagName==="OPTION") out.push({v:n.value,text:n.textContent,dis:n.disabled,grp:""});
+  });
+  return out;
+ }
+ function ouvrir(sel,btn,paint){
+  fermer();
+  const data=entrees(sel);
+  const panel=document.createElement("div"); panel.className="ss-panel"; panel.setAttribute("role","dialog");
+  panel.innerHTML='<div class="ss-search"><input type="text" class="ss-in" placeholder="Rechercher un élève (nom, prénom, classe)…" autocomplete="off" spellcheck="false" aria-label="Rechercher un élève"></div><div class="ss-list" role="listbox"></div>';
+  document.body.appendChild(panel);
+  const inp=panel.querySelector(".ss-in"), list=panel.querySelector(".ss-list");
+  let act=-1;
+  const items=()=>Array.from(list.querySelectorAll(".ss-it:not(.dis)"));
+  const setAct=n=>{ const its=items(); act=n; its.forEach((el,k)=>el.classList.toggle("act",k===n)); if(its[n]&&its[n].scrollIntoView) its[n].scrollIntoView({block:"nearest"}); };
+  function rendre(){
+   const q=nrm(inp.value).split(/\s+/).filter(Boolean);
+   let h="", pendingG=null, n=0;
+   data.forEach(e=>{
+    if(e.g){ pendingG=e.text; return; }
+    if(e.v===""){ if(q.length) return; h+='<div class="ss-it ss-none'+(sel.value===""?" sel":"")+'" role="option" data-v="">— Aucun élève</div>'; return; }
+    const hay=nrm(e.text+" "+e.grp);
+    if(!q.every(t=>hay.indexOf(t)!==-1)) return;
+    if(pendingG!==null&&e.grp===pendingG&&!h.includes('data-g="'+esc(e.grp)+'"')) h+='<div class="ss-grp" data-g="'+esc(e.grp)+'">'+esc(e.grp)+'</div>';
+    h+='<div class="ss-it'+(e.dis?" dis":"")+(e.v===sel.value?" sel":"")+'" role="option" data-v="'+esc(e.v)+'">'+esc(e.text)+'</div>'; n++;
+   });
+   list.innerHTML=h||'<div class="ss-empty">Aucun élève trouvé</div>';
+   setAct(n?0:-1);
+   if(!q.length){ const s=list.querySelector(".ss-it.sel"); if(s&&s.scrollIntoView) s.scrollIntoView({block:"nearest"}); }
+  }
+  function choisir(v){
+   fermer();
+   if(sel.value!==v){ sel.value=v; sel.dispatchEvent(new Event("change",{bubbles:true})); }
+   paint(); btn.focus&&btn.focus();
+  }
+  function placer(){
+   const r=btn.getBoundingClientRect(), W=Math.max(r.width,280), vw=window.innerWidth, vh=window.innerHeight;
+   const left=Math.max(8,Math.min(r.left,vw-W-8));
+   const below=vh-r.bottom-12, above=r.top-12, up=below<260&&above>below;
+   const space=Math.max(160,up?above:below);
+   panel.style.left=left+"px"; panel.style.width=W+"px";
+   list.style.maxHeight=Math.min(320,space-58)+"px";
+   if(up){ panel.style.top=""; panel.style.bottom=(vh-r.top+4)+"px"; } else { panel.style.bottom=""; panel.style.top=(r.bottom+4)+"px"; }
+  }
+  const onDown=e=>{ if(panel.contains(e.target)||btn.contains(e.target)) return; fermer(); };
+  const onAway=()=>fermer();
+  const onScroll=e=>{ if(!panel.contains(e.target)) fermer(); };
+  cur={sel,btn,panel,onDown,onAway,onScroll};
+  document.addEventListener("mousedown",onDown,true); window.addEventListener("resize",onAway); window.addEventListener("scroll",onScroll,true);
+  btn.setAttribute("aria-expanded","true");
+  inp.addEventListener("input",rendre);
+  inp.addEventListener("keydown",e=>{
+   const its=items();
+   if(e.key==="ArrowDown"){ e.preventDefault(); if(its.length) setAct((act+1)%its.length); }
+   else if(e.key==="ArrowUp"){ e.preventDefault(); if(its.length) setAct((act-1+its.length)%its.length); }
+   else if(e.key==="Enter"){ e.preventDefault(); const it=its[act>=0?act:0]; if(it) choisir(it.dataset.v); }
+   else if(e.key==="Escape"){ e.preventDefault(); e.stopPropagation(); fermer(); btn.focus&&btn.focus(); }
+   else if(e.key==="Tab"){ fermer(); }
+  });
+  list.addEventListener("click",e=>{ const it=e.target.closest(".ss-it"); if(it&&!it.classList.contains("dis")) choisir(it.dataset.v); });
+  list.addEventListener("mousemove",e=>{ const it=e.target.closest(".ss-it:not(.dis)"); if(!it) return; const k=items().indexOf(it); if(k!==act) setAct(k); });
+  rendre(); placer(); inp.focus();
+ }
+ function ameliorer(sel){
+  if(!sel||sel.dataset.ss==="1") return;
+  sel.dataset.ss="1"; sel.style.display="none";
+  const btn=document.createElement("button"); btn.type="button"; btn.className="ss-btn";
+  btn.setAttribute("aria-haspopup","listbox"); btn.setAttribute("aria-expanded","false");
+  btn.setAttribute("aria-label",sel.getAttribute("aria-label")||"Élève");
+  const paint=()=>{ const o=sel.options[sel.selectedIndex], t=(o&&o.value!=="")?o.textContent:""; btn.innerHTML='<span class="ss-val'+(t?"":" ss-ph")+'">'+esc(t||"Rechercher un élève…")+'</span>'+CHEV; };
+  paint();
+  sel.insertAdjacentElement("afterend",btn);
+  btn.addEventListener("click",()=>{ if(cur&&cur.sel===sel) fermer(); else ouvrir(sel,btn,paint); });
+  sel.addEventListener("change",paint);
+ }
+ let planned=false;
+ function scan(){ planned=false; IDS.forEach(id=>ameliorer(document.getElementById(id))); }
+ new MutationObserver(()=>{ if(!planned){ planned=true; requestAnimationFrame(scan); } }).observe(document.body,{childList:true,subtree:true});
+ scan();
+})();
 </script>
 </body>
 </html>
