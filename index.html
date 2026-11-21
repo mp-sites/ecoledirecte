@@ -2,6 +2,8 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com data:; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src https://script.google.com https://script.googleusercontent.com data: blob:; frame-src 'self' blob:; worker-src blob:; manifest-src 'self' data: blob:; base-uri 'none'; form-action 'self'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -1464,6 +1466,56 @@ html{ -webkit-text-size-adjust:100%; touch-action:manipulation }
 #consultSearch{width:100%;padding:12px 14px 12px 42px;border:1px solid var(--border);border-radius:10px;font-size:15px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3.5-3.5'/%3E%3C/svg%3E") no-repeat 14px center;box-shadow:0 1px 3px rgba(16,24,40,.06)}
 #consultSearch:focus{outline:none;border-color:#4db5f5;box-shadow:0 0 0 3px rgba(1,128,207,.15)}
 #consultSearch.open{border-bottom-left-radius:0;border-bottom-right-radius:0;border-color:#4db5f5}
+#paramPane_pwd .cs-wrap{position:relative;max-width:560px;margin:0 0 6px}
+#pwdSearch{width:100%;box-sizing:border-box;padding:12px 40px 12px 42px;border:1px solid var(--border);border-radius:10px;font-size:15px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3.5-3.5'/%3E%3C/svg%3E") no-repeat 14px center;box-shadow:0 1px 3px rgba(16,24,40,.06);-webkit-appearance:none;appearance:none}
+#pwdSearch::-webkit-search-cancel-button{display:none}
+#pwdSearch:focus{outline:none;border-color:#4db5f5;box-shadow:0 0 0 3px rgba(1,128,207,.15)}
+#pwdSearch.open{border-bottom-left-radius:0;border-bottom-right-radius:0;border-color:#4db5f5}
+#paramPane_pwd .cs-clear{position:absolute;right:8px;top:0;bottom:0;margin:auto 0;width:28px;height:28px;padding:0;border:0;border-radius:50%;background:transparent;color:#64748b;cursor:pointer;display:flex;align-items:center;justify-content:center}
+#paramPane_pwd .cs-clear[hidden]{display:none}
+#paramPane_pwd .cs-clear:hover{background:#e2e8f0;color:#0f172a}
+
+/* ── Paramétrage > Mots de passe : fiche élève moderne ── */
+.pw-card{border:1px solid #d6e6f2;border-radius:16px;padding:18px;background:linear-gradient(180deg,#fff,#f7fbff);box-shadow:0 4px 18px rgba(16,24,40,.06);max-width:560px;box-sizing:border-box}
+.pw-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.pw-av{width:44px;height:44px;border-radius:50%;background:var(--grad-v);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;flex:none}
+.pw-who{flex:1;min-width:0}
+.pw-name{font-weight:700;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pw-cls{color:var(--muted);font-size:13px}
+.pw-badge{font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.pw-b-on{background:#e7f7ee;color:#0a7a3d}.pw-b-off{background:#fdecea;color:#b42318}.pw-b-none{background:#eef2f6;color:#64748b}
+.pw-hint{margin:0 0 10px;color:var(--muted);font-size:14px}
+.pw-grid{display:grid;gap:12px;margin-top:16px}
+.pw-field{position:relative}
+.pw-in{width:100%;box-sizing:border-box;height:56px;padding:22px 72px 6px 46px;border:1.5px solid var(--border);border-radius:12px;background:#fff;font:inherit;font-size:15px;color:var(--text);transition:border-color .15s,box-shadow .15s;-webkit-appearance:none;appearance:none;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+.pw-in.pw-3{padding-right:112px}
+.pw-in.pw-mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.3px}
+.pw-in:hover{border-color:#b9d9ee}
+.pw-in:focus{outline:none;border-color:#4db5f5;box-shadow:0 0 0 4px rgba(1,128,207,.14)}
+.pw-field label{position:absolute;left:46px;top:50%;transform:translateY(-50%);line-height:1;color:var(--muted);font-size:15px;pointer-events:none;transition:top .15s,font-size .15s,color .15s,transform .15s}
+.pw-in:focus + label,.pw-in:not(:placeholder-shown) + label{top:11px;transform:none;font-size:11.5px;font-weight:600;color:var(--primary)}
+.pw-ic{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:20px;height:20px;color:#7a95aa;pointer-events:none;transition:color .15s}
+.pw-field:focus-within .pw-ic{color:var(--primary)}
+.pw-ic svg,.pw-ib svg,.pw-btn svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.pw-ic svg{width:20px;height:20px}
+.pw-acts{position:absolute;right:6px;top:0;bottom:0;display:flex;align-items:center;gap:2px}
+.pw-ib{position:relative;width:34px;height:34px;padding:0;border:0;border-radius:9px;background:transparent;color:#64748b;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s}
+.pw-ib svg{width:18px;height:18px}
+.pw-ib:hover{background:#e8f4fc;color:var(--primary)}
+.pw-ib.done{color:#0a7a3d;background:#e7f7ee}
+.pw-note{display:flex;gap:10px;margin-top:14px;padding:11px 13px;border-radius:12px;background:#fff7e6;border:1px solid #fde2a8;color:#7a4b00;font-size:13px;line-height:1.45}
+.pw-note svg{width:18px;height:18px;flex:none;margin-top:1px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.pw-warn{margin-top:12px;color:#b42318;font-size:13px}
+.pw-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.pw-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:42px;padding:0 18px;border-radius:11px;border:1px solid var(--border);background:#fff;color:var(--text);font:inherit;font-weight:600;font-size:14px;cursor:pointer;transition:filter .15s,box-shadow .15s,background .15s}
+.pw-btn svg{width:16px;height:16px}
+.pw-btn:hover:not([disabled]){background:#f3f8fc}
+.pw-btn[disabled]{opacity:.7;cursor:wait}
+.pw-primary{background:var(--grad);color:#fff;border-color:#0075bf;box-shadow:0 1px 3px rgba(0,117,191,.35)}
+.pw-primary:hover:not([disabled]){background:var(--grad);filter:brightness(1.1);box-shadow:0 3px 8px rgba(0,117,191,.35)}
+.pw-msg{margin-top:10px;font-size:13px;min-height:0}
+.pw-msg.ok{color:#0a7a3d}.pw-msg.err{color:#b42318}
+@media (max-width:480px){.pw-card{padding:14px}.pw-actions .pw-btn{flex:1}}
 .cs-list{position:absolute;left:0;right:0;top:100%;z-index:20;max-height:320px;overflow-y:auto;background:#fff;border:1px solid #4db5f5;border-top:1px solid var(--border);border-radius:0 0 10px 10px;box-shadow:0 10px 24px rgba(16,24,40,.14)}
 .cs-list[hidden]{display:none}
 .cs-it{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 14px;cursor:pointer;font-size:14.5px}
@@ -2590,6 +2642,7 @@ button.hw-note-ico:hover{ background:#eef2f7 }
   <input type="text" id="loginUser" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" required>
   <label for="loginPass">Mot de passe</label>
   <input type="password" id="loginPass" name="password" autocomplete="current-password" required>
+  <div id="loginSupWrap" style="display:none"><label for="loginSup">Mot de passe suprême</label><input type="password" id="loginSup" name="supreme" autocomplete="off"></div>
   <div style="height:16px"></div>
   <button type="submit" class="btn btn-primary" id="loginBtn">Se connecter</button>
   <div id="loginError"></div>
@@ -2611,6 +2664,7 @@ button.hw-note-ico:hover{ background:#eef2f7 }
     <label>Identifiant</label><input id="settingsUser">
     <label>Nouveau mot de passe</label><input type="password" id="settingsPass" placeholder="Laisser vide pour ne pas changer" autocomplete="new-password">
     <label>Confirmer le mot de passe</label><input type="password" id="settingsPass2" autocomplete="new-password">
+    <label>Mot de passe actuel <small>(nécessaire pour changer le mot de passe)</small></label><input type="password" id="settingsOld" autocomplete="current-password">
     <div id="settingsMsg"></div>
     <div class="modal-actions">
      <button type="button" class="btn" id="settingsCancel">Annuler</button>
@@ -3139,6 +3193,7 @@ button.hw-note-ico:hover{ background:#eef2f7 }
     <button type="button" class="subtab-btn" data-p="comp">Compétences</button>
     <button type="button" class="subtab-btn" data-p="imp">Importation</button>
     <button type="button" class="subtab-btn" data-p="lock">Verrouillage trimestres</button>
+    <button type="button" class="subtab-btn" data-p="pwd">Mots de passe</button>
    </div>
    <div id="paramPane_subj">
    <div id="subjectsEmptyInside" class="import-banner" style="display:none;">
@@ -3166,6 +3221,15 @@ button.hw-note-ico:hover{ background:#eef2f7 }
   <div class="lock-item"><span class="lock-label">Trimestre 3</span><button class="lock-btn" data-lock="T3" title="Verrouiller / déverrouiller le trimestre 3"><svg class="lk-ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.6-1.7"/></svg></button></div>
   <div class="lock-item"><span class="lock-label">Trimestre 4</span><button class="lock-btn" data-lock="T4" title="Verrouiller / déverrouiller le trimestre 4"><svg class="lk-ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.6-1.7"/></svg></button></div>
  </div>
+   </div>
+   <div id="paramPane_pwd" hidden>
+    <p class="ad-note" style="margin-top:0">Tapez le nom d'un élève, puis cliquez sur « Dévoiler » pour afficher son identifiant et son mot de passe. Vous pouvez aussi les modifier ici. Un compte créé avant cette fonction devient lisible dès la prochaine connexion de l'élève.</p>
+    <div class="cs-wrap">
+     <input type="text" id="pwdSearch" placeholder="Rechercher un élève (nom ou prénom)…" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="pwdList">
+     <button type="button" class="cs-clear" id="pwdClear" aria-label="Effacer la saisie" title="Effacer" hidden><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+     <div class="cs-list" id="pwdList" role="listbox" hidden></div>
+    </div>
+    <div id="pwdCard" style="margin-top:14px"></div>
    </div>
    <div id="paramPane_comp" hidden>
    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px;">
@@ -5546,7 +5610,7 @@ function applyLocksEffects(){
 const addStudentModal=document.getElementById("addStudentModal");
 function openAddStudentModal(){
  const sel=document.getElementById("addStudentClassSelect");
- sel.innerHTML='<option value="">- Aucune classe -</option>'+DATA.classes.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(c=>`<option value="${c.id}">${c.name}</option>`).join("");
+ sel.innerHTML='<option value="">- Aucune classe -</option>'+DATA.classes.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(c=>`<option value="${c.id}">${escHtml(c.name)}</option>`).join("");
  sel.value=document.getElementById("newClassSelect").value||"";
  ["newFirst","newLast","newLogin","newPwd"].forEach(i=>document.getElementById(i).value="");
  addStudentModal.classList.add("open"); addStudentModal.setAttribute("aria-hidden","false");
@@ -5564,9 +5628,10 @@ document.getElementById("addStudentForm").addEventListener("submit",(e)=>{
  if(!first||!last) return;
  const login=document.getElementById("newLogin").value.trim(), pwd=document.getElementById("newPwd").value;
  if(!login||!pwd){alert("Renseignez l'identifiant et le mot de passe de l'élève.");return;}
+ if(pwd.length<6){alert("Le mot de passe de l'élève doit faire au moins 6 caractères.");return;}
  const loginErr=checkStudentLogin(login,null); if(loginErr){alert(loginErr);return;}
  const id=(first+'_'+last).toLowerCase().replace(/\s+/g,'_')+'_'+Math.random().toString(36).slice(2,6);
- ACCOUNTS[id]={login,pwd};
+ ACCOUNTS[id]={login,pwd,hasPwd:true};
  DATA.students.push({id,first,last,classId,sex:(document.querySelector('input[name="newSex"]:checked')||{}).value||"M"});
  DATA.notes[id]=[];
  if(classId){const cls=classLike(classId);if(cls&&!cls.memberIds.includes(id)) cls.memberIds.push(id);}
@@ -5970,7 +6035,7 @@ function openGeneralStatsForClass(classId, period, subject) {
   if(detailBody && detailModal){
     detailBody.innerHTML = `
       <h3>Statistiques de la sélection</h3>
-      <p><strong>Classe :</strong> ${cls.name}</p>
+      <p><strong>Classe :</strong> ${escHtml(cls.name)}</p>
       <p><strong>Période :</strong> ${period === "YEAR" ? "Année" : period}</p>
       <p><strong>Matière :</strong> ${subject === "__ALL__" ? "Toutes" : subject}</p>
       <div style="margin-top:12px;padding:12px;background:#f1faff;border-radius:0;border:1px solid #bfe6ff;">
@@ -6055,9 +6120,9 @@ function showEvalStatsOnly(ev, classId) {
   detailBody.innerHTML = `
     ${ev.hwKey?'<span class="quiz-badge">Quiz</span>':""}
     <h3 style="margin-top:0;color:#0471b5;">Statistiques de l'évaluation</h3>
-    <p><strong>Classe :</strong> ${cls.name}</p>
+    <p><strong>Classe :</strong> ${escHtml(cls.name)}</p>
     <p><strong>Évaluation :</strong> ${ev.label || '-'}</p>
-    <p><strong>Matière :</strong> ${ev.subject}</p>
+    <p><strong>Matière :</strong> ${escHtml(ev.subject)}</p>
     <p><strong>Date :</strong> ${ev.dateJJMMAA || '-'}</p>
     <p><strong>Barème :</strong> /${fmt(ev.outof)} (Coef. ${fmtCoef(ev.coef)})</p>
     ${classStatsHtml}${baremeHtml}${compsHtml}
@@ -6092,7 +6157,7 @@ function openStudent(studentId){
 <div class="student-header-section">
  <div style="display:flex;align-items:center;gap:12px;justify-content:space-between;">
   <div style="display:flex;align-items:center;gap:8px;">
-   <div class="stu-name" style="font-weight:700;font-size:18px;">${stu.last} ${stu.first}</div>
+   <div class="stu-name" style="font-weight:700;font-size:18px;">${escHtml(stu.last)} ${escHtml(stu.first)}</div>
    <div class="stu-class" style="color:#64748b;">${clsObj?.name||'-'}</div>
   </div>
   <div style="display:flex;gap:8px;">
@@ -6544,7 +6609,7 @@ function renderProfViewForPeriod(studentId,periodKey){
    const _tplG=(()=>{ for(const c of [clsObjRef,...grpEns().filter(x=>(x.memberIds||[]).includes(studentId))].filter(Boolean)){ const e=(c.compEvals||[]).find(x=>x.id===g.id); if(e) return e.template||e.compTemplate||[]; } return []; })();
    const _incG=(g.items||[]).some(c=>!c.color)||(_tplG.length>0&&(g.items||[]).filter(c=>c.color).length<_tplG.length);
    if(isClassGrp ? _incG : !isFullyEvaluated(g,null,studentId)) labelHtmlC += `<span title="Évaluation incomplète" style="margin-right:4px;">${ICO_WARN}</span>`;
-   labelHtmlC += `<span style="border-left:4px solid #109ef5;padding-left:6px;display:inline-block;">${g.label}</span>`;
+   labelHtmlC += `<span style="border-left:4px solid #109ef5;padding-left:6px;display:inline-block;">${escHtml(g.label)}</span>`;
    tdLabelC.innerHTML = labelHtmlC;
 
    const tdDateC=document.createElement("td"); tdDateC.textContent=g.dateJJMMAA||"";
@@ -6697,7 +6762,7 @@ function renderEleveViewForPeriod(studentId,periodKey){
       const subDom=c.subDomain||c.level||"";
       const colorClass = c.color || 'white';
       const warnIcon = !c.color ? '<span style="font-size:12px;line-height:0;">'+ICO_WARN+'</span>' : '';
-      return `<div class="color-dot ${colorClass}" style="width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;" title="${subDom}${c.domain?' - '+c.domain:''} : ${c.name}">${warnIcon}</div>`
+      return `<div class="color-dot ${colorClass}" style="width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;" title="${subDom}${c.domain?' - '+c.domain:''} : ${escHtml(c.name)}">${warnIcon}</div>`
     }).join("")}</div>`;
     pill.addEventListener("click",()=>{
      const detailBody=document.getElementById("noteDetailBody");
@@ -6832,7 +6897,7 @@ function openStudentCompModal(studentId){
   let subs=Array.isArray(classSubs)&&classSubs.length?classSubs:SUBJECT_REGISTRY.map(s=>typeof s==='object'?s.name:s);
   subs=subs.map(s=>typeof s==='object'?s.name:s);
   if(!subs.includes("Compétences")) subs.push("Compétences");
-  subSel.innerHTML=subs.map(name=>`<option>${name}</option>`).join("");
+  subSel.innerHTML=subs.map(name=>`<option>${escHtml(name)}</option>`).join("");
   subSel.value="Compétences";
  }
  const pSel=document.getElementById("studentCompPeriod");
@@ -6863,7 +6928,7 @@ function renderStudentCompListUI(){
     <div style="flex:1;">
       <div style="font-size:0.8em; color:#64748b;">${h.cycle}</div>
       <div style="font-weight:700;color:#0471b5;font-size:0.95em;">${h.domain} (${h.subDomain})</div>
-      <div style="margin-top:2px;">${item.name}</div>
+      <div style="margin-top:2px;">${escHtml(item.name)}</div>
     </div>
     <button class="btn btn-danger" style="padding:2px 8px;font-size:12px;margin-left:8px;">&times;</button>
   </div>
@@ -6943,7 +7008,7 @@ function openEditStudentComp(studentId,groupId){
   let subs=Array.isArray(classSubs)&&classSubs.length?classSubs:SUBJECT_REGISTRY.map(s=>typeof s==='object'?s.name:s);
   subs=subs.map(s=>typeof s==='object'?s.name:s);
   if(!subs.includes("Compétences")) subs.push("Compétences");
-  subSel.innerHTML=subs.map(name=>`<option>${name}</option>`).join("");
+  subSel.innerHTML=subs.map(name=>`<option>${escHtml(name)}</option>`).join("");
   if(comps[0]?.subject) subSel.value=comps[0].subject;
  }
  const pSel=document.getElementById("studentCompPeriod");
@@ -7002,7 +7067,7 @@ function openClassCompSetupModal(classId,prefillSubject=null,periodKey=null,exis
   let subs=(cls?.subjects||[]).map(s=>typeof s==='object'?s.name:s);
   if(!subs||!subs.length) subs=SUBJECT_REGISTRY.map(s=>typeof s==='object'?s.name:s);
   if(!subs.includes("Compétences")) subs.push("Compétences");
-  subSel.innerHTML=subs.map(name=>`<option>${name}</option>`).join("");
+  subSel.innerHTML=subs.map(name=>`<option>${escHtml(name)}</option>`).join("");
   subSel.value=prefillSubject||"Compétences";
  }
  const cWrap=document.getElementById("classCompSetupCommentWrap"),cInp=document.getElementById("classCompSetupComment");
@@ -7045,7 +7110,7 @@ function renderClassCompSetupListUI(){
  const list=document.getElementById("classCompSetupList"); list.innerHTML="";
  CURRENT_COMP_LIST.forEach((item,idx)=>{
   const div=document.createElement("div"); div.className="comp-item";
-  div.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;"><span><strong>${item.domain}</strong> - ${item.name}</span><button class="btn btn-danger" style="padding:2px 6px;">&times;</button></div>`;
+  div.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;"><span><strong>${item.domain}</strong> - ${escHtml(item.name)}</span><button class="btn btn-danger" style="padding:2px 6px;">&times;</button></div>`;
   div.querySelector("button").addEventListener("click",()=>{
    /* supprime la compétence ET décale les résultats saisis des compétences suivantes (ils sont rangés par position) */
    const doRemove=()=>{
@@ -7104,7 +7169,7 @@ function renderGradingGrid(){
   const subDomainText = c.subDomain || c.level || "";
   html+=`<th class="comp-header-clickable" data-cidx="${cIdx}" style="padding:8px;border-bottom:1px solid #ccc;min-width:150px;cursor:pointer;background:#f1faff;">
     <div style="display:flex;align-items:center;justify-content:center;gap:4px;">
-      <span>${c.name}</span>
+      <span>${escHtml(c.name)}</span>
       <span style="font-size:12px;color:#109ef5;">✏️</span>
     </div>
     <small>${domainText}${subDomainText?' - '+subDomainText:''}</small>
@@ -7118,7 +7183,7 @@ function renderGradingGrid(){
    const n=arr.find(m=>m.classCommon&&m.classId===CURRENT_CLASS_ID_FOR_COMP&&m.classNoteId===CLASS_COMP_LINK_TO_EVAL_ID);
    if(n){let disp=isSpecial(n)?n.noteText||"":fmt(n.note)+" / "+fmt(n.outof);noteBadge=`<span style="font-size:12px;color:#0471b5;background:#eef9ff;border:1px solid #b9e2fc;padding:2px 6px;border-radius:0;">${disp}</span>`;}
   }
-  html+=`<tr><td style="padding:8px;border-bottom:1px solid #eee;display:flex;align-items:center;gap:8px;"><span style="flex:1;">${stu.last} ${stu.first}</span>${noteBadge}<button type="button" class="btn" data-stu-comment="${stu.id}" style="padding:2px 6px;font-size:12px;">+</button></td>`;
+  html+=`<tr><td style="padding:8px;border-bottom:1px solid #eee;display:flex;align-items:center;gap:8px;"><span style="flex:1;">${escHtml(stu.last)} ${escHtml(stu.first)}</span>${noteBadge}<button type="button" class="btn" data-stu-comment="${stu.id}" style="padding:2px 6px;font-size:12px;">+</button></td>`;
   CURRENT_COMP_LIST.forEach((c,cIdx)=>{
    const myColor=(CLASS_COMP_GRADES[stu.id]||{})[cIdx]||null;
    html+=`<td style="padding:8px;border-bottom:1px solid #eee;"><div class="comp-grade-cell" data-stu="${stu.id}" data-cidx="${cIdx}" style="display:flex;gap:4px;flex-wrap:wrap;">${renderColorDotsHtml(myColor)}</div></td>`;
@@ -7356,7 +7421,7 @@ function renderNoteModalCompetencies(){
     <div style="flex:1;">
       <div style="font-size:0.8em; color:#64748b;">${h.cycle}</div>
       <div style="font-size:0.9em;"><strong>${h.domain} (${h.subDomain})</strong></div>
-      <div style="font-size:0.9em;margin-top:2px;">${c.name}</div>
+      <div style="font-size:0.9em;margin-top:2px;">${escHtml(c.name)}</div>
     </div>
     <span style="cursor:pointer;color:#ef4444;font-weight:bold;padding:0 4px;" onclick="removeTempNoteComp(${idx})">&times;</span>
   </div>
@@ -7737,7 +7802,7 @@ function openNoteFormModal(studentId=null, noteToEdit=null, editIndex=null){
   // Remplit les selects
   const noteStudentSelect = document.getElementById("noteStudentSelect");
   noteStudentSelect.innerHTML = DATA.students.slice().sort((a,b)=>a.last.localeCompare(b.last)||a.first.localeCompare(b.first))
-    .map(s=>`<option value="${s.id}"${studentId===s.id?' selected':""}>${s.last} ${s.first}</option>`).join("");
+    .map(s=>`<option value="${s.id}"${studentId===s.id?' selected':""}>${escHtml(s.last)} ${escHtml(s.first)}</option>`).join("");
 
   const stu = DATA.students.find(s=>s.id===studentId);
   const classSubs = DATA.classes.find(c=>c.id===stu?.classId)?.subjects;
@@ -8914,7 +8979,7 @@ function renderCompList(){
   filtered.forEach(c=>{
     const isChecked=PENDING_COMP_SELECTION_INNER.some(x=>x.cycle===c.cycle&&x.domain===c.domain&&x.subDomain===c.subDomain&&x.name===c.name);
     const div=document.createElement("div");div.className="comp-item"+(isChecked?" selected":"");
-    div.innerHTML=`<input type="checkbox" style="margin-top:4px;width:18px;height:18px;"${isChecked?" checked":""}><div style="flex:1;"><strong>${c.cycle} - ${c.subDomain}</strong><br><span style="color:#64748b;font-size:0.9em;">${c.domain}</span><br>${c.name}</div>`;
+    div.innerHTML=`<input type="checkbox" style="margin-top:4px;width:18px;height:18px;"${isChecked?" checked":""}><div style="flex:1;"><strong>${c.cycle} - ${c.subDomain}</strong><br><span style="color:#64748b;font-size:0.9em;">${c.domain}</span><br>${escHtml(c.name)}</div>`;
     div.style.display="flex";div.style.gap="10px";div.style.alignItems="flex-start";
     const chk=div.querySelector("input");
     const toggle=()=>{
@@ -8970,7 +9035,7 @@ function showNoteDetailByObj(n, studentId){
   const stu = DATA.students.find(s => s.id === studentId);
   let studentNameHtml = "";
   if(stu && !isEleveTab) {
-    studentNameHtml = `<p><strong>Élève :</strong> ${stu.last} ${stu.first}</p>`;
+    studentNameHtml = `<p><strong>Élève :</strong> ${escHtml(stu.last)} ${escHtml(stu.first)}</p>`;
   }
 
   let displayed;
@@ -9197,17 +9262,17 @@ function renderGroupList(){
 function renderClassSelects(){
  ensureSubjectRegistry();
  const _ncs=document.getElementById("newClassSelect"), _ncsPrev=_ncs.value;
- _ncs.innerHTML='<option value="">Toutes les classes</option>'+DATA.classes.filter(c=>window.edOkCls(c.id,null)).slice().sort((a,b)=>a.name.localeCompare(b.name)).map(c=>`<option value="${c.id}">${c.name}</option>`).join("");
+ _ncs.innerHTML='<option value="">Toutes les classes</option>'+DATA.classes.filter(c=>window.edOkCls(c.id,null)).slice().sort((a,b)=>a.name.localeCompare(b.name)).map(c=>`<option value="${c.id}">${escHtml(c.name)}</option>`).join("");
  if(_ncsPrev && DATA.classes.some(c=>c.id===_ncsPrev)) _ncs.value=_ncsPrev;
  const _grpOptions=()=>'<option value="">Tous les groupes</option>'+grpUi().filter(g=>window.edOkCls(g.id,null)).slice().sort((a,b)=>a.name.localeCompare(b.name,"fr",{numeric:true,sensitivity:"base"})).map(g=>`<option value="${g.id}">${escHtml(g.name)}</option>`).join("");
  const _ngs=document.getElementById("newGroupSelect");
  if(_ngs){ const _prev=_ngs.value; _ngs.innerHTML=_grpOptions(); if(_prev && grpEns().some(g=>g.id===_prev)) _ngs.value=_prev; }
  const classSelect=document.getElementById("classSelect");
- if(classSelect) classSelect.innerHTML=DATA.classes.filter(c=>window.edOkCls(c.id,null)).slice().sort((a,b)=>a.name.localeCompare(b.name)).map(c=>`<option value="${c.id}">${c.name}</option>`).join("")+(grpUi().length?`<optgroup label="Groupes">${grpUi().filter(g=>window.edOkCls(g.id,null)).slice().sort((a,b)=>a.name.localeCompare(b.name,"fr",{numeric:true,sensitivity:"base"})).map(g=>`<option value="${g.id}">${escHtml(g.name)}</option>`).join("")}</optgroup>`:"");
+ if(classSelect) classSelect.innerHTML=DATA.classes.filter(c=>window.edOkCls(c.id,null)).slice().sort((a,b)=>a.name.localeCompare(b.name)).map(c=>`<option value="${c.id}">${escHtml(c.name)}</option>`).join("")+(grpUi().length?`<optgroup label="Groupes">${grpUi().filter(g=>window.edOkCls(g.id,null)).slice().sort((a,b)=>a.name.localeCompare(b.name,"fr",{numeric:true,sensitivity:"base"})).map(g=>`<option value="${g.id}">${escHtml(g.name)}</option>`).join("")}</optgroup>`:"");
  const classSubject=document.getElementById("classSubject");
  if(classSubject) classSubject.innerHTML=SUBJECT_REGISTRY.map(s=>`<option>${typeof s==='object'?s.name:s}</option>`).join("");
  const appFilter=document.getElementById("appreciationClassFilter");
- if(appFilter){ const _p=appFilter.value; appFilter.innerHTML='<option value="">Toutes les classes</option>'+DATA.classes.filter(c=>window.edOkCls(c.id,null)).slice().sort((a,b)=>a.name.localeCompare(b.name)).map(c=>`<option value="${c.id}">${c.name}</option>`).join(""); if(_p && DATA.classes.some(c=>c.id===_p)) appFilter.value=_p; }
+ if(appFilter){ const _p=appFilter.value; appFilter.innerHTML='<option value="">Toutes les classes</option>'+DATA.classes.filter(c=>window.edOkCls(c.id,null)).slice().sort((a,b)=>a.name.localeCompare(b.name)).map(c=>`<option value="${c.id}">${escHtml(c.name)}</option>`).join(""); if(_p && DATA.classes.some(c=>c.id===_p)) appFilter.value=_p; }
  const appGroupFilter=document.getElementById("appreciationGroupFilter");
  if(appGroupFilter){ const _p=appGroupFilter.value; appGroupFilter.innerHTML=_grpOptions(); if(_p && grpEns().some(g=>g.id===_p)) appGroupFilter.value=_p; }
 }
@@ -9717,7 +9782,7 @@ function renderClassEvalComps(){
     const div = document.createElement("div");
     div.className = "comp-pill";
     div.style.cssText = "display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:#eef9ff;border:1px solid #b9e2fc;border-radius:999px;font-size:12px;color:#0075bf;";
-    div.innerHTML = `<span>${c.name} (${c.domain})</span><span style="color:#ef4444;font-weight:bold;cursor:pointer;padding-left:4px;">&times;</span>`;
+    div.innerHTML = `<span>${escHtml(c.name)} (${c.domain})</span><span style="color:#ef4444;font-weight:bold;cursor:pointer;padding-left:4px;">&times;</span>`;
     div.querySelector("span:last-child").addEventListener("click", (e)=>{
       e.stopPropagation();
       const doRemove=()=>{ CURRENT_CLASS_EVAL_COMPS.splice(idx, 1); renderClassEvalComps(); };
@@ -10046,7 +10111,7 @@ function openEvalTableModal(classId, ev){
  <div class="card">
  <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
   <div>
-   <strong>${cls.name}</strong> — ${ev.subject} — ${ev.label||"-"} — ${ev.dateJJMMAA} — Sur ${fmt(ev.outof)} — Coef ${fmtCoef(ev.coef)} — ${ev.period||"YEAR"}
+   <strong>${escHtml(cls.name)}</strong> — ${escHtml(ev.subject)} — ${ev.label||"-"} — ${ev.dateJJMMAA} — Sur ${fmt(ev.outof)} — Coef ${fmtCoef(ev.coef)} — ${ev.period||"YEAR"}
    ${hasBareme?'<span class="bareme-badge">📊 Barème</span>':''}
    ${ev.defaultImportant?'⭐':""}
   </div>
@@ -10119,7 +10184,7 @@ function openEvalTableModal(classId, ev){
   const important=current?!!current.important:!!ev.defaultImportant;
   const tr=document.createElement("tr");
 
-  let rowHtml=`<td>${idx+1}</td><td>${stu.last} ${stu.first}</td>`;
+  let rowHtml=`<td>${idx+1}</td><td>${escHtml(stu.last)} ${escHtml(stu.first)}</td>`;
 
   if(hasBareme){
    // Barème : colonne total + colonnes par critère
@@ -10352,9 +10417,9 @@ function openEditStudentModal(){
  const id=document.getElementById("studentList").value; if(!id) return;
  const stu=DATA.students.find(s=>s.id===id); if(!stu) return;
  document.getElementById("editFirst").value=stu.first; document.getElementById("editLast").value=stu.last; document.querySelectorAll('input[name="editSex"]').forEach(r=>r.checked=(r.value===(stu.sex==="F"?"F":"M")));
- document.getElementById("editClassSelect").innerHTML='<option value="">-</option>'+DATA.classes.map(c=>`<option value="${c.id}">${c.name}</option>`).join("");
+ document.getElementById("editClassSelect").innerHTML='<option value="">-</option>'+DATA.classes.map(c=>`<option value="${c.id}">${escHtml(c.name)}</option>`).join("");
  document.getElementById("editClassSelect").value=stu.classId||"";
- document.getElementById("editLogin").value=ACCOUNTS[id]?.login||""; document.getElementById("editPwd").value=ACCOUNTS[id]?.pwd||""; try{edLockRefresh(id);}catch(e){}
+ document.getElementById("editLogin").value=ACCOUNTS[id]?.login||""; document.getElementById("editPwd").value=""; document.getElementById("editPwd").placeholder=ACCOUNTS[id]?.hasPwd?"Laisser vide pour ne pas changer":""; try{edLockRefresh(id);}catch(e){}
  editStudentModal.classList.add("open");editStudentModal.setAttribute("aria-hidden","false");
 }
 function closeEditStudentModal(){editStudentModal.classList.remove("open");editStudentModal.setAttribute("aria-hidden","true");}
@@ -10369,9 +10434,11 @@ document.getElementById("editStudentForm").addEventListener("submit",e=>{
  const newLast=document.getElementById("editLast").value.trim();
  const newClass=document.getElementById("editClassSelect").value||"";
  const newLogin=document.getElementById("editLogin").value.trim(), newPwd=document.getElementById("editPwd").value;
- if((newLogin&&!newPwd)||(!newLogin&&newPwd)){alert("Renseignez l'identifiant ET le mot de passe (ou laissez les deux vides).");return;}
+ const hadPwd=!!(ACCOUNTS[id]&&ACCOUNTS[id].hasPwd);
+ if((newLogin&&!newPwd&&!hadPwd)||(!newLogin&&newPwd)){alert("Renseignez l'identifiant ET le mot de passe (ou laissez les deux vides).");return;}
+ if(newPwd&&newPwd.length<6){alert("Le mot de passe de l'élève doit faire au moins 6 caractères.");return;}
  if(newLogin){const e2=checkStudentLogin(newLogin,id); if(e2){alert(e2);return;}}
- if(newLogin){ const o=ACCOUNTS[id]; ACCOUNTS[id]={login:newLogin,pwd:newPwd,bloque:!!(o&&o.bloque),auto:!!(o&&o.auto&&o.pwd===newPwd)}; } else delete ACCOUNTS[id];
+ if(newLogin){ const o=ACCOUNTS[id]; ACCOUNTS[id]={login:newLogin,pwd:newPwd,hasPwd:!!(newPwd||hadPwd),bloque:!!(o&&o.bloque),auto:!!(o&&o.auto&&!newPwd)}; } else delete ACCOUNTS[id];
  if(stu.classId!==newClass){
   const oldCls=DATA.classes.find(c=>c.id===stu.classId); if(oldCls) oldCls.memberIds=oldCls.memberIds.filter(mid=>mid!==stu.id);
   const newClsObj=DATA.classes.find(c=>c.id===newClass); if(newClsObj&&!newClsObj.memberIds.includes(stu.id)) newClsObj.memberIds.push(stu.id);
@@ -10409,12 +10476,12 @@ function openClassModal(isNew){
   const currentCoef = cls.subjectCoefs[name]?.coef !== undefined ? cls.subjectCoefs[name].coef : globalCoef;
 
   return `<div style="display:flex;align-items:center;gap:12px;padding:4px 0;border-bottom:1px solid #eff8fe;">
-    <input type="checkbox" value="${name}" ${cls.subjects.includes(name)?'checked':""} data-name="${name}" style="width:20px;height:20px;cursor:pointer;"> 
+    <input type="checkbox" value="${escHtml(name)}" ${cls.subjects.includes(name)?'checked':""} data-name="${escHtml(name)}" style="width:20px;height:20px;cursor:pointer;"> 
     <div style="display:flex;align-items:center;gap:4px;">
      <span style="font-size:0.85em;color:#64748b;">Coef:</span>
-     <input type="number" step="any" value="${currentCoef}" class="class-subject-coef" data-name="${name}" style="width:55px;padding:2px 4px;border:1px solid #cbd5e1;border-radius:4px;">
+     <input type="number" step="any" value="${currentCoef}" class="class-subject-coef" data-name="${escHtml(name)}" style="width:55px;padding:2px 4px;border:1px solid #cbd5e1;border-radius:4px;">
     </div>
-    <span style="font-weight:600;flex:1;">${name}</span>
+    <span style="font-weight:600;flex:1;">${escHtml(name)}</span>
   </div>`;
  }).join("");
  editClassModal.classList.add("open");editClassModal.setAttribute("aria-hidden","false");
@@ -10493,7 +10560,7 @@ function renderManageSubjectsTable(){
   const name=typeof s==='object'?s.name:s;
   const coef=typeof s==='object'?s.coef:1;
   return `<tr draggable="true" data-index="${idx}" class="draggable-subject">
-   <td style="cursor:move;">☰ ${name}</td>
+   <td style="cursor:move;">☰ ${escHtml(name)}</td>
    <td>${fmtCoef(coef)}</td>
    <td style="display:flex;gap:8px;">
     <button class="btn" data-edit="${idx}">Modifier</button>
@@ -10726,7 +10793,7 @@ function renderAppreciationUI(){
  }).join("")}
  <button class="btn btn-primary" onclick="downloadStudentBulletin(CURRENT_APP_STUDENT, CURRENT_APP_PERIOD)" style="margin-left:auto;">📥 Télécharger le bulletin</button>
  </div>`;
- html+=`<h3>${periodLabels[CURRENT_APP_PERIOD]} — ${stu.first} ${stu.last}</h3>`;
+ html+=`<h3>${periodLabels[CURRENT_APP_PERIOD]} — ${escHtml(stu.first)} ${escHtml(stu.last)}</h3>`;
  if(!cls){html+='<p>Élève sans classe.</p>';appreciationContent.innerHTML=html;return;}
  
  const _appKeys=[...studentSubjectNames(stu),"__GENERAL__"];
@@ -11143,7 +11210,7 @@ function renderCompDetailsHtml(items){
     <div class="color-dot ${colorClass}" style="flex-shrink:0;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:12px;color:${(colorClass==='white'||colorClass==='yellow'||colorClass==='orange'||colorClass==='cyan')?'#000':'#fff'};">${titlesMap[colorClass]||""}</div>
     <div style="flex:1;">
       <div style="font-weight:700;font-size:0.95em;color:#0471b5;margin-bottom:2px;">${h.cycle} - ${h.domain} (${h.subDomain})</div>
-      <div style="font-size:0.85em;color:#334155;">${c.name}</div>
+      <div style="font-size:0.85em;color:#334155;">${escHtml(c.name)}</div>
       ${c.comment?`<div style="margin-top:4px;font-style:italic;font-size:0.85em;color:#475569;background:#f9fbfc;padding:4px;border-radius:4px;">${c.comment}</div>`:""}
     </div>
   </div>`;
@@ -11164,7 +11231,7 @@ function renderBatchEditComps() {
     div.style.display = "flex";
     div.style.alignItems = "center";
     div.style.gap = "5px";
-    div.innerHTML = `<span>${c.name}</span><span style="cursor:pointer;color:#ef4444;" onclick="batchComps.splice(${idx},1);renderBatchEditComps();">×</span>`;
+    div.innerHTML = `<span>${escHtml(c.name)}</span><span style="cursor:pointer;color:#ef4444;" onclick="batchComps.splice(${idx},1);renderBatchEditComps();">×</span>`;
     container.appendChild(div);
   });
 }
@@ -11523,19 +11590,19 @@ function cloudSnapshot(csv){
 }
 // Mode « Consultation » : cette page est ouverte dans le cadre de l'onglet Consultation du professeur
 // avec les identifiants d'un élève (transmis via le nom du cadre). La session du professeur n'est jamais touchée.
-const EDC=(function(){ try{ if(window.name&&window.name.indexOf("ED_CONSULT:")===0){ const o=JSON.parse(window.name.slice(11)); if(o&&o.u&&o.p) return o; } }catch(e){} return null; })();
-const AUTH = { user:"", pass:"", role:"", studentId:"" };   // role : "prof" | "eleve"
+const EDC=(function(){ try{ if(window.name&&window.name.indexOf("ED_CONSULT:")===0){ const o=JSON.parse(window.name.slice(11)); window.name=""; if(o&&o.t) return o; } }catch(e){} return null; })();
+const PM_ORIGIN=(location.origin&&location.origin!=="null")?location.origin:"*";   // messages entre la page et son aperçu : même origine uniquement
+const AUTH = { user:"", token:"", role:"", studentId:"" };   // le mot de passe n'est jamais conservé : seul un jeton de session l'est   // role : "prof" | "eleve"
 let ACCOUNTS = {};   // (prof uniquement) id élève -> {login, pwd}
 
 function authLoad(){
  if(EDC) return null;
- try{ try{localStorage.removeItem("carnet_auth");}catch(e){} const t=sessionStorage.getItem("carnet_auth"); if(t){const o=JSON.parse(t); if(o&&o.u&&o.p) return o;} }catch(e){}
+ try{ try{localStorage.removeItem("carnet_auth");}catch(e){} const t=sessionStorage.getItem("carnet_auth"); if(t){const o=JSON.parse(t); if(o&&o.u&&o.t) return o; sessionStorage.removeItem("carnet_auth");} }catch(e){}
  return null;
 }
-function authSave(u,p,remember){
+function authSave(u,tok){
  if(EDC) return;
- const t=JSON.stringify({u,p});
- try{ sessionStorage.setItem("carnet_auth",t); if(remember) localStorage.setItem("carnet_auth",t); else localStorage.removeItem("carnet_auth"); }catch(e){}
+ try{ sessionStorage.setItem("carnet_auth",JSON.stringify({u,t:tok})); localStorage.removeItem("carnet_auth"); }catch(e){}
 }
 function authClear(){ if(EDC) return; try{sessionStorage.removeItem("carnet_auth");localStorage.removeItem("carnet_auth");}catch(e){} }
 
@@ -11553,17 +11620,18 @@ async function gzipB64(str){
 }
 // Délai maximal + nouvelles tentatives automatiques (serveur occupé, réseau coupé, requête trop longue)
 async function api(action,extra){
- const EDX=(typeof EDC!=="undefined"&&EDC&&EDC.ro)?{ro:1,snap:EDC.snap||"",au:EDC.au||"",ap:EDC.ap||""}:{};
- let payload=JSON.stringify(Object.assign({action,user:AUTH.user,pass:AUTH.pass},EDX,extra||{}));
+ const EDX=(typeof EDC!=="undefined"&&EDC&&EDC.ro)?{ro:1,snap:EDC.snap||""}:{};
+ const TK=action==="login"?{}:{token:AUTH.token};
+ let payload=JSON.stringify(Object.assign({action},TK,EDX,extra||{}));
  if(extra && payload.length>12000 && typeof CompressionStream!=="undefined"){
   try{
    const z=await gzipB64(JSON.stringify(extra));
-   const small=JSON.stringify(Object.assign({action,user:AUTH.user,pass:AUTH.pass,gz:z},EDX));
+   const small=JSON.stringify(Object.assign({action},TK,{gz:z},EDX));
    if(small.length<payload.length*0.8) payload=small;
   }catch(e){ /* on envoie sans compression */ }
  }
  // setProf change le mot de passe : on ne le rejoue jamais automatiquement après un échec réseau
- const rejouable = action!=="setProf";
+ const rejouable = action!=="setProf" && action!=="adminSetPass" && action!=="adminSetSupreme";
  const rendu = action==="submitHomeworkSubmission";
  const maxTry = action==="rev" ? 1 : (rendu ? 6 : 3);
  const delai = action==="rev" ? 25000 : (rendu ? 45000 : 60000);
@@ -11576,7 +11644,8 @@ async function api(action,extra){
    const r=await fetch(CLOUD_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:payload,signal:ctl?ctl.signal:undefined});
    const j=await r.json();
    if(to) clearTimeout(to);
-   if(j && j.blocked && AUTH.role==="eleve" && !EDC){ edBlockedKick(); return j; }
+   if(j && j.expired && AUTH.role && !EDC){ try{ sessionStorage.setItem("ed_expired","1"); }catch(e){} authClear(); location.reload(); return j; }   // session expirée : retour à la connexion
+    if(j && j.blocked && AUTH.role==="eleve" && !EDC){ edBlockedKick(); return j; }
    if(j && j.ok===false && j.error==="busy" && essai<maxTry-1){ await cloudSleep(attente(essai)); continue; }
    return j;
   }catch(e){
@@ -11647,13 +11716,13 @@ function checkStudentLogin(login,exceptId){
 async function cloudPull(){
  let j=null;
  const pf=CLOUD.prefetch; CLOUD.prefetch=null;   // chargement lancé dès l'ouverture de la page (session déjà enregistrée)
- if(pf && pf.u===AUTH.user && pf.p===AUTH.pass && Date.now()-pf.t<60000){ j=await pf.promise; }
+ if(pf && pf.u===AUTH.user && pf.k===AUTH.token && Date.now()-pf.at<60000){ j=await pf.promise; }
  if(!j||!j.ok) j=await api("load");
  if(!j.ok) throw new Error(j.error||"erreur");
  if(j.role==="admin"){ AUTH.role="admin"; window.edAdminBoot&&edAdminBoot(j); return j; }
  if(window.edSetEtab) edSetEtab(j.etabName);
  CLOUD.rev=j.rev; CLOUD.srev=(j.srev!=null?j.srev:null); CLOUD.stale=false; if(j.profInfo) Object.assign(PROF_INFO,j.profInfo); if(j.role==="eleve") PROF_INFO.first=""; AUTH.role=j.role; AUTH.studentId=j.studentId||""; try{ window.edRoleInit&&edRoleInit(j); }catch(x){ console.error("rôle:",x); }
- ACCOUNTS={}; (j.accounts||[]).forEach(a=>{ACCOUNTS[a.id]={login:a.login,pwd:a.pwd,bloque:!!a.bloque,auto:!!a.auto};});
+ ACCOUNTS={}; (j.accounts||[]).forEach(a=>{ACCOUNTS[a.id]={login:a.login,pwd:"",hasPwd:true,bloque:!!a.bloque,auto:!!a.auto};});   // le serveur ne renvoie jamais les mots de passe
  if(j.lines && j.lines.length>1){
   importCSV(j.lines.join("\n"));
   ensureSubjectRegistry(); backfillClassSubjectsFromRegistry();
@@ -11688,12 +11757,17 @@ function applyProfMode(){
  const lab=document.getElementById("userLabel"); if(lab) lab.innerHTML=USER_ICON_SVG+"<span>"+escHtml(profFull())+"</span>";
 }
 
-async function tryLogin(user,pass,remember){
- AUTH.user=user; AUTH.pass=pass; AUTH.role="";
+function loginMsg(m){
+ m=String(m||"");
+ return /bloqu/.test(m) ? "Compte temporairement bloqué. Contactez votre professeur." : /trop de tentatives/.test(m) ? "Trop de tentatives échouées : réessayez dans une heure." : /session/.test(m) ? "Votre session a expiré, reconnectez-vous." : /identifiants/.test(m) ? "Identifiant ou mot de passe incorrect." : "Connexion impossible ("+m+"). Vérifiez votre connexion internet.";
+}
+/* Ouvre la page avec un jeton de session déjà obtenu (connexion, session enregistrée, consultation) */
+async function enterSession(user,token){
+ AUTH.user=user; AUTH.token=token; AUTH.role="";
  try{
   await cloudPull();
   CLOUD.ready=!!AUTH.role&&AUTH.role!=="admin"; IS_MODIFIED=false;
-  authSave(user,pass,remember);
+  authSave(user,token);
   ["carnet_notes_data","carnet_notes_subjects","carnet_notes_locks","cloud_token"].forEach(k=>{try{localStorage.removeItem(k);}catch(e){}});
   document.body.classList.remove("auth-pending");
   document.querySelector('#mainTabs .tab-btn[data-target="homeView"]')?.click();
@@ -11701,10 +11775,21 @@ async function tryLogin(user,pass,remember){
   return "";
  }catch(e){
   console.error("login:",e);
-  AUTH.user=AUTH.pass=AUTH.role="";
-  const m=String(e.message||e);
-  return /bloqu/.test(m) ? "Compte temporairement bloqué. Contactez votre professeur." : /trop de tentatives/.test(m) ? "Trop de tentatives échouées : réessayez dans quelques minutes." : /identifiants/.test(m) ? "Identifiant ou mot de passe incorrect." : "Connexion impossible ("+m+"). Vérifiez votre connexion internet.";
+  AUTH.user=AUTH.token=AUTH.role="";
+  return loginMsg(e.message||e);
  }
+}
+async function tryLogin(user,pass,remember,sup){
+ AUTH.user=user; AUTH.token=""; AUTH.role="";
+ let lj=null;
+ try{ lj=await api("login",{user,pass,sup:sup||"",remember:!!remember}); }
+ catch(e){ AUTH.user=""; return loginMsg(e.message||e); }
+ if(!lj||!lj.ok){
+  AUTH.user="";
+  if(lj&&lj.needSupreme){ const w=document.getElementById("loginSupWrap"); if(w) w.style.display="block"; return "Trop de tentatives : saisissez le mot de passe suprême."; }
+  return loginMsg(lj&&lj.error);
+ }
+ return enterSession(user,lj.token);
 }
 
 function showLoginError(msg){
@@ -11715,34 +11800,37 @@ function showLoginError(msg){
 async function bootAuth(){
  if(EDC){
   document.body.classList.add("consult-mode");
-  const err=await tryLogin(EDC.u,EDC.p,false);
-  try{ parent.postMessage({edConsult:err?"error":"ready",msg:err||""},"*"); }catch(e){}
+  const err=await enterSession("",EDC.t);
+  try{ parent.postMessage({edConsult:err?"error":"ready",msg:err||""},PM_ORIGIN); }catch(e){}
   if(err) showLoginError(err);
   return;
  }
  const saved=authLoad();
  if(saved){
-  const err=await tryLogin(saved.u,saved.p,false);
+  const err=await enterSession(saved.u,saved.t);
   if(!err) return;
   authClear();
-  showLoginError(/incorrect/.test(err)?"Votre session a expiré, reconnectez-vous.":err);
+  showLoginError(/incorrect|expiré/.test(err)?"Votre session a expiré, reconnectez-vous.":err);
  }
+ try{ if(sessionStorage.getItem("ed_expired")){ sessionStorage.removeItem("ed_expired"); showLoginError("Votre session a expiré, reconnectez-vous."); } }catch(e){}
  try{ if(sessionStorage.getItem("ed_blocked")){ sessionStorage.removeItem("ed_blocked"); showLoginError("Compte temporairement bloqué. Contactez votre professeur."); } }catch(e){}
  document.getElementById("loginUser")?.focus();
 }
 
 document.getElementById("loginForm")?.addEventListener("submit",async(e)=>{
  e.preventDefault();
- const u=document.getElementById("loginUser").value.trim(), p=document.getElementById("loginPass").value;
+ const u=document.getElementById("loginUser").value.trim(), p=document.getElementById("loginPass").value, sup=(document.getElementById("loginSup")||{}).value||"";
  const btn=document.getElementById("loginBtn"); btn.disabled=true; btn.innerHTML='<span class="btn-spin" aria-hidden="true"></span>Connexion…'; showLoginError("");
- const err=await tryLogin(u,p,false);
+ const err=await tryLogin(u,p,false,sup);
  btn.disabled=false; btn.textContent="Se connecter";
  if(err){ showLoginError(err); document.getElementById("loginPass").value=""; document.getElementById("loginPass").focus(); }
  else document.getElementById("loginPass").value="";
 });
 document.getElementById("logoutBtn")?.addEventListener("click",async()=>{
  if(IS_MODIFIED && AUTH.role==="prof" && !(await siteConfirm("Des modifications sont encore en cours d'enregistrement. Se déconnecter quand même ?",{ok:"Se déconnecter"}))) return;
- IS_MODIFIED=false; authClear(); location.reload();
+ IS_MODIFIED=false;
+ try{ if(AUTH.token) fetch(CLOUD_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"logout",token:AUTH.token}),keepalive:true}).catch(()=>{}); }catch(e){}
+ authClear(); location.reload();
 });
 
 // ── Paramètres du compte professeur ──
@@ -11752,7 +11840,7 @@ function settingsMsg(t){ const m=document.getElementById("settingsMsg"); m.textC
 document.getElementById("settingsBtn")?.addEventListener("click",()=>{
  if(AUTH.role!=="prof") return;
  document.getElementById("settingsUser").value=AUTH.user; document.getElementById("settingsCiv").value=PROF_INFO.civ||"Monsieur"; document.getElementById("settingsFirst").value=PROF_INFO.first||""; document.getElementById("settingsLast").value=PROF_INFO.last||"";
- document.getElementById("settingsPass").value=""; document.getElementById("settingsPass2").value="";
+ document.getElementById("settingsPass").value=""; document.getElementById("settingsPass2").value=""; document.getElementById("settingsOld").value="";
  settingsMsg(""); settingsModal.classList.add("open"); settingsModal.setAttribute("aria-hidden","false");
 });
 document.getElementById("settingsClose")?.addEventListener("click",closeSettings);
@@ -11762,15 +11850,18 @@ document.getElementById("settingsForm")?.addEventListener("submit",async(e)=>{
  const nu=document.getElementById("settingsUser").value.trim(), np=document.getElementById("settingsPass").value, np2=document.getElementById("settingsPass2").value;
  if(!nu){ settingsMsg("L'identifiant ne peut pas être vide."); return; }
  if(np!==np2){ settingsMsg("Les deux mots de passe ne correspondent pas."); return; }
+ const oldp=document.getElementById("settingsOld").value;
+ if(np&&np.length<10){ settingsMsg("Le nouveau mot de passe doit faire au moins 10 caractères."); return; }
+ if(np&&!oldp){ settingsMsg("Saisissez votre mot de passe actuel pour changer de mot de passe."); return; }
  const pi={civ:document.getElementById("settingsCiv").value,first:document.getElementById("settingsFirst").value.trim(),last:document.getElementById("settingsLast").value.trim()};
  const piSame=pi.civ===(PROF_INFO.civ||"Monsieur")&&pi.first===PROF_INFO.first&&pi.last===PROF_INFO.last;
  if(nu===AUTH.user && !np && piSame){ closeSettings(); return; }
  const clash=checkStudentLogin(nu,null); if(nu!==AUTH.user && clash.indexOf("professeur")<0 && clash){ settingsMsg(clash); return; }
  try{
-  const j=await api("setProf",{newUser:nu,newPass:np,civ:pi.civ,first:pi.first,last:pi.last});
+  const j=await api("setProf",{newUser:nu,newPass:np,oldPass:oldp,civ:pi.civ,first:pi.first,last:pi.last});
   if(!j.ok){ settingsMsg(j.error||"Erreur"); return; }
-  AUTH.user=j.user; if(np) AUTH.pass=np; Object.assign(PROF_INFO,pi); renderSchedule();
-  authSave(AUTH.user,AUTH.pass,false);
+  AUTH.user=j.user; if(j.token) AUTH.token=j.token; Object.assign(PROF_INFO,pi); renderSchedule();
+  authSave(AUTH.user,AUTH.token);
   applyProfMode(); closeSettings(); cloudStatus("ok","Profil et identifiants enregistrés dans Google Sheets – "+cloudHour());
  }catch(err){ settingsMsg("Échec de l'enregistrement ("+err.message+")"); }
 });
@@ -11799,6 +11890,8 @@ async function cloudPush(force){
   const j=await api("save",{lines,accounts,cancelled,deletedMsgs,baseRev:CLOUD.rev,force:!!force,reqId:CLOUD.lastTry.id});
   if(j.ok){
    CLOUD.rev=j.rev; CLOUD.lastSnap=snap; CLOUD.retryAt=0; CLOUD.lastTry=null;
+   try{ const sent={}; accounts.forEach(a=>{ if(a.pwd) sent[a.id]=a.pwd; }); const ids=Object.keys(sent);
+    if(ids.length){ const same=(cloudSnapshot()===snap); ids.forEach(id=>{ const a=ACCOUNTS[id]; if(a&&a.pwd===sent[id]){ a.pwd=""; a.hasPwd=true; } }); if(same) CLOUD.lastSnap=cloudSnapshot(); } }catch(x){}
    if(j.merged){ CLOUD.stale=true; setTimeout(()=>cloudCheckRemoteUpdates(false),600); }   // le serveur a fusionné des rendus d'élèves ou les modifications d'un autre appareil : on les recharge
    cancelled.forEach(k=>window.HW_CANCELLED_SUBS&&window.HW_CANCELLED_SUBS.delete(k));
    deletedMsgs.forEach(k=>window.HW_DELETED_MSGS&&window.HW_DELETED_MSGS.delete(k));
@@ -11970,6 +12063,7 @@ function loadData(){ /* les données viennent uniquement du serveur après conne
     if(sl.existing && DATA.students.some(x=>x.classId===sl.existing.id&&x.first.toLowerCase()===s.first.toLowerCase()&&x.last.toLowerCase()===s.last.toLowerCase())){s.skip=true;s.note="déjà dans la classe : ignoré";return;}
     if(!s.login&&!s.pwd){s.noAccount=true;s.note="sans compte";return;}
     if(!s.login||!s.pwd){s.noAccount=true;s.note="identifiant ou mot de passe manquant : sans compte";return;}
+    if(String(s.pwd).length<6){s.noAccount=true;s.note="mot de passe trop court (6 caractères minimum) : sans compte";return;}
     const err=checkStudentLogin(s.login,null);
     if(err||logins.has(s.login)){s.noAccount=true;s.note=(err||"identifiant en double dans le fichier")+" Importé sans compte.";return;}
     logins.add(s.login);
@@ -12010,7 +12104,7 @@ function loadData(){ /* les données viennent uniquement du serveur après conne
     DATA.students.push({id,first:s.first,last:s.last,classId:cls.id,sex:s.sex==="F"?"F":"M"});
     DATA.notes[id]=[];
     if(!cls.memberIds.includes(id)) cls.memberIds.push(id);
-    if(s.noAccount) nNo++; else ACCOUNTS[id]={login:s.login,pwd:s.pwd};
+    if(s.noAccount) nNo++; else ACCOUNTS[id]={login:s.login,pwd:s.pwd,hasPwd:true};
     nS++;
    });
   });
@@ -15766,7 +15860,7 @@ async function finishHomeworkQuiz(reason){
      return `
       <div class="online-preview-correction-item ${detail.correct===true ? "is-correct" : "is-wrong"}">
        <strong>Question ${index+1}${shownScore}</strong>
-       <small>Ta réponse : ${answer}</small>
+       <small>Ta réponse : ${escHtml(answer)}</small>
        <small>Attendu : ${expected}</small>
        ${(()=>{ const qc=String(submission.review?.questionComments?.[detail.question.id]||"").trim(); return qc?`<div class="hwc-comment"><b>Commentaire du professeur</b>${escHtml(qc).replace(/\n/g,"<br>")}</div>`:""; })()}
       </div>
@@ -17354,7 +17448,7 @@ function warmUpServer(){
  try{
   const sv=authLoad();
   if(sv){   // session enregistrée : on lance le chargement des données PENDANT que l'interface s'initialise
-   CLOUD.prefetch={u:sv.u,p:sv.p,t:Date.now(),promise:fetch(CLOUD_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"load",user:sv.u,pass:sv.p})}).then(r=>r.json()).catch(()=>null)};
+   CLOUD.prefetch={u:sv.u,k:sv.t,at:Date.now(),promise:fetch(CLOUD_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"load",token:sv.t})}).then(r=>r.json()).catch(()=>null)};
    return;
   }
   fetch(CLOUD_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"ping"})}).catch(()=>{}); }catch(e){}
@@ -19949,7 +20043,7 @@ document.addEventListener("keydown",e=>{
 /* ───────── Paramétrage : Matières + Compétences ───────── */
 function paramFixSize(){
  const body=document.querySelector("#manageSubjectsModal .modal-body"); if(!body) return;
- const panes=["subj","comp","imp","lock","year"].map(k=>$("paramPane_"+k)).filter(Boolean);
+ const panes=["subj","comp","imp","lock","year","pwd"].map(k=>$("paramPane_"+k)).filter(Boolean);
  const was=panes.map(p=>p.hidden);
  body.style.height="";
  if(typeof renderCompHierarchyUI==="function") try{ renderCompHierarchyUI(); }catch(e){}
@@ -19959,7 +20053,7 @@ function paramFixSize(){
  body.style.height=Math.min(max,Math.round(window.innerHeight*0.7))+"px";
 }
 function paramShow(w){
- ["subj","comp","imp","lock","year"].forEach(k=>{
+ ["subj","comp","imp","lock","year","pwd"].forEach(k=>{
   const pane=$("paramPane_"+k); if(pane) pane.hidden=(k!==w);
   document.querySelector('#paramTabs [data-p="'+k+'"]')?.classList.toggle("active",k===w);
  });
@@ -20170,17 +20264,21 @@ if(typeof EDC!=="undefined"&&EDC&&EDC.ro){
  const b=document.createElement("div"); b.className="ed-ro-flag"; b.textContent=EDC.snap?"Version sauvegardée — lecture seule":"Consultation — lecture seule"; document.body.appendChild(b);
  /* bouton « Quitter l'aperçu » (à la place de Déconnexion) : demande à l'administration de fermer la consultation */
  const xb=document.getElementById("edPreviewExitTop");
- if(xb){ xb.textContent="Quitter l'aperçu"; xb.title="Quitter l'aperçu"; xb.addEventListener("click",e=>{ e.preventDefault(); e.stopImmediatePropagation(); try{ parent.postMessage({edConsult:"exit"},"*"); }catch(x){} },true); }
+ if(xb){ xb.textContent="Quitter l'aperçu"; xb.title="Quitter l'aperçu"; xb.addEventListener("click",e=>{ e.preventDefault(); e.stopImmediatePropagation(); try{ parent.postMessage({edConsult:"exit"},PM_ORIGIN); }catch(x){} },true); }
 }
 /* côté administration : fermeture de la consultation demandée par le compte affiché */
 window.addEventListener("message",e=>{
+ if(PM_ORIGIN!=="*"&&e.origin!==PM_ORIGIN) return;
  const d=e.data; if(!d||d.edConsult!=="exit") return;
  const ok=[...document.querySelectorAll(".ad-ov-full iframe")].some(f=>f.contentWindow===e.source); if(!ok) return;
  document.querySelectorAll(".ad-ov-full").forEach(o=>o.remove());
 });
-function mountFrame(box,p,snap){
+async function mountFrame(box,desc,snap){
+ box.innerHTML='<div class="ad-note" style="padding:24px">Ouverture du compte…</div>';
+ let j=null; try{ j=await api("adminConsult",desc); }catch(x){}
+ if(!j||!j.ok){ document.querySelectorAll(".ad-ov-full").forEach(o=>o.remove()); alert((j&&j.error)||"Consultation impossible."); return; }
  box.innerHTML=""; const f=document.createElement("iframe");
- f.name="ED_CONSULT:"+JSON.stringify({u:p.user,p:p.pass,ro:1,snap:snap||"",au:AUTH.user,ap:AUTH.pass});
+ f.name="ED_CONSULT:"+JSON.stringify({t:j.token,ro:1,snap:snap||""});   // jeton de consultation (45 min, lecture seule)
  f.className="ad-frame"; f.src=location.href.split("#")[0]; box.appendChild(f);
 }
 
@@ -20233,13 +20331,14 @@ function profPopup(e,i,isNew){
  const d=dr(e), p=d.profs[i]; if(!p) return; let done=false;
  const f=(k,l,t)=>'<label class="ad-lab">'+l+'</label><input class="ad-in" data-pp="'+k+'" type="'+(t||"text")+'" value="'+E(p[k])+'" autocomplete="off" style="width:100%">';
  const body='<label class="ad-lab">Civilité</label><select class="ad-in" data-pp="civ" style="width:100%"><option'+(p.civ!=="Madame"?" selected":"")+'>Monsieur</option><option'+(p.civ==="Madame"?" selected":"")+'>Madame</option></select>'+
-  f("last","Nom")+f("first","Prénom")+f("user","Identifiant")+f("pass","Mot de passe")+
+  f("last","Nom")+f("first","Prénom")+f("user","Identifiant")+f("pass",isNew?"Mot de passe (10 caractères minimum)":"Nouveau mot de passe (vide = inchangé)","password")+
   '<label class="ad-chk" style="margin-top:14px"><input type="checkbox" data-pp="resp"'+(p.resp?" checked":"")+'><span><strong>Responsable</strong><br><small>Gère emplois du temps, classes, groupes, salles, congés et élèves.</small></span></label>'+
   (isNew?"":'<div class="ad-row"><button type="button" class="btn btn-danger" data-del>Retirer ce professeur</button></div>');
  const m=modal(isNew?"Nouveau professeur":"Paramètres du professeur",body,"Valider",async mm=>{
   const g=k=>{ const el=mm.querySelector('[data-pp="'+k+'"]'); return el.type==="checkbox"?el.checked:el.value.trim(); };
   const v={civ:g("civ"),last:g("last"),first:g("first"),user:g("user"),pass:mm.querySelector('[data-pp="pass"]').value,resp:g("resp")};
-  if(!v.last||!v.user||!v.pass) return "Le nom, l'identifiant et le mot de passe sont obligatoires.";
+  if(!v.last||!v.user||(!v.pass&&(isNew||!p.hasPass))) return "Le nom, l'identifiant et le mot de passe sont obligatoires.";
+   if(v.pass&&v.pass.length<10) return "Le mot de passe doit faire au moins 10 caractères.";
   if(d.profs.some((x,k)=>k!==i&&String(x.user).trim()===v.user)) return "Cet identifiant est déjà utilisé dans cet établissement.";
   if(v.resp&&!p.resp){ if(!(await setResp(d.profs,i,true))) return "Transfert de responsabilité annulé."; }
   else if(!v.resp) p.resp=false;
@@ -20256,39 +20355,57 @@ function profPopup(e,i,isNew){
 
 /* ── console administrateur ── */
 const S={reg:null,snaps:[],tab:"",sub:"profs",draft:{}};
-const dr=e=>S.draft[e.id]||(S.draft[e.id]={name:e.name,profs:clone(e.profs)});
+const dr=e=>S.draft[e.id]||(S.draft[e.id]={name:e.name,profs:clone(e.profs).map(p=>Object.assign({pass:""},p))});
 const fmt=d=>{ try{ return new Date(d).toLocaleString("fr-FR",{dateStyle:"short",timeStyle:"short"}); }catch(x){ return d; } };
 const KIND={manuelle:"Manuelle",annee:"Nouvelle année",auto:"Automatique"};
 
 window.edAdminBoot=function(j){
  document.body.classList.add("admin-mode"); document.body.classList.remove("auth-pending");
- S.reg=j.registry; S.snaps=j.snaps||[]; S.tab=(S.reg.etabs[0]||{}).id||"#c";
+ S.reg=j.registry; S.snaps=j.snaps||[]; S.supreme=!!j.supreme; S.tab=(S.reg.etabs[0]||{}).id||"#c";
  const lab=$("userLabel"); if(lab) lab.innerHTML="<span>Administrateur</span>";
  edSetEtab("Administration"); render();
 };
 async function call(a,x){
  try{ const j=await api(a,x); if(!j.ok){ alert(j.error==="busy"?"Serveur occupé, réessayez.":(j.error||"Erreur")); return null; }
-  if(j.registry){ S.reg=j.registry; S.snaps=j.snaps||[]; } return j; }
+  if(j.registry){ S.reg=j.registry; S.snaps=j.snaps||[]; S.supreme=!!j.supreme; } return j; }
  catch(e){ alert("Erreur réseau : "+(e.message||e)); return null; }
 }
 /* ── engrenage de l'en-tête (admin) : changer le mot de passe administrateur ── */
 function adminPassPopup(){
  const f=(id,l)=>'<label class="ad-lab">'+l+'</label><input class="ad-in" id="'+id+'" type="password" autocomplete="off" style="width:100%">';
  const m=modal("Mot de passe administrateur",
-  '<p class="ad-note" style="margin-top:0">Identifiant : <strong>'+E(AUTH.user)+'</strong></p>'+f("adpOld","Mot de passe actuel")+f("adpNew","Nouveau mot de passe")+f("adpNew2","Confirmer le nouveau mot de passe"),
+  '<p class="ad-note" style="margin-top:0">Identifiant : <strong>'+E(AUTH.user)+'</strong></p>'+f("adpOld","Mot de passe actuel")+f("adpNew","Nouveau mot de passe (12 caractères minimum)")+f("adpNew2","Confirmer le nouveau mot de passe")+
+  '<div class="ad-row" style="margin-top:14px"><button type="button" class="btn" id="adpSupBtn">'+(S.supreme?"Changer":"Définir")+' le mot de passe suprême…</button></div>',
   "Enregistrer",async mm=>{
    const o=mm.querySelector("#adpOld").value, n=mm.querySelector("#adpNew").value, n2=mm.querySelector("#adpNew2").value;
-   if(o!==AUTH.pass) return "Le mot de passe actuel est incorrect.";
-   if(n.length<4) return "Le nouveau mot de passe doit faire au moins 4 caractères.";
+   if(!o) return "Saisissez le mot de passe actuel.";
+   if(n.length<12) return "Le nouveau mot de passe doit faire au moins 12 caractères.";
    if(n!==n2) return "Les deux mots de passe ne correspondent pas.";
    if(n===o) return "Le nouveau mot de passe est identique à l'ancien.";
-   try{ const j=await api("adminSetPass",{newPass:n}); if(!j.ok) return j.error||"Erreur"; }
+   try{ const j=await api("adminSetPass",{oldPass:o,newPass:n}); if(!j.ok) return j.error||"Erreur"; if(j.token){ AUTH.token=j.token; authSave(AUTH.user,AUTH.token); } }
    catch(x){ return "Échec : "+(x.message||x); }
-   AUTH.pass=n; authSave(AUTH.user,AUTH.pass,false);
    setTimeout(()=>siteAlert("Mot de passe administrateur modifié."),50);
    return "";
   },460);
+ const sb=m.querySelector("#adpSupBtn"); if(sb) sb.addEventListener("click",()=>{ m.remove(); adminSupremePopup(); });
  setTimeout(()=>{ const i=m.querySelector("#adpOld"); if(i) i.focus(); },30);
+}
+/* mot de passe suprême : demandé à l'administrateur après 10 échecs de connexion dans l'heure (il n'est jamais bloqué) */
+function adminSupremePopup(){
+ const f=(id,l)=>'<label class="ad-lab">'+l+'</label><input class="ad-in" id="'+id+'" type="password" autocomplete="off" style="width:100%">';
+ const m=modal("Mot de passe suprême",
+  '<p class="ad-note" style="margin-top:0">'+(S.supreme?"Un mot de passe suprême est déjà défini.":"Aucun mot de passe suprême n'est défini : après 10 échecs, l'administrateur serait bloqué une heure.")+' Choisissez une phrase très longue (20 caractères minimum), différente du mot de passe administrateur.</p>'+f("adsOld","Mot de passe administrateur actuel")+f("adsNew","Nouveau mot de passe suprême")+f("adsNew2","Confirmer le mot de passe suprême"),
+  "Enregistrer",async mm=>{
+   const o=mm.querySelector("#adsOld").value, n=mm.querySelector("#adsNew").value, n2=mm.querySelector("#adsNew2").value;
+   if(!o) return "Saisissez le mot de passe administrateur actuel.";
+   if(n.length<20) return "Le mot de passe suprême doit faire au moins 20 caractères.";
+   if(n!==n2) return "Les deux mots de passe ne correspondent pas.";
+   try{ const j=await api("adminSetSupreme",{oldPass:o,newSupreme:n}); if(!j.ok) return j.error||"Erreur"; S.supreme=true; }
+   catch(x){ return "Échec : "+(x.message||x); }
+   setTimeout(()=>siteAlert("Mot de passe suprême enregistré."),50);
+   return "";
+  },500);
+ setTimeout(()=>{ const i=m.querySelector("#adsOld"); if(i) i.focus(); },30);
 }
 document.addEventListener("click",e=>{
  if(!document.body.classList.contains("admin-mode")) return;
@@ -20325,34 +20442,15 @@ function consultView(){
 const P={list:null,loading:false,done:0,total:0};
 const nrm=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/œ/gi,"oe").replace(/æ/gi,"ae").toLowerCase();
 const wds=s=>nrm(s).split(/[^a-z0-9]+/).filter(Boolean);
-async function loadAs(u,p){
- const r=await fetch(CLOUD_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"load",user:u,pass:p,ro:1,snap:""})});
- return r.json();
-}
-function addStudents(e,p,j){
- const acc={}; (j.accounts||[]).forEach(a=>{ acc[a.id]={u:a.login,p:a.pwd}; });
- (j.lines||[]).forEach(line=>{
-  if(String(line).slice(0,8)!=="student;") return;
-  const c=parseCsvLine(line).map(s=>s.trim()), a=acc[c[1]]||{};
-  P.list.push({kind:"eleve",first:unescapeCsv(c[2]||""),last:unescapeCsv(c[3]||""),sub:(unescapeCsv(c[5]||"")?unescapeCsv(c[5])+" · ":"")+e.name,user:a.u||"",pass:a.p||""});
- });
-}
 async function loadPeople(force){
  if(P.loading||!S.reg) return; if(P.list&&!force) return;
- P.loading=true; P.list=[]; const jobs=[];
- S.reg.etabs.forEach(e=>e.profs.forEach(p=>{
-  P.list.push({kind:"prof",first:p.first,last:p.last,sub:"Professeur"+(p.resp?" responsable":"")+" · "+e.name,user:p.user,pass:p.pass});
-  jobs.push({e,p});
- }));
- P.total=jobs.length; P.done=0; cStatus();
- let k=0;
- const worker=async()=>{ while(k<jobs.length){ const {e,p}=jobs[k++]; try{ const j=await loadAs(p.user,p.pass); if(j&&j.ok) addStudents(e,p,j); }catch(x){} P.done++; cStatus(); } };
- await Promise.all([worker(),worker(),worker()]);
+ P.loading=true; P.list=[]; cStatus();
+ try{ const j=await api("adminAnnuaire"); if(j&&j.ok) P.list=j.people||[]; }catch(x){}
  P.loading=false; cStatus(); cRender();
 }
 function cStatus(){
  const el=$("adCStatus"); if(!el) return;
- if(P.loading) el.textContent="Chargement des comptes… "+P.done+" / "+P.total+" professeurs";
+ if(P.loading) el.textContent="Chargement des comptes…";
  else if(P.list) el.innerHTML=P.list.length+" comptes dans "+S.reg.etabs.length+" établissement(s). <a href=\"#\" data-a=\"cRefresh\">Actualiser</a>";
 }
 let cItems=[], cAct=-1;
@@ -20364,16 +20462,16 @@ function cRender(){
  cItems=(P.list||[]).filter(it=>{ const w=wds(it.first+" "+it.last); return q.every(t=>w.some(x=>x.indexOf(t)===0)); })
   .sort((a,b)=>(nrm(a.last)+" "+nrm(a.first)).localeCompare(nrm(b.last)+" "+nrm(b.first))).slice(0,200);
  list.innerHTML=cItems.length
-  ? cItems.map((s,i)=>'<div class="cs-it'+(s.user&&s.pass?"":" off")+'" role="option" data-i="'+i+'"><span>'+E(s.first)+" <b>"+E(s.last)+'</b></span><span class="cs-cl">'+E(s.sub)+(s.user&&s.pass?"":" · pas de compte")+'</span></div>').join("")
+  ? cItems.map((s,i)=>'<div class="cs-it'+(s.ok?"":" off")+'" role="option" data-i="'+i+'"><span>'+E(s.first)+" <b>"+E(s.last)+'</b></span><span class="cs-cl">'+E(s.sub)+(s.ok?"":" · pas de compte")+'</span></div>').join("")
   : '<div class="cs-empty">'+(P.loading?"Chargement en cours…":"Aucun compte trouvé")+'</div>';
  list.hidden=false; inp.classList.add("open"); inp.setAttribute("aria-expanded","true");
  cSetAct(cItems.length?0:-1);
 }
 function cPick(i){
  const s=cItems[i]; if(!s) return;
- if(!s.user||!s.pass){ alert("Cet élève n'a pas de compte (identifiant et mot de passe vides)."); return; }
+ if(!s.ok){ alert("Ce compte n'existe pas (identifiant ou mot de passe vide)."); return; }
  const inp=$("adSearch"); inp.value=s.first+" "+s.last; const c=$("adClr"); if(c) c.hidden=false;
- cClose(); overlay({user:s.user,pass:s.pass},"",s.first+" "+s.last);
+ cClose(); overlay({kind:s.kind,etabId:s.etabId,pid:s.pid,studentId:s.studentId},"",s.first+" "+s.last);
 }
 document.addEventListener("input",e=>{ if(e.target&&e.target.id==="adSearch"){ const c=$("adClr"); if(c) c.hidden=!e.target.value; cRender(); } });
 document.addEventListener("focusin",e=>{ if(e.target&&e.target.id==="adSearch"&&e.target.value.trim()) cRender(); });
@@ -20405,7 +20503,7 @@ function newEtab(){
  const m=modal("Nouvel établissement",'<label class="ad-lab">Nom de l\'établissement</label><input class="ad-in" id="adNName" style="width:100%"><label class="ad-lab" style="margin-top:14px">Professeurs (au moins un)</label><div id="adNProfs"></div><div class="ad-row"><button type="button" class="btn" id="adNAdd">+ Ajouter un professeur</button></div>',"Créer l'établissement",async()=>{
   nw.name=m.querySelector("#adNName").value.trim();
   if(!nw.name) return "Le nom de l'établissement est obligatoire.";
-  if(!nw.profs.length||nw.profs.some(p=>!p.last.trim()||!p.user.trim()||!p.pass)) return "Chaque professeur doit avoir un nom, un identifiant et un mot de passe.";
+  if(!nw.profs.length||nw.profs.some(p=>!p.last.trim()||!p.user.trim()||!p.pass||p.pass.length<10)) return "Chaque professeur doit avoir un nom, un identifiant et un mot de passe de 10 caractères minimum.";
   const j=await call("adminAddEtab",{name:nw.name,profs:nw.profs}); if(!j) return "Création impossible (voir le message ci-dessus).";
   S.tab=S.reg.etabs[S.reg.etabs.length-1].id; S.sub="profs"; render(); return ""; },900);
  const draw=()=>{ m.querySelector("#adNProfs").innerHTML=profTable(nw.profs); };
@@ -20432,7 +20530,7 @@ document.addEventListener("click",async ev=>{
  else if(a==="snapSave"){ const n=($("adSnapName").value||"").trim(); if(!n){ alert("Donnez un nom à la sauvegarde."); return; } if(await call("adminSnapSave",{etabId:e.id,name:n})) render(); }
  else if(a==="snapDel"){ if((await siteConfirm("Supprimer cette sauvegarde ?"))&&await call("adminSnapDel",{id:b.dataset.id})) render(); }
  else if(a==="publish"){ const s=S.snaps.find(x=>x.id===b.dataset.id); if((await siteConfirm("Publier la version « "+s.name+" » ?\nLes données actuelles de tous les professeurs de l'établissement seront remplacées (l'état actuel est sauvegardé avant)."))&&await call("adminSnapRestore",{id:s.id})){ delete S.draft[e.id]; render(); alert("Version publiée."); } }
- else if(a==="csnap"){ const s=S.snaps.find(x=>x.id===b.dataset.id), sel=b.parentNode.querySelector("select"), p=e.profs.find(x=>x.pid===sel.value); overlay(p,s.id,"Version « "+s.name+" » — "+p.last); }
+ else if(a==="csnap"){ const s=S.snaps.find(x=>x.id===b.dataset.id), sel=b.parentNode.querySelector("select"), p=e.profs.find(x=>x.pid===sel.value); overlay({kind:"prof",etabId:e.id,pid:p.pid},s.id,"Version « "+s.name+" » — "+p.last); }
  else if(a==="cRefresh"){ ev.preventDefault(); P.list=null; loadPeople(true); }
 });
 
@@ -20462,6 +20560,144 @@ document.addEventListener("click",async ev=>{
 })();
 })();
 
+</script>
+
+<script id="ed-pwd">
+/* ═══ Paramétrage > Mots de passe : retrouver / modifier l'identifiant et le mot de passe d'un élève ═══
+   Le mot de passe n'est jamais affiché par défaut : « Dévoiler » le demande au serveur à ce moment-là.
+   Il n'est conservé nulle part dans la page : « Masquer », changement d'onglet, fermeture ou 60 s le font disparaître. */
+(function(){
+ if(typeof EDC!=="undefined"&&EDC) return;
+ const $=id=>document.getElementById(id);
+ const inp=$("pwdSearch"), list=$("pwdList"), card=$("pwdCard"); if(!inp||!list||!card) return;
+ const nrm=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+ let cur=null, timer=null, seq=0, shown="";
+ const cname=s=>{ const c=(DATA.classes||[]).find(x=>x.id===s.classId); return c?c.name:""; };
+ function masquer(){ clearTimeout(timer); seq++; shown=""; card.innerHTML=""; if(cur&&$("pwdSearch")) { /* la sélection reste, pas le mot de passe */ } }
+ function msg(t,ok){ const m=$("pwdMsg"); if(!m) return; m.textContent=t||""; m.className="pw-msg"+(t?(ok?" ok":" err"):""); }
+ const SV=d=>'<svg viewBox="0 0 24 24" aria-hidden="true">'+d+'</svg>';
+ const ICON={
+  user:SV('<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>'),
+  lock:SV('<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>'),
+  eye:SV('<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>'),
+  eyeoff:SV('<path d="M3 3l18 18"/><path d="M10.6 5.1A10 10 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4.2M6.5 6.6A17 17 0 0 0 2 12s3.6 7 10 7a9.7 9.7 0 0 0 4.2-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>'),
+  copy:SV('<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/>'),
+  check:SV('<path d="M5 12.5l4.5 4.5L19 7.5"/>'),
+  dice:SV('<rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r="1"/><circle cx="15" cy="15" r="1"/><circle cx="15" cy="9" r="1"/><circle cx="9" cy="15" r="1"/>'),
+  info:SV('<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>'),
+  plus:SV('<path d="M12 5v14M5 12h14"/>'),
+  save:SV('<path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/>')
+ };
+ const REV=ICON.eye+"Dévoiler";
+ function fiche(){
+  const has=!!ACCOUNTS[cur.id], a=ACCOUNTS[cur.id]||{};
+  const ini=String(cur.first||cur.last||"?").trim().charAt(0).toUpperCase();
+  const badge=!has?'<span class="pw-badge pw-b-none">Sans compte</span>':((a.auto||a.bloque)?'<span class="pw-badge pw-b-off">Bloqué</span>':'<span class="pw-badge pw-b-on">Compte actif</span>');
+  card.innerHTML='<div class="pw-card">'+
+   '<div class="pw-head"><div class="pw-av">'+escHtml(ini)+'</div><div class="pw-who"><div class="pw-name">'+escHtml(cur.last+" "+cur.first)+'</div><div class="pw-cls">'+escHtml(cname(cur)||"Sans classe")+'</div></div>'+badge+'</div>'+
+   (has?'<button type="button" class="pw-btn pw-primary" id="pwdReveal">'+REV+'</button>':'<p class="pw-hint">Cet élève n’a pas encore de compte.</p><button type="button" class="pw-btn pw-primary" id="pwdCreate">'+ICON.plus+'Créer un compte</button>')+
+   (a.auto?'<div class="pw-warn">Compte bloqué automatiquement : enregistrer un nouveau mot de passe le débloque.</div>':'')+
+   '<div id="pwdFields"></div><div id="pwdMsg" class="pw-msg"></div></div>';
+ }
+ const ib=(act,title,ic)=>'<button type="button" class="pw-ib" data-act="'+act+'" title="'+title+'" aria-label="'+title+'">'+ic+'</button>';
+ const fld=(id,label,ic,cls,acts,ac)=>'<div class="pw-field"><span class="pw-ic">'+ic+'</span><input id="'+id+'" class="pw-in '+cls+'" placeholder=" " autocomplete="'+ac+'" autocapitalize="none" spellcheck="false"><label for="'+id+'">'+label+'</label><div class="pw-acts">'+acts+'</div></div>';
+ function champs(login,pwd,known,legacy){
+  shown=pwd||"";
+  const f=$("pwdFields"); if(!f) return;
+  f.innerHTML='<div class="pw-grid">'+
+   fld("pwdLogin","Identifiant",ICON.user,"","" +ib("copy-login","Copier l’identifiant",ICON.copy),"off")+
+   fld("pwdPwd","Mot de passe",ICON.lock,"pw-mono pw-3",ib("gen","Générer un mot de passe",ICON.dice)+ib("toggle","Masquer / afficher",ICON.eyeoff)+ib("copy-pwd","Copier le mot de passe",ICON.copy),"new-password")+
+   '</div>'+
+   (known?'':'<div class="pw-note">'+ICON.info+'<div>'+(legacy?'Ce compte a été créé avant la fonction « Dévoiler » : son mot de passe est stocké sous forme irréversible et ne peut pas être relu. <b>Il s’affichera ici automatiquement dès la prochaine connexion de l’élève.</b> Vous pouvez aussi en définir un nouveau maintenant.':'Ce mot de passe n’est pas récupérable : saisissez-en un nouveau.')+'</div></div>')+
+   '<div class="pw-actions"><button type="button" class="pw-btn pw-primary" id="pwdSave">'+ICON.save+'Enregistrer</button><button type="button" class="pw-btn" id="pwdHide">Masquer la fiche</button></div>';
+  $("pwdLogin").value=login||""; $("pwdPwd").value=pwd||"";
+  const rb=$("pwdReveal"); if(rb) rb.hidden=true;
+  clearTimeout(timer); timer=setTimeout(()=>{ if(cur) fiche(); shown=""; },60000);
+ }
+ function mdpAleatoire(){
+  const A="abcdefghjkmnpqrstuvwxyzACDEFGHJKLMNPQRTUVWXYZ2346789", n=10, out=[];
+  const r=(window.crypto&&crypto.getRandomValues)?crypto.getRandomValues(new Uint32Array(n)):Array.from({length:n},()=>Math.floor(Math.random()*4294967296));
+  for(let i=0;i<n;i++) out.push(A.charAt(r[i]%A.length));
+  return out.join("");
+ }
+ function copier(txt,btn){
+  const ok=()=>{ const h=btn.innerHTML; btn.classList.add("done"); btn.innerHTML=ICON.check; setTimeout(()=>{ btn.classList.remove("done"); btn.innerHTML=h; },1200); };
+  const repli=()=>{ try{ const t=document.createElement("textarea"); t.value=txt; t.style.cssText="position:fixed;opacity:0"; document.body.appendChild(t); t.select(); document.execCommand("copy"); t.remove(); ok(); }catch(e){ msg("Copie impossible."); } };
+  if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(ok,repli); else repli();
+ }
+ function aide(btn){
+  const act=btn.dataset.act, L=$("pwdLogin"), P=$("pwdPwd"); if(!L||!P) return;
+  if(act==="copy-login"){ if(L.value) copier(L.value,btn); }
+  else if(act==="copy-pwd"){ if(P.value) copier(P.value,btn); }
+  else if(act==="toggle"){ const h=P.type==="password"; P.type=h?"text":"password"; btn.innerHTML=h?ICON.eyeoff:ICON.eye; }
+  else if(act==="gen"){ P.type="text"; P.value=mdpAleatoire(); const t=card.querySelector('[data-act="toggle"]'); if(t) t.innerHTML=ICON.eyeoff; msg("Nouveau mot de passe généré : cliquez sur « Enregistrer » pour l’appliquer.",true); }
+ }
+ function renderList(){
+  const q=nrm(inp.value).split(/[^a-z0-9]+/).filter(Boolean);
+  if(!q.length){ fermer(); return; }
+  const items=(DATA.students||[]).filter(s=>{ const w=nrm(s.first+" "+s.last).split(/[^a-z0-9]+/).filter(Boolean); return q.every(t=>w.some(x=>x.indexOf(t)===0)); })
+   .sort((a,b)=>(nrm(a.last)+" "+nrm(a.first)).localeCompare(nrm(b.last)+" "+nrm(b.first))).slice(0,40);
+  list.innerHTML=items.length?items.map((s,i)=>'<div class="cs-it" role="option" data-i="'+i+'" data-id="'+escHtml(s.id)+'"><span>'+escHtml(s.first)+" <b>"+escHtml(s.last)+'</b></span><span class="cs-cl">'+escHtml(cname(s))+'</span></div>').join(""):'<div class="cs-empty">Aucun élève trouvé</div>';
+  list.hidden=false; inp.classList.add("open"); inp.setAttribute("aria-expanded","true");
+  setAct(items.length?0:-1);
+ }
+ let act=-1;
+ function fermer(){ list.hidden=true; list.innerHTML=""; inp.classList.remove("open"); inp.setAttribute("aria-expanded","false"); act=-1; }
+ function setAct(n){ act=n; const its=list.querySelectorAll(".cs-it"); its.forEach((el,k)=>el.classList.toggle("act",k===n)); if(its[n]&&its[n].scrollIntoView) its[n].scrollIntoView({block:"nearest"}); }
+ async function devoiler(){
+  const my=++seq, b=$("pwdReveal"); if(!b||!cur) return;
+  b.disabled=true; b.innerHTML='<span class="btn-spin" aria-hidden="true"></span>Recherche…';
+  try{
+   const j=await api("revealPassword",{studentId:cur.id});
+   if(my!==seq) return;
+   if(!j.ok){ b.disabled=false; b.innerHTML=REV; msg(j.error||"Erreur"); return; }
+   if(!j.exists){ b.disabled=false; b.innerHTML=REV; msg("Aucun compte enregistré pour cet élève."); return; }
+   champs(j.login,j.known?j.password:"",!!j.known,!!j.legacy);
+  }catch(e){ if(my!==seq) return; b.disabled=false; b.innerHTML=REV; msg("Échec : "+(e.message||e)); }
+ }
+ function enregistrer(){
+  if(!cur) return;
+  const login=($("pwdLogin").value||"").trim(), pwd=$("pwdPwd").value, a=ACCOUNTS[cur.id];
+  if(!login){ msg("Renseignez l'identifiant."); return; }
+  const err=checkStudentLogin(login,cur.id); if(err){ msg(err); return; }
+  const changed=(!a)||pwd!==shown;
+  if(changed){ if(!pwd){ msg("Renseignez le mot de passe."); return; } if(pwd.length<6){ msg("Le mot de passe doit faire au moins 6 caractères."); return; } }
+  ACCOUNTS[cur.id]={login,pwd:changed?pwd:"",hasPwd:true,bloque:!!(a&&a.bloque),auto:!!(a&&a.auto&&!changed)};
+  try{ saveData(); }catch(e){ msg("Échec de l'enregistrement : "+(e.message||e)); return; }
+  shown=pwd; msg("Enregistré.",true);
+ }
+ function choisir(id){
+  cur=(DATA.students||[]).find(s=>s.id===id); fermer(); if(!cur) return;
+  inp.value=cur.last+" "+cur.first; $("pwdClear").hidden=false; masquer(); fiche();
+ }
+ inp.addEventListener("input",()=>{ masquer(); cur=null; $("pwdClear").hidden=!inp.value; renderList(); });
+ inp.addEventListener("focus",()=>{ if(inp.value.trim()&&!cur) renderList(); });
+ inp.addEventListener("keydown",e=>{
+  const its=list.querySelectorAll(".cs-it");
+  if(list.hidden){ if((e.key==="ArrowDown"||e.key==="Enter")&&inp.value.trim()&&!cur){ e.preventDefault(); renderList(); } return; }
+  if(e.key==="ArrowDown"){ e.preventDefault(); if(its.length) setAct((act+1)%its.length); }
+  else if(e.key==="ArrowUp"){ e.preventDefault(); if(its.length) setAct((act-1+its.length)%its.length); }
+  else if(e.key==="Enter"){ e.preventDefault(); const it=its[act>=0?act:0]; if(it) choisir(it.dataset.id); }
+  else if(e.key==="Escape"){ fermer(); }
+ });
+ $("pwdClear").addEventListener("click",()=>{ masquer(); cur=null; inp.value=""; $("pwdClear").hidden=true; fermer(); inp.focus(); });
+ list.addEventListener("mousedown",e=>{ const it=e.target.closest(".cs-it"); if(it){ e.preventDefault(); choisir(it.dataset.id); } });
+ list.addEventListener("touchend",e=>{ const it=e.target.closest(".cs-it"); if(it){ e.preventDefault(); choisir(it.dataset.id); } });
+ list.addEventListener("mousemove",e=>{ const it=e.target.closest(".cs-it"); if(it&&+it.dataset.i!==act) setAct(+it.dataset.i); });
+ inp.addEventListener("blur",()=>{ setTimeout(()=>{ if(!list.matches(":hover")) fermer(); },120); });
+ card.addEventListener("click",e=>{
+  const ibt=e.target.closest(".pw-ib"); if(ibt){ aide(ibt); return; }
+  if(e.target.closest("#pwdReveal")) devoiler();
+  else if(e.target.closest("#pwdCreate")){ champs("","",true,false); const rc=$("pwdCreate"); if(rc) rc.hidden=true; }
+  else if(e.target.closest("#pwdSave")) enregistrer();
+  else if(e.target.closest("#pwdHide")){ masquer(); if(cur) fiche(); }
+ });
+ const reset=()=>{ masquer(); cur=null; inp.value=""; $("pwdClear").hidden=true; fermer(); };
+ $("paramTabs")?.addEventListener("click",e=>{ const b=e.target.closest("[data-p]"); if(b&&b.dataset.p!=="pwd") reset(); });
+ $("paramBtn")?.addEventListener("click",reset);
+ $("manageSubjectsClose")?.addEventListener("click",reset);
+ document.addEventListener("visibilitychange",()=>{ if(document.hidden&&cur){ masquer(); fiche(); } });
+})();
 </script>
 
 <script id="ed-roles">
