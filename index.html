@@ -1625,6 +1625,27 @@ body.ed-preview #edPreviewExitTop{display:inline-flex!important;background:#fff;
 body.consult-mode #edPreviewExitTop{display:inline-flex!important;background:#fff;color:#0471b5;border-color:#fff}
 #edPreviewExitTop{white-space:nowrap}
 #consultStage{height:auto!important;min-height:0!important;padding:28px 18px;text-align:center;color:var(--muted);font-size:15px}
+
+/* ── Compétences : barre de création sur une seule ligne + filtres ── */
+.comp-create-row{display:flex;flex-wrap:nowrap;gap:8px;margin-bottom:14px;overflow-x:auto}
+.comp-create-row .btn{flex:1 1 0;min-width:0;white-space:nowrap;padding:8px 10px;font-size:13px}
+.ec-filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;align-items:center}
+.ec-filters input{flex:2 1 220px;min-width:0}
+.ec-filters select{flex:1 1 150px;min-width:0}
+.ec-count{font-size:12.5px;color:#64748b;margin:0 0 8px}
+.ec-empty{padding:18px;text-align:center;color:#64748b}
+/* ── Création de groupe : matières en liste déroulante à cases à cocher ── */
+.grp-dd{position:relative;margin:6px 0 14px}
+.grp-dd-btn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:#fff;cursor:pointer;font:inherit;text-align:left}
+.grp-dd-btn:hover{border-color:#109ef5}
+.grp-dd-btn .grp-dd-arrow{transition:transform .15s;flex:none}
+.grp-dd.open .grp-dd-arrow{transform:rotate(180deg)}
+.grp-dd-panel{display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:30;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 10px 24px rgba(2,6,23,.18);max-height:240px;overflow:auto;padding:6px}
+.grp-dd.open .grp-dd-panel{display:block}
+.grp-dd-panel label{display:flex!important;align-items:center;gap:8px;margin:0!important;padding:6px 8px;border-radius:6px;font-weight:400!important;cursor:pointer}
+.grp-dd-panel label:hover{background:#eff8fe}
+.grp-dd-panel input{width:auto!important}
+.grp-dd-q{width:100%;margin-bottom:6px}
 </style>
 <style id="patch-2026-10">
 /* Compte élève : pas de bouton « Tout activer / désactiver » dans les appréciations */
@@ -2263,6 +2284,38 @@ button.hw-note-ico:hover{ background:#eef2f7 }
 #onlineTestSetupModal div.online-check-item,#onlineBasicTestModal div.online-check-item{ display:flex !important; align-items:center !important; gap:14px !important; margin:0 !important }
 #onlineTestSetupModal .online-check-item input[type="checkbox"],#onlineBasicTestModal .online-check-item input[type="checkbox"]{ margin:0 !important; padding:0 !important; align-self:center !important; flex:none }
 #onlineTestSetupModal .online-check-item strong,#onlineBasicTestModal .online-check-item strong{ display:block !important; margin:0 !important; line-height:1.3 !important }
+</style>
+<style id="patch-modern-ui">
+/* Rangée des boutons de création : plus de barre de défilement, les boutons passent à la ligne si besoin */
+.comp-create-row{flex-wrap:wrap !important;overflow:visible !important;align-items:stretch}
+.comp-create-row .btn{flex:1 1 140px !important;min-width:0}
+.comp-create-row .btn.comp-gear{flex:0 0 42px !important;width:42px;padding:0 !important;display:inline-flex;align-items:center;justify-content:center;color:#475569;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:10px}
+.comp-create-row .btn.comp-gear:hover{background:#e2e8f0;color:#0f172a}
+/* Champs de recherche modernes */
+input[type="search"]{
+ -webkit-appearance:none;appearance:none;box-sizing:border-box;width:100%;
+ padding:10px 14px 10px 40px !important;border:1px solid #e2e8f0 !important;border-radius:999px !important;
+ background-color:#f8fafc !important;color:#0f172a;font-size:14px;line-height:1.3;
+ background-repeat:no-repeat !important;background-position:14px center !important;background-size:16px 16px !important;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E") !important;
+ transition:border-color .15s,box-shadow .15s,background-color .15s;outline:none}
+input[type="search"]::placeholder{color:#94a3b8}
+input[type="search"]:hover{border-color:#cbd5e1 !important}
+input[type="search"]:focus{background-color:#fff !important;border-color:#60b4f0 !important;box-shadow:0 0 0 3px rgba(4,141,226,.15)}
+input[type="search"]::-webkit-search-cancel-button{-webkit-appearance:none;height:14px;width:14px;cursor:pointer;opacity:.55;
+ background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M18 6 6 18M6 6l12 12'/%3E%3C/svg%3E") center/contain no-repeat}
+input[type="search"]::-webkit-search-cancel-button:hover{opacity:1}
+/* Listes de filtre modernes (fini le style Windows par défaut) */
+.ec-filters select,.filter-pair select,.grp-f select,select.modern-select,select.cls-sel,select[id$="Filter"],#vsCls,#vsGrp{
+ -webkit-appearance:none;appearance:none;box-sizing:border-box;cursor:pointer;
+ padding:10px 36px 10px 14px !important;border:1px solid #e2e8f0 !important;border-radius:999px !important;
+ background-color:#f8fafc !important;color:#0f172a !important;font-size:14px;font-weight:500;line-height:1.3;
+ background-repeat:no-repeat !important;background-position:right 14px center !important;background-size:12px 12px !important;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+ transition:border-color .15s,box-shadow .15s,background-color .15s;outline:none;text-overflow:ellipsis}
+.ec-filters select:hover,.filter-pair select:hover,.grp-f select:hover,select.modern-select:hover,select.cls-sel:hover,select[id$="Filter"]:hover,#vsCls:hover,#vsGrp:hover{border-color:#cbd5e1 !important;background-color:#f1f5f9 !important}
+.ec-filters select:focus,.filter-pair select:focus,.grp-f select:focus,select.modern-select:focus,select.cls-sel:focus,select[id$="Filter"]:focus,#vsCls:focus,#vsGrp:focus{background-color:#fff !important;border-color:#60b4f0 !important;box-shadow:0 0 0 3px rgba(4,141,226,.15)}
+.ec-filters select option,.filter-pair select option,select.modern-select option{font-weight:400;color:#0f172a;background:#fff}
 </style>
 <script id="site-dialogs">
 (function(){
@@ -3179,25 +3232,27 @@ button.hw-note-ico:hover{ background:#eef2f7 }
  </div>
 </div>
 
-<div id="editCompetenciesDataModal" class="modal" aria-hidden="true">
+<div id="editCompetenciesDataModal" class="modal" aria-hidden="true" style="z-index:115;">
  <div class="modal-card" style="width:900px; max-width:96%;">
   <div class="modal-header">
    <h3>Modifier les données des compétences</h3>
-   <button class="modal-close" id="editCompDataClose">×</button>
+   <button class="modal-close" id="editCompDataClose" type="button">×</button>
   </div>
   <div class="modal-body">
-   <div class="form-row" style="margin-bottom:15px;">
-    <input id="editCompSearchInput" placeholder="Rechercher une compétence, un domaine..." style="flex:1;">
-    <select id="editCompCycleFilter" style="width:150px;"><option value="">Tous les Cycles</option></select>
-    <select id="editCompDomainFilter" style="width:200px;"><option value="">Tous les Domaines</option></select>
-    <select id="editCompSubDomainFilter" style="width:200px;"><option value="">Tous les Sous-Domaines</option></select>
+   <div class="ec-filters">
+    <input id="editCompSearchInput" type="search" placeholder="Rechercher une compétence, un domaine, un sous-domaine…" autocomplete="off" spellcheck="false">
+    <select id="editCompCycleFilter"><option value="">Tous les cycles</option></select>
+    <select id="editCompDomainFilter"><option value="">Tous les domaines</option></select>
+    <select id="editCompSubDomainFilter"><option value="">Tous les sous-domaines</option></select>
+    <button type="button" class="btn" id="editCompResetFilters" title="Réinitialiser les filtres">Réinitialiser</button>
    </div>
-   <div id="editCompDataList" style="max-height:500px; overflow:auto; border:1px solid var(--border); border-radius:8px;"></div>
+   <div id="editCompCount" class="ec-count"></div>
+   <div id="editCompDataList" style="max-height:55vh; overflow:auto; border:1px solid var(--border); border-radius:8px;"></div>
   </div>
  </div>
 </div>
 
-<div id="createHierarchyModal" class="modal" aria-hidden="true" style="z-index:110;">
+<div id="createHierarchyModal" class="modal" aria-hidden="true" style="z-index:125;">
  <div class="modal-card" style="width:400px;">
   <div class="modal-header">
    <h3 id="createHierarchyTitle">Créer</h3>
@@ -3277,14 +3332,17 @@ button.hw-note-ico:hover{ background:#eef2f7 }
     <div id="schRoomList" class="rm-list"></div>
    </div>
    <div id="paramPane_comp" hidden>
-   <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px;">
-    <button class="btn btn-primary" id="btnCreateCycle">Créer Cycle</button>
-    <button class="btn btn-primary" id="btnCreateDomaine">Créer Domaine (Matière)</button>
-    <button class="btn btn-primary" id="btnCreateSousDomaine">Créer Sous-domaine</button>
-    <button class="btn btn-primary" id="btnCreateComp">Créer Compétence</button>
+   <div class="comp-create-row">
+    <button class="btn btn-primary" id="btnCreateCycle" type="button">Créer Cycle</button>
+    <button class="btn btn-primary" id="btnCreateDomaine" type="button">Créer Domaine</button>
+    <button class="btn btn-primary" id="btnCreateSousDomaine" type="button">Créer Sous-domaine</button>
+    <button class="btn btn-primary" id="btnCreateComp" type="button">Créer Compétence</button>
+    <button class="btn comp-gear" id="btnOpenEditDataPopup" type="button" title="Modifier les données" aria-label="Modifier les données"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
    </div>
-   <div style="margin-bottom:15px; display:flex; gap:8px;">
-    <button class="btn" id="btnOpenEditDataPopup" style="flex:1; font-weight:600; background:#f9fbfc;">Modifier les données ⚙️</button>
+   <div class="ec-filters" style="margin-bottom:10px;">
+    <input id="viewCompSearchInput" type="search" placeholder="Rechercher dans les compétences…" autocomplete="off" spellcheck="false">
+    <select id="viewCompCycleFilter"><option value="">Tous les cycles</option></select>
+    <select id="viewCompDomainFilter"><option value="">Tous les domaines</option></select>
    </div>
    <div id="manageCompHierarchy" style="max-height:400px; overflow:auto; border:1px solid var(--border); border-radius:8px; padding:10px;"></div>
    </div>
@@ -11104,17 +11162,51 @@ document.getElementById("manageCompetenciesBtn")?.addEventListener("click",()=>{
 document.getElementById("manageCompetenciesClose")?.addEventListener("click",()=>document.getElementById("manageCompetenciesModal").classList.remove("open"));
 document.getElementById("manageCompetenciesCancel")?.addEventListener("click",()=>document.getElementById("manageCompetenciesModal").classList.remove("open"));
 
+function compNorm(x){ return String(x==null?"":x).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase(); }
+function compFillSelect(sel,values,allLabel,keep){
+ if(!sel) return;
+ const cur=keep!==undefined?keep:sel.value;
+ sel.innerHTML='<option value="">'+allLabel+'</option>'+values.map(v=>'<option value="'+escHtml(v)+'">'+escHtml(v)+'</option>').join("");
+ sel.value=values.includes(cur)?cur:"";
+}
+function compHier(){ return DATA.competenciesHierarchy||COMPETENCIES_HIERARCHY; }
+function compFilterTree(h,q,cyc,dom,sd){
+ /* renvoie une copie filtrée { cycle:{ domaine:{ sousDomaine:[compétences] } } } */
+ const out={}; const nq=compNorm(q).trim(); let n=0;
+ Object.keys(h).forEach(c=>{
+  if(cyc&&c!==cyc) return;
+  Object.keys(h[c]||{}).forEach(d=>{
+   if(dom&&d!==dom) return;
+   Object.keys(h[c][d]||{}).forEach(x=>{
+    if(sd&&x!==sd) return;
+    const all=h[c][d][x]||[];
+    const ctx=compNorm(c+" "+d+" "+x);
+    let list=all;
+    if(nq){ const ctxOk=nq.split(/\s+/).every(w=>ctx.includes(w)); list=ctxOk?all:all.filter(k=>nq.split(/\s+/).every(w=>compNorm(k+" "+ctx).includes(w))); if(!ctxOk&&!list.length) return; }
+    (out[c]=out[c]||{});(out[c][d]=out[c][d]||{})[x]=list; n+=list.length||1;
+   });
+   if(!nq&&!sd&&(!h[c][d]||!Object.keys(h[c][d]).length)){ (out[c]=out[c]||{})[d]=out[c][d]||{}; n++; }
+  });
+  if(!nq&&!dom&&!sd&&(!h[c]||!Object.keys(h[c]).length)){ out[c]=out[c]||{}; n++; }
+ });
+ return {tree:out,n};
+}
 function renderCompHierarchyUI(){
  const host=document.getElementById("manageCompHierarchy"); if(!host) return;
- const h=DATA.competenciesHierarchy||COMPETENCIES_HIERARCHY;
+ const h=compHier();
+ const cs=document.getElementById("viewCompCycleFilter"), ds=document.getElementById("viewCompDomainFilter"), qi=document.getElementById("viewCompSearchInput");
+ compFillSelect(cs,Object.keys(h),"Tous les cycles");
+ const doms=[]; Object.keys(h).forEach(c=>{ if(cs&&cs.value&&c!==cs.value) return; Object.keys(h[c]||{}).forEach(d=>{ if(!doms.includes(d)) doms.push(d); }); });
+ compFillSelect(ds,doms,"Tous les domaines");
+ const r=compFilterTree(h,qi?qi.value:"",cs?cs.value:"",ds?ds.value:"","");
  let html="";
- for(const cycle in h){
-  html+=`<div style="margin-bottom:10px;"><strong style="color:var(--primary);">${cycle}</strong>`;
-  for(const domaine in h[cycle]){
-   html+=`<div style="margin-left:15px;margin-top:6px;background:#f9fbfc;padding:6px;border-radius:6px;"><strong>${domaine}</strong>`;
-   for(const sd in h[cycle][domaine]){
-    const comps=h[cycle][domaine][sd];
-    html+=`<div style="margin-left:15px;margin-top:4px;"><span style="color:#64748b;">${sd}</span><ul style="margin:4px 0 4px 20px;">`;
+ for(const cycle in r.tree){
+  html+=`<div style="margin-bottom:10px;"><strong style="color:var(--primary);">${escHtml(cycle)}</strong>`;
+  for(const domaine in r.tree[cycle]){
+   html+=`<div style="margin-left:15px;margin-top:6px;background:#f9fbfc;padding:6px;border-radius:6px;"><strong>${escHtml(domaine)}</strong>`;
+   for(const sd in r.tree[cycle][domaine]){
+    const comps=r.tree[cycle][domaine][sd];
+    html+=`<div style="margin-left:15px;margin-top:4px;"><span style="color:#64748b;">${escHtml(sd)}</span><ul style="margin:4px 0 4px 20px;">`;
     comps.forEach(c=>{html+=`<li style="font-size:13px;">${escHtml(c)}</li>`;});
     html+=`</ul></div>`;
    }
@@ -11122,10 +11214,16 @@ function renderCompHierarchyUI(){
   }
   html+=`</div>`;
  }
- host.innerHTML=html;
+ host.innerHTML=html||'<div class="ec-empty">Aucun résultat.</div>';
 }
+(function(){
+ const rf=()=>renderCompHierarchyUI();
+ document.getElementById("viewCompSearchInput")?.addEventListener("input",rf);
+ document.getElementById("viewCompCycleFilter")?.addEventListener("change",()=>{ const d=document.getElementById("viewCompDomainFilter"); if(d) d.value=""; rf(); });
+ document.getElementById("viewCompDomainFilter")?.addEventListener("change",rf);
+})();
 
-document.getElementById("editCompDataClose")?.addEventListener("click",()=>document.getElementById("editCompetenciesDataModal").style.display="none");
+document.getElementById("editCompDataClose")?.addEventListener("click",closeEditCompetenciesDataModal);
   document.getElementById("editCompDataCancel")?.addEventListener("click",()=>document.getElementById("editCompetenciesDataModal").style.display="none");
   document.getElementById("btnCreateCycle")?.addEventListener("click",()=>openCreateHierarchyModal('cycle'));
   document.getElementById("btnCreateDomaine")?.addEventListener("click",()=>openCreateHierarchyModal('domaine'));
@@ -11200,6 +11298,7 @@ window.editHierarchyItem = function(type, path) {
     });
 
     renderCompHierarchyUI();
+    try{ renderEditCompDataList(); }catch(e){}
     saveData();
   });
 };
@@ -11317,56 +11416,75 @@ function handleCreateHierarchySubmit(e){
 
 function openEditCompetenciesDataModal(){
  const modal=document.getElementById("editCompetenciesDataModal"); if(!modal) return;
+ /* toujours au-dessus du pop-up de visualisation : on le replace en fin de <body> */
+ if(modal.parentNode!==document.body||modal.nextElementSibling) document.body.appendChild(modal);
+ modal.style.zIndex="115";
  renderEditCompDataList();
  modal.style.display="flex";
+ modal.setAttribute("aria-hidden","false");
+ setTimeout(()=>document.getElementById("editCompSearchInput")?.focus(),50);
 }
+function closeEditCompetenciesDataModal(){
+ const modal=document.getElementById("editCompetenciesDataModal"); if(!modal) return;
+ modal.style.display="none"; modal.setAttribute("aria-hidden","true");
+ try{ renderCompHierarchyUI(); }catch(e){}
+}
+(function(){
+ const m=()=>document.getElementById("editCompetenciesDataModal");
+ const rd=()=>renderEditCompDataList();
+ document.getElementById("editCompSearchInput")?.addEventListener("input",rd);
+ document.getElementById("editCompCycleFilter")?.addEventListener("change",()=>{ const d=document.getElementById("editCompDomainFilter"),x=document.getElementById("editCompSubDomainFilter"); if(d) d.value=""; if(x) x.value=""; rd(); });
+ document.getElementById("editCompDomainFilter")?.addEventListener("change",()=>{ const x=document.getElementById("editCompSubDomainFilter"); if(x) x.value=""; rd(); });
+ document.getElementById("editCompSubDomainFilter")?.addEventListener("change",rd);
+ document.getElementById("editCompResetFilters")?.addEventListener("click",()=>{ ["editCompSearchInput","editCompCycleFilter","editCompDomainFilter","editCompSubDomainFilter"].forEach(i=>{ const e=document.getElementById(i); if(e) e.value=""; }); rd(); });
+ document.getElementById("editCompDataList")?.addEventListener("click",ev=>{
+  const b=ev.target.closest("[data-ec-act]"); if(!b) return;
+  let path=[]; try{ path=JSON.parse(b.dataset.ecPath||"[]"); }catch(e){ return; }
+  if(b.dataset.ecAct==="edit") window.editHierarchyItem(b.dataset.ecType,path);
+  else if(b.dataset.ecAct==="del") window.deleteHierarchyItem(b.dataset.ecType,path);
+ });
+ m()?.addEventListener("mousedown",ev=>{ if(ev.target===m()) closeEditCompetenciesDataModal(); });
+ document.addEventListener("keydown",ev=>{ const x=m(); if(ev.key==="Escape"&&x&&x.style.display==="flex"){ const top=[...document.querySelectorAll(".modal.open")].some(o=>(parseInt(o.style.zIndex)||50)>115); if(!top) closeEditCompetenciesDataModal(); } });
+})();
 
 function renderEditCompDataList(){
  const list=document.getElementById("editCompDataList"); if(!list) return;
- const h = DATA.competenciesHierarchy || JSON.parse(JSON.stringify(COMPETENCIES_HIERARCHY));
- let html = "";
- for(const cyc in h){
-  html += `<div style="margin-bottom:15px; border:1px solid #ccc; padding:10px; border-radius:5px; background:#f9f9f9;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-     <strong style="font-size:1.1em; color:#0471b5;">Cycle: ${cyc}</strong>
-     <div>
-      <button class="btn btn-sm" onclick="editHierarchyItem('cycle', ['${cyc}'])">✏️</button>
-      <button class="btn btn-sm btn-danger" onclick="deleteHierarchyItem('cycle', ['${cyc}'])">🗑️</button>
-     </div>
-    </div>`;
-  for(const dom in h[cyc]){
-   html += `<div style="margin-left:20px; margin-bottom:10px; border-left:3px solid #109ef5; padding-left:10px;">
-     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-      <strong style="color:#0080d0;">Domaine: ${dom}</strong>
-      <div>
-       <button class="btn btn-sm" onclick="editHierarchyItem('domaine', ['${cyc}','${dom}'])">✏️</button>
-       <button class="btn btn-sm btn-danger" onclick="deleteHierarchyItem('domaine', ['${cyc}','${dom}'])">🗑️</button>
-      </div>
-     </div>`;
-   for(const sd in h[cyc][dom]){
-    html += `<div style="margin-left:20px; margin-bottom:5px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; background:#fff; padding:5px; border-radius:3px; border:1px inset #eee;">
-       <span style="font-weight:600; color:#4b5563;">Sous-domaine: ${sd}</span>
-       <div>
-        <button class="btn btn-sm" style="padding:1px 4px; font-size:10px;" onclick="editHierarchyItem('sous-domaine', ['${cyc}','${dom}','${sd}'])">✏️</button>
-        <button class="btn btn-sm btn-danger" style="padding:1px 4px; font-size:10px;" onclick="deleteHierarchyItem('sous-domaine', ['${cyc}','${dom}','${sd}'])">🗑️</button>
-       </div>
-      </div>
-      <div style="margin-left:20px; margin-top:5px; display:flex; flex-wrap:wrap; gap:5px;">`;
-    (h[cyc][dom][sd]||[]).forEach(comp=>{
-     html += `<div class="badge" style="display:flex; align-items:center; gap:5px; background:#e3f4ff; color:#027ecb; border:1px solid #bfe6ff;">
-       <span>${comp}</span>
-       <button style="border:none; background:none; cursor:pointer; padding:0 3px; font-size:10px;" onclick="editHierarchyItem('competence', ['${cyc}','${dom}','${sd}','${comp}'])">✏️</button>
-       <button style="border:none; background:none; cursor:pointer; padding:0 3px; font-size:10px; color:#ef4444;" onclick="deleteHierarchyItem('competence', ['${cyc}','${dom}','${sd}','${comp}'])">🗑️</button>
-      </div>`;
+ const h=compHier();
+ const cs=document.getElementById("editCompCycleFilter"), ds=document.getElementById("editCompDomainFilter"), xs=document.getElementById("editCompSubDomainFilter"), qi=document.getElementById("editCompSearchInput");
+ compFillSelect(cs,Object.keys(h),"Tous les cycles");
+ const doms=[]; Object.keys(h).forEach(c=>{ if(cs.value&&c!==cs.value) return; Object.keys(h[c]||{}).forEach(d=>{ if(!doms.includes(d)) doms.push(d); }); });
+ compFillSelect(ds,doms,"Tous les domaines");
+ const sds=[]; Object.keys(h).forEach(c=>{ if(cs.value&&c!==cs.value) return; Object.keys(h[c]||{}).forEach(d=>{ if(ds.value&&d!==ds.value) return; Object.keys(h[c][d]||{}).forEach(x=>{ if(!sds.includes(x)) sds.push(x); }); }); });
+ compFillSelect(xs,sds,"Tous les sous-domaines");
+ const r=compFilterTree(h,qi?qi.value:"",cs.value,ds.value,xs.value);
+ const J=a=>escHtml(JSON.stringify(a));
+ const btns=(type,path,small)=>`<div style="display:flex;gap:4px;flex:none"><button type="button" class="btn btn-sm" data-ec-act="edit" data-ec-type="${type}" data-ec-path="${J(path)}" title="Renommer"${small?' style="padding:1px 5px;font-size:11px"':''}>✏️</button><button type="button" class="btn btn-sm btn-danger" data-ec-act="del" data-ec-type="${type}" data-ec-path="${J(path)}" title="Supprimer"${small?' style="padding:1px 5px;font-size:11px"':''}>🗑️</button></div>`;
+ let html="", nCyc=0, nComp=0;
+ for(const cyc in r.tree){
+  nCyc++;
+  html+=`<div style="margin:10px; border:1px solid #ccc; padding:10px; border-radius:8px; background:#f9f9f9;">
+   <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px;"><strong style="font-size:1.05em; color:#0471b5;">Cycle : ${escHtml(cyc)}</strong>${btns("cycle",[cyc])}</div>`;
+  for(const dom in r.tree[cyc]){
+   html+=`<div style="margin-left:16px; margin-bottom:10px; border-left:3px solid #109ef5; padding-left:10px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:5px;"><strong style="color:#0080d0;">Domaine : ${escHtml(dom)}</strong>${btns("domaine",[cyc,dom])}</div>`;
+   for(const sd in r.tree[cyc][dom]){
+    html+=`<div style="margin-left:16px; margin-bottom:6px;">
+     <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; background:#fff; padding:5px 8px; border-radius:6px; border:1px solid #e2e8f0;"><span style="font-weight:600; color:#4b5563;">Sous-domaine : ${escHtml(sd)}</span>${btns("sous-domaine",[cyc,dom,sd],true)}</div>
+     <div style="margin:6px 0 0 16px; display:flex; flex-wrap:wrap; gap:6px;">`;
+    (r.tree[cyc][dom][sd]||[]).forEach(comp=>{
+     nComp++;
+     html+=`<div class="badge" style="display:flex; align-items:center; gap:5px; background:#e3f4ff; color:#027ecb; border:1px solid #bfe6ff;"><span>${escHtml(comp)}</span>
+      <button type="button" style="border:none;background:none;cursor:pointer;padding:0 3px;font-size:11px" data-ec-act="edit" data-ec-type="competence" data-ec-path="${J([cyc,dom,sd,comp])}" title="Renommer">✏️</button>
+      <button type="button" style="border:none;background:none;cursor:pointer;padding:0 3px;font-size:11px;color:#ef4444" data-ec-act="del" data-ec-type="competence" data-ec-path="${J([cyc,dom,sd,comp])}" title="Supprimer">🗑️</button></div>`;
     });
-    html += `</div></div>`;
+    html+=`</div></div>`;
    }
-   html += `</div>`;
+   html+=`</div>`;
   }
-  html += `</div>`;
+  html+=`</div>`;
  }
- list.innerHTML = html;
+ list.innerHTML=html||'<div class="ec-empty">Aucun résultat pour ces filtres.</div>';
+ const c=document.getElementById("editCompCount"); if(c) c.textContent=nCyc?(nComp+" compétence"+(nComp>1?"s":"")+" affichée"+(nComp>1?"s":"")):"";
 }
 
 function renderCompDetailsHtml(items){
@@ -15601,6 +15719,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
  window.hwOpenCorrectif=hwOpenCorrectif;
  window.hwSyncGrades=function(){ try{ return syncHomeworkDirectGrades(); }catch(e){ return false; } };
  window.hwSpecialFor=function(h,t,sid){ try{ return hwSpecialMark(h,t,sid)||""; }catch(e){ return ""; } };
+ window.hwGetTest=function(t,hw){ try{ return getHomeworkTest(t,hw); }catch(e){ return null; } };
  window.hwMatchesStudent=function(h){ try{ return homeworkMatchesStudentClass(h); }catch(e){ return false; } };
  /* Fil d'actualite eleve : onglet Devoirs sur le jour du devoir, puis pop-up du test */
  window.hwOpenFeedTest=function(homeworkId,testId){
@@ -18003,13 +18122,19 @@ document.getElementById("schSigNo").onclick=()=>schSignal(false);
   m.innerHTML='<div class="modal-card" style="width:520px"><div class="modal-header"><h3>'+(g?"Modifier le groupe":"Créer un groupe")+'</h3><button class="modal-close" type="button">×</button></div><div class="modal-body">'
    +'<label style="display:block;font-weight:600;margin-bottom:4px">Nom du groupe</label><input id="grpName" placeholder="Nom du groupe" maxlength="60" value="'+escHtml(g?g.name:"")+'">'
    +'<label style="display:block;font-weight:600;margin:12px 0 2px">Matières du groupe</label><div style="color:#64748b;font-size:12.5px">Pas forcément celles de la classe. Une matière commune avec la classe d\'un élève apparaît sur la même ligne.</div>'
-   +'<div class="grp-subs" id="grpSubs">'+(function(){ ensureSubjectRegistry(); const cur=g?(Array.isArray(g.subjectsSel)?g.subjectsSel:(classLike(g.id)||{subjects:[]}).subjects):[]; const names=SUBJECT_REGISTRY.map(x=>typeof x==="object"?x.name:x); cur.forEach(n=>{ if(!names.includes(n)) names.push(n); }); return names.length?names.map(n=>'<label><input type="checkbox" data-name="'+escHtml(n)+'"'+(cur.includes(n)?" checked":"")+'> '+escHtml(n)+'</label>').join(""):"<span class='hint'>Aucune matière : créez-les d\'abord via « Gérer les matières ».</span>"; })()+'</div>'
+   +'<div class="grp-dd" id="grpDd"><button type="button" class="grp-dd-btn" id="grpDdBtn" aria-haspopup="listbox" aria-expanded="false"><span id="grpDdLabel">Choisir les matières</span><svg class="grp-dd-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="grp-dd-panel" id="grpSubs" role="listbox">'+(function(){ ensureSubjectRegistry(); const cur=g?(Array.isArray(g.subjectsSel)?g.subjectsSel:(classLike(g.id)||{subjects:[]}).subjects):[]; const names=SUBJECT_REGISTRY.map(x=>typeof x==="object"?x.name:x); cur.forEach(n=>{ if(!names.includes(n)) names.push(n); }); return names.length?names.map(n=>'<label><input type="checkbox" data-name="'+escHtml(n)+'"'+(cur.includes(n)?" checked":"")+'> '+escHtml(n)+'</label>').join(""):"<span class='hint'>Aucune matière : créez-les d\'abord via « Gérer les matières ».</span>"; })()+'</div></div>'
    +'<div class="grp-f"><select id="grpCls"><option value="">Toutes les classes</option>'+DATA.classes.slice().sort((a,b)=>String(a.name).localeCompare(String(b.name),"fr",{numeric:true,sensitivity:"base"})).map(c=>'<option value="'+escHtml(c.id)+'">'+escHtml(c.name)+'</option>').join("")+'</select><input id="grpSearch" type="search" placeholder="Rechercher un élève…"></div>'
    +'<div id="grpCount" style="color:#64748b;margin-bottom:6px"></div>'
    +'<div id="grpStuList" style="max-height:44vh;overflow:auto"></div>'
    +'<div class="modal-actions" style="margin-top:12px"><button type="button" class="btn" id="grpEdCancel">Annuler</button><button type="button" class="btn btn-primary" id="grpEdSave">Enregistrer</button></div></div></div>';
   const close=()=>hide(m);
   m.querySelector(".modal-close").onclick=close; m.querySelector("#grpEdCancel").onclick=close;
+  { const dd=m.querySelector("#grpDd"), btn=m.querySelector("#grpDdBtn"), lab=m.querySelector("#grpDdLabel"), pan=m.querySelector("#grpSubs");
+    const upd=()=>{ const on=[...pan.querySelectorAll("input:checked")].map(i=>i.dataset.name); lab.textContent=on.length?(on.length<=2?on.join(", "):on.length+" matières sélectionnées"):"Choisir les matières"; lab.style.color=on.length?"":"#64748b"; };
+    btn.onclick=ev=>{ ev.stopPropagation(); const o=!dd.classList.contains("open"); dd.classList.toggle("open",o); btn.setAttribute("aria-expanded",o?"true":"false"); };
+    pan.addEventListener("change",upd); pan.addEventListener("click",ev=>ev.stopPropagation());
+    m.addEventListener("click",ev=>{ if(!dd.contains(ev.target)){ dd.classList.remove("open"); btn.setAttribute("aria-expanded","false"); } });
+    upd(); }
   const draw=()=>{
    const c=m.querySelector("#grpCls").value, q=norm(m.querySelector("#grpSearch").value);
    const l=DATA.students.filter(s=>(!c||s.classId===c)&&(!q||norm(s.last+" "+s.first).includes(q)||norm(s.first+" "+s.last).includes(q))).sort(cmpStu);
@@ -19299,29 +19424,46 @@ function tlItems(){
      title:(multi?"Nouvelles évaluations de ":"Nouvelle évaluation de ")+last.subject,
      sub:multi?"":l[0].label, lines:multi?l.map(r=>r.label||"Évaluation"):null});
    });
-  /* Tests assignes en devoirs : "du jour" tant que le test n'est pas fait ; nouvelle notif si le prof annule la soumission (refaire) */
-  try{
-   if(window.hwSyncGrades) window.hwSyncGrades();   /* met NR → EA pour les devoirs dont la date est dépassée */
+  /* Tests assignés en devoirs : une notification par test et par élève, à la date d'assignation du devoir (même future) ;
+     « À faire » tant que le test n'est pas rendu, « En retard » dès que la date demandée est dépassée sans rendu ;
+     nouvelle notif si le prof annule la soumission (refaire). Chaque test est traité isolément : une erreur ne masque plus les autres. */
+  try{ if(window.hwSyncGrades) window.hwSyncGrades(); }catch(x){}   /* NR → EA pour les devoirs dont la date est dépassée */
+  {
    const sid=AUTH.studentId, tl=[], redo=DATA.homeworkRedo||[];
+   const mine=h=>{
+    if(AUTH.role==="eleve"&&!isPrev()) return true;   /* le serveur n'envoie à l'élève que les devoirs qui le visent */
+    try{ if(window.hwMatchesStudent&&window.hwMatchesStudent(h)) return true; }catch(x){}
+    /* repli : la classe ou un groupe de l'élève correspond à la cible du devoir */
+    try{
+     const st=(DATA.students||[]).find(z=>z.id===sid); if(!st) return false;
+     if(h.classId&&h.classId===st.classId) return true;
+     const g=(DATA.groups||[]).find(z=>z.id===h.classId);
+     return !!(g&&(g.memberIds||[]).includes(sid));
+    }catch(x){ return false; }
+   };
    (DATA.homework||[]).forEach(h=>{
-    if(!h||!h.dateISO||!window.hwMatchesStudent||!window.hwMatchesStudent(h)) return;
-    (h.testIds||[]).forEach(tid=>{
-     const t=getHomeworkTest(tid,h.id); if(!t||(t.options&&t.options.trainingMode)) return;
-     const sub=(DATA.homeworkSubmissions||[]).find(x=>x.homeworkId===h.id&&x.testId===tid&&x.studentId===sid);
-     const done=!!(sub&&sub.submittedAt)||!!(window.hwSpecialFor&&window.hwSpecialFor(h,t,sid));   /* rendu, ou marque X/Abs/Disp/NE/EA par le prof = fait */
-     /* Le test apparaît à la date d'assignation du devoir (et non au jour où le prof l'a créé), même si cette date est dans le futur */
-     let ts=new Date(h.dateISO+"T12:00:00").getTime();
-     const r=redo.find(x=>x.hw===h.id&&x.test===tid&&x.stu===sid), rts=r?new Date(r.at).getTime():0;
-     if(!done&&rts>ts) ts=rts;
-     /* Date d'assignation dépassée et test non fait : il remonte à « aujourd'hui » avec le label « En retard » */
-     const late=!done&&h.dateISO<today;
-     const iso=late?today:isoOf(new Date(ts)), day=new Date(h.dateISO+"T12:00:00").toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
-     tl.push({k:"t"+h.id+"|"+tid,type:"hwt",act:"hwt",ts,iso,today:!done,todo:!done,late,tag:late?"En retard":"À faire",hwId:h.id,testId:tid,stuId:sid,
-      title:"Test à faire pour le "+day,sub:[t.title||"Test en ligne",h.subject].filter(Boolean).join(" · ")});
-    });
+    try{
+     if(!h||!h.dateISO||!mine(h)) return;
+     (h.testIds||[]).forEach(tid=>{
+      try{
+       const t0=window.hwGetTest?window.hwGetTest(tid,h.id):null; if(t0&&t0.options&&t0.options.trainingMode) return; const t=t0||{title:"Test en ligne"};
+       const sub=(DATA.homeworkSubmissions||[]).find(x=>x.homeworkId===h.id&&x.testId===tid&&x.studentId===sid);
+       let special=""; try{ special=(window.hwSpecialFor&&window.hwSpecialFor(h,t,sid))||""; }catch(x){}
+       const done=!!(sub&&sub.submittedAt)||!!special;   /* rendu, ou marque X/Abs/Disp/NE/EA par le prof = fait */
+       let ts=new Date(h.dateISO+"T12:00:00").getTime();
+       const r=redo.find(x=>x.hw===h.id&&x.test===tid&&x.stu===sid), rts=r?new Date(r.at).getTime():0;
+       if(!done&&rts>ts) ts=rts;
+       const late=!done&&h.dateISO<today;   /* date demandée dépassée, test toujours pas fait */
+       const iso=late?today:isoOf(new Date(ts));
+       const day=new Date(h.dateISO+"T12:00:00").toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
+       tl.push({k:"t"+h.id+"|"+tid,type:"hwt",act:"hwt",ts,iso,today:!done,todo:!done,late,tag:late?"En retard":"À faire",hwId:h.id,testId:tid,stuId:sid,
+        title:"Test à faire pour le "+day,sub:[t.title||"Test en ligne",h.subject].filter(Boolean).join(" · ")});
+      }catch(x){ console.warn("test timeline (test):",x); }
+     });
+    }catch(x){ console.warn("test timeline (devoir):",x); }
    });
    tl.sort((a,b)=>b.ts-a.ts).forEach(r=>out.push(r));
-  }catch(x){ console.warn("tests timeline:",x); }
+  }
   /* Colles : jaune = à rendre à la date limite (en retard si dépassée, comme les tests) ; verte/rouge = dès leur saisie, toujours « nouvelles » */
   try{
    if(typeof vsEns==="function"){
