@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com data:; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src https://script.google.com https://script.googleusercontent.com data: blob:; frame-src 'self' blob:; worker-src blob:; manifest-src 'self' data: blob:; base-uri 'none'; form-action 'self'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com data:; img-src 'self' data: blob: https://drive.google.com https://drive.usercontent.google.com https://*.googleusercontent.com; media-src 'self' data: blob:; connect-src https://script.google.com https://script.googleusercontent.com data: blob:; frame-src 'self' blob: https://*.google.com https://*.googleusercontent.com https://drive.usercontent.google.com; worker-src blob:; manifest-src 'self' data: blob:; base-uri 'none'; form-action 'self'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
@@ -298,6 +298,51 @@ body.student-mode #onlineTestsView{ display:none !important }
 .online-choice-row.is-correct{ border-color:#4db5f5; background:#eef9ff }
 .online-choice-row.is-correct .online-choice-marker{ background:#0080d0; border-color:#0080d0 }
 .online-choice-status{ font-size:12px; color:#007ac6; font-weight:700 }
+.ot-imgwrap{ position:relative; display:inline-flex; align-items:center; flex:none }
+.ot-imgbtn{ width:36px; height:36px; border-radius:50%; border:1.5px solid #4db5f5; background:#fff center/cover no-repeat; color:#0080d0; display:inline-flex; align-items:center; justify-content:center; padding:0; cursor:pointer; flex:none }
+.ot-imgbtn:hover{ background-color:#eef9ff }
+.ot-imgbtn.has-img{ border-color:#16a34a; border-width:2px }
+.ot-imgbtn.has-img svg{ opacity:0 }
+.ot-imgbtn.is-busy{ opacity:.55; cursor:progress; animation:otPulse 1s infinite }
+@keyframes otPulse{ 50%{ opacity:.9 } }
+.ot-imgdel{ position:absolute; top:-6px; right:-6px; width:18px; height:18px; border-radius:50%; border:0; background:#dc2626; color:#fff; font-size:13px; line-height:18px; padding:0; cursor:pointer }
+.ot-imgdel[hidden]{ display:none }
+.ot-imgfit{ margin-left:6px; width:auto !important; min-width:0; padding:6px 10px !important; font-size:12px !important; border-radius:8px !important; flex:none; display:inline-flex; align-items:center; gap:5px; white-space:nowrap }
+.ot-imgfit[hidden]{ display:none }
+.otfit-ov{ position:fixed; inset:0; z-index:300; background:rgba(15,23,42,.55); display:flex; align-items:center; justify-content:center; padding:12px }
+.otfit-card{ position:relative; width:860px; max-width:100%; max-height:94vh; display:flex; flex-direction:column; background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 20px 40px rgba(0,0,0,.3) }
+.otfit-card::before{ content:""; position:absolute; left:0; right:0; top:0; height:4px; background:var(--grad); pointer-events:none }
+.otfit-head{ display:flex; justify-content:space-between; align-items:center; padding:16px 14px 12px; border-bottom:1px solid var(--border) }
+.otfit-head h3{ margin:0; font-size:18px; font-weight:700; color:#0471b5 }
+.otfit-body{ padding:14px; overflow:auto; flex:1 1 auto; background:#f8fafc }
+.otfit-hint{ margin:0 0 12px; font-size:13px; color:#475569 }
+.otfit-q{ background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:16px }
+.otfit-prompt{ font-weight:700; font-size:16px; color:#0f172a; line-height:1.4; margin-bottom:6px; white-space:pre-wrap }
+.otfit-prompt.is-empty{ color:#94a3b8; font-weight:400; font-style:italic }
+.otfit-choice{ display:flex; gap:10px; align-items:flex-start; padding:10px 12px; margin-top:8px; border:1px solid #e2e8f0; border-radius:12px; background:#fff }
+.otfit-choice.is-current{ border-color:#4db5f5; background:#f4fbff }
+.otfit-mark{ flex:none; width:18px; height:18px; margin-top:2px; border:2px solid #94a3b8; border-radius:999px; box-sizing:border-box }
+.otfit-mark.sq{ border-radius:4px }
+.otfit-choice-body{ min-width:0; flex:1 }
+.otfit-choice-body img.ot-img{ max-height:none; cursor:default }
+.otfit-q img.ot-img{ cursor:default }
+.otfit-fig{ position:relative; display:block; max-width:100%; margin:8px 0; outline:2px solid #0080d0; outline-offset:0; touch-action:none; user-select:none; -webkit-user-select:none }
+.otfit-fig img.ot-img{ width:100% !important; max-width:none !important; max-height:none !important; margin:0 !important; border-radius:0 !important; display:block; pointer-events:none }
+.otfit-fig .h{ position:absolute; width:12px; height:12px; background:#fff; border:2px solid #0080d0; box-sizing:border-box; border-radius:2px; touch-action:none; z-index:2 }
+.otfit-fig .h.nw{ left:-7px; top:-7px; cursor:nwse-resize }
+.otfit-fig .h.ne{ right:-7px; top:-7px; cursor:nesw-resize }
+.otfit-fig .h.sw{ left:-7px; bottom:-7px; cursor:nesw-resize }
+.otfit-fig .h.se{ right:-7px; bottom:-7px; cursor:nwse-resize }
+.otfit-badge{ position:absolute; left:50%; bottom:6px; transform:translateX(-50%); background:rgba(15,23,42,.8); color:#fff; font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; pointer-events:none; white-space:nowrap }
+.otfit-foot{ display:flex; gap:8px; align-items:center; justify-content:flex-end; padding:12px 14px; border-top:1px solid var(--border); flex-wrap:wrap }
+.otfit-val{ font-size:13px; color:#475569; margin-right:auto }
+img.ot-img.is-broken{ min-height:40px; padding:8px; border:1px dashed #cbd5e1; font-size:12px; color:#64748b }
+.ot-q-imgrow{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:4px }
+.ot-q-imgrow label{ margin:0 !important }
+img.ot-img{ display:block; max-width:100%; max-height:320px; object-fit:contain; border-radius:12px; margin:8px 0; cursor:zoom-in; background:#f8fafc }
+img.ot-img.ot-img-choice{ max-height:160px; margin:6px 0 0 }
+.online-choice-row{ grid-template-columns:28px minmax(0,1fr) auto auto auto !important }
+
 .online-answer-target{
   min-height:58px; border:2px dashed #8dd0fb; border-radius:14px; background:#f4fbff;
   display:flex; align-items:center; justify-content:center; text-align:center; padding:14px;
@@ -2439,6 +2484,93 @@ input[type="search"]::-webkit-search-cancel-button:hover{opacity:1}
 .cs.open .cs-chev{ transform:rotate(180deg) }
 .cs.dis .cs-btn{ background:#f1f5f9; color:#94a3b8; cursor:not-allowed }
 </style>
+<style id="patch-rendus">
+/* ── Filtres des devoirs : une grille qui s'adapte à l'écran, une seule liste « Élève » ── */
+.homework-toolbar{ display:block; margin-bottom:14px }
+.homework-toolbar.is-hidden{ display:none }
+.hwf-bar{ display:flex; flex-wrap:wrap; gap:12px 14px; align-items:flex-end }
+.hwf-target{ display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1.4fr); gap:8px; align-items:end; flex:1 1 560px; min-width:0 }
+.hwf{ min-width:0; display:flex; flex-direction:column; gap:4px }
+.hwf > label{ margin:0; font-size:13px; font-weight:600; color:#334155 }
+.hwf select, .hwf .ss-btn{ width:100%; min-width:0 !important; max-width:100%; height:42px; box-sizing:border-box; padding:0 10px; border:1px solid var(--border); border-radius:8px; background:#fff; font:inherit; font-size:14px }
+.hwf .ss-btn{ display:inline-flex; align-items:center; justify-content:space-between; gap:8px; cursor:pointer }
+.hwf select[data-ss="1"]{ display:none !important }
+.hwf-or{ font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; padding-bottom:12px }
+.hwf-subject{ flex:0 1 230px; min-width:160px }
+.hwf-actions{ display:flex; gap:8px; flex-wrap:wrap; margin-left:auto }
+.hwf-actions .btn{ height:42px; white-space:nowrap }
+@media (max-width:900px){
+ .hwf-target{ flex:1 1 100% }
+ .hwf-subject{ flex:1 1 100% }
+ .hwf-actions{ width:100%; margin-left:0 }
+ .hwf-actions .btn{ flex:1 1 0 }
+}
+@media (max-width:560px){
+ .hwf-target{ grid-template-columns:minmax(0,1fr) }
+ .hwf-or{ text-align:center; padding:0 }
+}
+/* ── Devoirs à rendre ── */
+.hw-subtabs{ margin-bottom:12px }
+body.student-mode .hw-subtabs{ display:none !important }
+.wr-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:12px }
+.wr-head h3{ margin:0 }
+.wr-asg{ border:1px solid #e2e8f0; border-radius:12px; background:#fff; margin-bottom:10px; overflow:hidden }
+.wr-asg > summary{ list-style:none; cursor:pointer; display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; padding:10px 14px; background:#f8fafc }
+.wr-asg > summary::-webkit-details-marker{ display:none }
+.wr-asg[open] > summary{ border-bottom:1px solid #e2e8f0 }
+.wr-date{ font-weight:700; color:#0471b5; min-width:84px }
+.wr-who{ font-weight:600 }
+.wr-subj{ color:#334155 }
+.wr-title{ color:#64748b; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1 1 120px }
+.wr-count{ font-size:13px; font-weight:700; padding:3px 10px; border-radius:999px; background:#eaf0fb; color:#0471b5 }
+.wr-count.all{ background:#dcfce7; color:#15803d }
+.wr-ico{ display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border:1px solid #cbd5e1; border-radius:50%; background:#fff; color:#0471b5; cursor:pointer; text-decoration:none; font-size:16px; padding:0 }
+.wr-ico:hover{ background:#eef9ff }
+.wr-ico.del{ color:#dc2626 } .wr-ico.del:hover{ background:#fee2e2 }
+.wr-scroll{ overflow-x:auto }
+.wr-table{ width:100%; border-collapse:collapse; font-size:14px }
+.wr-table th{ text-align:left; font-size:12px; text-transform:uppercase; letter-spacing:.03em; color:#64748b; padding:8px 14px }
+.wr-table td{ padding:8px 14px; border-top:1px solid #eef2f7; vertical-align:middle }
+.wr-no{ color:#94a3b8 }
+.wr-files{ font-size:13px; color:#334155 }
+.wr-ov{ position:fixed; inset:0; z-index:400; background:rgba(15,23,42,.6); display:flex; align-items:center; justify-content:center; padding:12px }
+.wr-modal{ width:520px; max-width:100%; max-height:92vh; overflow:auto; background:#fff; border-radius:14px; padding:18px; box-shadow:0 20px 40px rgba(0,0,0,.3) }
+.wr-modal h3{ margin:0 0 4px; color:#0471b5 }
+.wr-modal label{ display:block; margin:12px 0 4px; font-weight:600; font-size:13px; color:#334155 }
+.wr-modal input, .wr-modal textarea{ width:100%; box-sizing:border-box; padding:9px 10px; border:1px solid var(--border); border-radius:8px; font:inherit }
+.wr-modal textarea{ min-height:84px; resize:vertical }
+.wr-sum{ font-size:13px; color:#475569; background:#f1f5f9; border-radius:8px; padding:8px 10px; margin-top:6px; word-break:break-word }
+.wr-btns{ display:flex; justify-content:flex-end; gap:8px; margin-top:16px; flex-wrap:wrap }
+/* côté élève */
+#wrStudentBox:empty{ display:none }
+#wrStudentBox{ margin-bottom:16px }
+.wr-s-title{ margin:0 0 8px; font-size:16px; color:#0f172a }
+.wr-card{ border:1px solid #bfdbfe; background:#f5faff; border-radius:12px; padding:12px 14px; margin-bottom:10px }
+.wr-card.done{ border-color:#bbf7d0; background:#f3fdf6 }
+.wr-top{ display:flex; justify-content:space-between; gap:10px; align-items:flex-start; flex-wrap:wrap }
+.wr-top strong{ display:block; color:#0f172a }
+.wr-meta{ font-size:13px; color:#64748b }
+.wr-badge{ font-size:12px; font-weight:700; padding:3px 10px; border-radius:999px; background:#dbeafe; color:#1d4ed8; white-space:nowrap }
+.wr-card.done .wr-badge{ background:#dcfce7; color:#15803d }
+.wr-instr{ margin:8px 0 0; white-space:pre-wrap; font-size:14px; color:#334155 }
+.wr-sent{ margin-top:8px; font-size:13px; color:#15803d }
+.wr-drop{ display:block; margin-top:10px; border:2px dashed #93c5fd; border-radius:12px; padding:14px; text-align:center; color:#475569; background:#fff; cursor:pointer; font-size:14px }
+.wr-drop.over{ background:#eff6ff; border-color:#3b82f6 }
+.wr-drop input{ display:none }
+.wr-drop u{ color:#0471b5; font-weight:600 }
+.wr-pick{ display:flex; align-items:center; gap:8px; margin-top:6px; font-size:13px; min-width:0 }
+.wr-pick span{ flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.wr-pick button{ border:none; background:none; color:#dc2626; font-size:18px; cursor:pointer; line-height:1 }
+.wr-send{ margin-top:10px }
+.hw-subtabs{ display:flex; gap:4px; padding:0; background:transparent; border-radius:0; border-bottom:1px solid #e2e8f0; margin-bottom:14px }
+.hw-subtabs .subtab-btn{ background:transparent; border:none; border-bottom:3px solid transparent; border-radius:0; padding:8px 16px; margin-bottom:-1px; color:#64748b; font-weight:600; box-shadow:none }
+.hw-subtabs .subtab-btn:hover:not(.active){ background:transparent; color:#0471b5 }
+.hw-subtabs .subtab-btn.active{ background:transparent; color:#0471b5; border-bottom-color:#0471b5; box-shadow:none }
+.wr-slot:empty{ display:none }
+.wr-slot .wr-card{ margin:12px 0 0 }
+.wr-pblock{ display:flex; justify-content:space-between; align-items:center; gap:10px 14px; flex-wrap:wrap; margin-top:12px; padding:10px 12px; border:1px solid #bfdbfe; background:#f5faff; border-radius:12px }
+.wr-pblock strong{ color:#0f172a }
+</style>
 </head>
 <body class="auth-pending">
 <header>
@@ -2618,6 +2750,7 @@ input[type="search"]::-webkit-search-cancel-button:hover{opacity:1}
     <div class="online-tests-shell">
      <div class="online-tests-toolbar">
       <div id="onlineTestsSummary" class="online-modal-note" style="margin-top:0;">0 test réalisé</div>
+      <input id="onlineTestsSearch" type="search" class="modern-input otsearch" placeholder="Rechercher un test…" aria-label="Rechercher un test" autocomplete="off">
       <select id="onlineTestsSubjectFilter" class="modern-select" aria-label="Filtrer par matière"><option value="">Toutes les matières</option></select>
       <button class="btn btn-primary" id="openCreateOnlineTestBtn" type="button" style="font-size:16px;padding:12px 18px;">+ Créer un test</button>
       <button class="btn" id="openBasicOnlineTestBtn" type="button" style="font-size:16px;padding:12px 18px;background:#fff;color:#048de2;border:2px solid #048de2;">Créer test basique</button>
@@ -2642,7 +2775,11 @@ input[type="search"]::-webkit-search-cancel-button:hover{opacity:1}
  <section id="appelView" class="view"><div class="card"><div class="card-header"><strong>Feuille d'appel</strong><div id="appelCtl"></div></div><div class="card-body" id="appelBody"></div></div></section>
  <section id="vieView" class="view"><div class="card"><div class="card-body" id="vieBody"></div></div></section>
  <section id="homeworkView" class="view">
-  <div class="card">
+  <div class="subtabs hw-subtabs" id="hwSubtabs" role="tablist" aria-label="Devoirs">
+   <button type="button" class="subtab-btn active" data-hwsub="devoirs" role="tab">Devoirs</button>
+   <button type="button" class="subtab-btn" data-hwsub="rendus" role="tab">Devoirs rendus</button>
+  </div>
+  <div class="card" id="hwDevoirsPane">
    <div class="card-body">
     <div class="homework-shell">
      <aside class="homework-calendar-panel">
@@ -2657,6 +2794,12 @@ input[type="search"]::-webkit-search-cancel-button:hover{opacity:1}
       <div id="homeworkMainContent"></div>
      </section>
     </div>
+   </div>
+  </div>
+  <div class="card" id="hwRendusPane" hidden>
+   <div class="card-body">
+    <div class="wr-head"><h3>Devoirs rendus</h3><button type="button" class="btn" data-wr="refresh">Actualiser</button></div>
+    <div id="wrProfList"></div>
    </div>
   </div>
  </section>
@@ -3700,26 +3843,24 @@ input[type="search"]::-webkit-search-cancel-button:hover{opacity:1}
         </span>
        </div>
        <label class="online-check-item" id="onlineTestFocusWrap"><input type="checkbox" id="onlineTestFocusMode"><strong>Mode Focus</strong></label>
+       <div class="online-check-item">
+        <strong>Points par question</strong>
+        <span class="online-inline-field"><input id="onlineTestDefaultPoints" type="number" min="0.25" step="0.25" value="1" aria-label="Points par défaut par question"></span>
+       </div>
+       <div class="online-check-item">
+        <strong>Temps par question</strong>
+        <span class="online-inline-field online-time-fields"><input id="onlineTestDefaultQMin" type="number" min="0" step="1" placeholder="Min" aria-label="Minutes"><span>min</span><input id="onlineTestDefaultQSec" type="number" min="0" max="59" step="1" placeholder="Sec" aria-label="Secondes"><span>s</span></span>
+       </div>
       </div>
       <div id="onlineTestSetupHint" class="online-modal-note" style="display:none"></div>
      </div>
-     <div class="full">
-      <label>Message d’introduction</label>
-      <textarea id="onlineTestIntroInput" rows="4" placeholder="Message affiché à l’élève avant le début du test."></textarea>
+     <div class="full otmsg">
+      <label class="otmsg-head"><input type="checkbox" id="onlineTestIntroToggle"><span>Message d’introduction</span></label>
+      <textarea id="onlineTestIntroInput" rows="4" placeholder="Message affiché à l’élève avant le début du test." hidden></textarea>
      </div>
-     <div class="full">
-      <label>Message de conclusion</label>
-      <textarea id="onlineTestConclusionInput" rows="4" placeholder="Message affiché à l’élève à la fin du test."></textarea>
-     </div>
-     <div>
-      <label>Points par défaut pour chaque question</label>
-      <input id="onlineTestDefaultPoints" type="number" min="0.25" step="0.25" value="1">
-      <div class="online-subhint">Cette valeur pré-remplit les nouvelles questions, mais reste modifiable question par question.</div>
-     </div>
-     <div>
-      <label for="onlineTestDefaultQMin">Temps par défaut pour chaque question (facultatif)</label>
-      <span class="online-inline-field online-time-fields"><input id="onlineTestDefaultQMin" type="number" min="0" step="1" placeholder="Min" aria-label="Minutes"><span>min</span><input id="onlineTestDefaultQSec" type="number" min="0" max="59" step="1" placeholder="Sec" aria-label="Secondes"><span>s</span></span>
-      <div class="online-subhint">Vide = aucun temps. Pré-remplit les nouvelles questions ; modifiable question par question. Indisponible si un temps global est défini.</div>
+     <div class="full otmsg">
+      <label class="otmsg-head"><input type="checkbox" id="onlineTestConclusionToggle"><span>Message de conclusion</span></label>
+      <textarea id="onlineTestConclusionInput" rows="4" placeholder="Message affiché à l’élève à la fin du test." hidden></textarea>
      </div>
     </div>
     <div class="modal-actions">
@@ -3761,13 +3902,13 @@ input[type="search"]::-webkit-search-cancel-button:hover{opacity:1}
       </div>
       <div id="obtHint" class="online-modal-note" style="display:none"></div>
      </div>
-     <div class="obt-full">
-      <label>Message d’introduction</label>
-      <textarea id="obtIntro" rows="4" placeholder="Message affiché à l’élève avant le début du test."></textarea>
+     <div class="obt-full otmsg">
+      <label class="otmsg-head"><input type="checkbox" id="obtIntroToggle"><span>Message d’introduction</span></label>
+      <textarea id="obtIntro" rows="4" placeholder="Message affiché à l’élève avant le début du test." hidden></textarea>
      </div>
-     <div class="obt-full">
-      <label>Message de conclusion</label>
-      <textarea id="obtConclusion"></textarea>
+     <div class="obt-full otmsg">
+      <label class="otmsg-head"><input type="checkbox" id="obtConclusionToggle"><span>Message de conclusion</span></label>
+      <textarea id="obtConclusion" rows="4" hidden></textarea>
      </div>
      <div class="obt-full obt-section">Questions</div>
      <div><label for="onlineBasicCount">Nombre de questions</label><input id="onlineBasicCount" type="number" min="1" max="100" step="1" value="10"></div>
@@ -3777,7 +3918,7 @@ input[type="search"]::-webkit-search-cancel-button:hover{opacity:1}
      <div><label for="onlineBasicPoints">Points par question</label><input id="onlineBasicPoints" type="number" min="0.25" step="0.25" value="1"></div>
      <div><label for="onlineBasicQMin">Temps par question (facultatif)</label><span class="online-inline-field online-time-fields"><input id="onlineBasicQMin" type="number" min="0" step="1" placeholder="Min" aria-label="Minutes par question"><span>min</span><input id="onlineBasicQSec" type="number" min="0" max="59" step="1" placeholder="Sec" aria-label="Secondes par question"><span>s</span></span><div class="online-subhint">Vide = aucun temps. Chaque question reste modifiable (colonne « s » de la liste). Indisponible si un temps global est défini.</div></div>
     </div>
-    <div class="obt-hint">Les questions s’appellent « Question n°x » et les propositions sont de simples lettres ou chiffres. Question par question, tu peux changer le type (QCU / QCM / réponse à écrire), ajouter ou retirer une proposition, et cliquer sur la ou les bonnes réponses (facultatif). Sans bonne réponse cochée, tu corriges toi-même : pour chaque question (QCU, QCM ou réponse à écrire), un bouton glissant Correct / Incorrect t’attend dans la correction.</div>
+
     <div id="onlineBasicRows" class="obt-rows"></div>
     <button type="button" class="btn" id="onlineBasicAddRow">+ Ajouter une question</button>
     <div class="modal-actions">
@@ -5359,7 +5500,16 @@ function isNewDate(){const t=todayISO(); for(let i=0;i<arguments.length;i++){ co
    même si elle est datée d'un autre jour. Une note simplement modifiée garde son horodatage d'origine : elle ne se souligne pas. */
 function createdTodayISO(o){ try{ const v=o&&o.createdAt; if(v==null||v==="") return ""; const t=/^\d+$/.test(String(v))?Number(v):Date.parse(v); if(!isFinite(t)||t<=0) return ""; return todayISOFromDate(new Date(t)); }catch(e){ return ""; } }
 function isCreatedToday(o){ return createdTodayISO(o)===todayISO(); }
-function isNewNote(o){ const a=Array.prototype.slice.call(arguments,1); return isCreatedToday(o) || isNewDate.apply(null,a); }
+function isModifiedToday(o){ try{ const v=o&&o.modifiedAt; if(v==null||v==="") return false; const t=/^\d+$/.test(String(v))?Number(v):Date.parse(v); if(!isFinite(t)||t<=0) return false; return todayISOFromDate(new Date(t))===todayISO(); }catch(e){ return false; } }
+function isNewNote(o){ const a=Array.prototype.slice.call(arguments,1); return isCreatedToday(o) || isModifiedToday(o) || isNewDate.apply(null,a); }
+/* Une note dont la valeur (ou le barème, coef, libellé, date, commentaire) change reçoit un horodatage de modification : elle est soulignée toute la journée, chez l'élève comme dans les aperçus */
+const __NSIG={}, __NMOD={}; let __NSNAP=false;
+function noteSig(n){ return [typeof n.note==="number"?n.note:"", n.noteText||"", n.outof, n.coef, n.label||"", n.dateJJMMAA||"", n.comment||""].join("\u00a4"); }
+function snapNoteSigs(){ try{ Object.keys(DATA.notes||{}).forEach(sid=>(DATA.notes[sid]||[]).forEach(n=>{ if(n&&n.id){ __NSIG[n.id]=noteSig(n); if(n.modifiedAt) __NMOD[n.id]=n.modifiedAt; } })); __NSNAP=true; }catch(e){ console.warn("snapNoteSigs",e); } }
+function touchNotes(){ if(!__NSNAP||typeof DATA==="undefined"||!DATA) return; const now=String(Date.now());
+  Object.keys(DATA.notes||{}).forEach(sid=>(DATA.notes[sid]||[]).forEach(n=>{ if(!n||!n.id) return; const sg=noteSig(n);
+    if(n.id in __NSIG){ if(__NSIG[n.id]!==sg){ n.modifiedAt=now; __NMOD[n.id]=now; __NSIG[n.id]=sg; } else if(!n.modifiedAt && __NMOD[n.id]) n.modifiedAt=__NMOD[n.id]; }
+    else __NSIG[n.id]=sg; })); }
 
 /* ── Heure de saisie (createdAt, en ms) : sert à ordonner les évaluations individuelles ── */
 const __CTS={};
@@ -5367,6 +5517,7 @@ function createdTs(o){ const v=o&&o.createdAt; if(v==null||v==="") return 0; con
 /* legacy=true : données déjà existantes sans horodatage → "0" (ordre d'origine conservé) ; sinon : horodatage = maintenant */
 function stampCreated(legacy){
   if(typeof DATA==="undefined"||!DATA) return;
+  if(!legacy){ try{ touchNotes(); }catch(e){} }
   let t=Date.now();
   const empty=o=>o.createdAt===undefined||o.createdAt===null||o.createdAt==="";
   const give=(o,key)=>{
@@ -5565,7 +5716,7 @@ function buildCSVText(){
   const stu=STU_BY_ID[sid];
   const stuClsName=escapeCsv((stu&&CLS_BY_ID[stu.classId]?.name)||"");
   arr.forEach(n=>{
-   rows.push(["note",sid,escapeCsv(stu?.first||""),escapeCsv(stu?.last||""),stu?.classId||"",stuClsName,escapeCsv(n.subject),escapeCsv(n.label||""),n.dateJJMMAA||"",n.isoDate||"",(isSpecial(n)?"":(typeof n.note==='number'?n.note:"")),n.outof,n.coef,n.classCommon?1:0,n.classId||"",n.classNoteId||"",escapeCsv(n.noteText||""),n.period||"",n.important?1:0,n.id||"",escapeCsv(n.comment||""),n.hideFromStudent?1:0,escapeCsv(JSON.stringify(n.bareme||null)),n.hwAuto?1:0,n.hideUntil||"",n.createdAt||""].join(";"));
+   rows.push(["note",sid,escapeCsv(stu?.first||""),escapeCsv(stu?.last||""),stu?.classId||"",stuClsName,escapeCsv(n.subject),escapeCsv(n.label||""),n.dateJJMMAA||"",n.isoDate||"",(isSpecial(n)?"":(typeof n.note==='number'?n.note:"")),n.outof,n.coef,n.classCommon?1:0,n.classId||"",n.classNoteId||"",escapeCsv(n.noteText||""),n.period||"",n.important?1:0,n.id||"",escapeCsv(n.comment||""),n.hideFromStudent?1:0,escapeCsv(JSON.stringify(n.bareme||null)),n.hwAuto?1:0,n.hideUntil||"",n.createdAt||"",n.modifiedAt||""].join(";"));
   });
  });
  (DATA.competencies||[]).forEach(c=>{
@@ -5669,7 +5820,7 @@ function importCSV(text){
    const baremeStr = unescapeCsv(cols[22]||"");
    let bareme = undefined;
    try { bareme = baremeStr ? JSON.parse(baremeStr) : undefined; } catch(e) {}
-   DATA.notes[sid].push({subject:unescapeCsv(cols[6]||""),label:unescapeCsv(cols[7]||""),dateJJMMAA:cols[8]||"",isoDate:cols[9]||"",note:note==null?undefined:note,outof:parseFloat(cols[11])||20,coef:cols[12].length?parseFloat(cols[12]):1,noteText:unescapeCsv(cols[16]||"")||undefined,classCommon:cols[13]==="1",classId:cols[14]||"",classNoteId:cols[15]||"",period:cols[17]||undefined,important:cols[18]==="1",id:cols[19]||undefined,comment:unescapeCsv(cols[20]||"")||undefined,hideFromStudent:cols[21]==="1", bareme, ...(cols[23]==="1"?{hwAuto:true}:{}), ...(cols[24]?{hideUntil:cols[24]}:{}), ...(cols[25]?{createdAt:cols[25]}:{})});
+   DATA.notes[sid].push({subject:unescapeCsv(cols[6]||""),label:unescapeCsv(cols[7]||""),dateJJMMAA:cols[8]||"",isoDate:cols[9]||"",note:note==null?undefined:note,outof:parseFloat(cols[11])||20,coef:cols[12].length?parseFloat(cols[12]):1,noteText:unescapeCsv(cols[16]||"")||undefined,classCommon:cols[13]==="1",classId:cols[14]||"",classNoteId:cols[15]||"",period:cols[17]||undefined,important:cols[18]==="1",id:cols[19]||undefined,comment:unescapeCsv(cols[20]||"")||undefined,hideFromStudent:cols[21]==="1", bareme, ...(cols[23]==="1"?{hwAuto:true}:{}), ...(cols[24]?{hideUntil:cols[24]}:{}), ...(cols[25]?{createdAt:cols[25]}:{}), ...(cols[26]?{modifiedAt:cols[26]}:{})});
   }
   else if(type==="competency"){
    (DATA.competencies||(DATA.competencies=[])).push({id:cols[1]||('cp_'+Math.random().toString(36).slice(2)),studentId:cols[2]||"",domain:unescapeCsv(cols[3]||""),level:unescapeCsv(cols[4]||""),name:unescapeCsv(cols[5]||""),color:cols[6]||"",dateJJMMAA:cols[7]||undefined,date:cols[8]||undefined,label:unescapeCsv(cols[9]||"")||undefined,groupId:cols[10]||undefined,subject:unescapeCsv(cols[11]||"")||undefined,period:cols[12]||undefined,noteId:cols[13]||undefined,comment:unescapeCsv(cols[14]||"")||undefined,hideFromStudent:cols[15]==="1",cycle:unescapeCsv(cols[16]||"")||undefined,subDomain:unescapeCsv(cols[17]||"")||undefined,hideUntil:cols[18]||undefined,createdAt:cols[19]||undefined});
@@ -5708,9 +5859,10 @@ function importCSV(text){
      conclusion: unescapeCsv(cols[6]||""),
      defaultPoints: cols[7] ? parseFloat(cols[7]) : 1,
      questions,
-     createdAt: cols[9]||"",
-     updatedAt: cols[10]||""
-    }));
+     files: (()=>{ try{ return cols[12]?JSON.parse(unescapeCsv(cols[12])):[]; }catch(e){ return []; } })(),
+      createdAt: cols[9]||"",
+      updatedAt: cols[10]||""
+     }));
    }catch(e){ console.error("Import onlineTest error", e); }
   }
   else if(type==="appel"){ let ci=[],ab=[],la={}; try{ci=JSON.parse(unescapeCsv(cols[7]||"[]"))||[];}catch(e){} try{ab=JSON.parse(unescapeCsv(cols[8]||"[]"))||[];}catch(e){} try{la=JSON.parse(unescapeCsv(cols[9]||"{}"))||{};}catch(e){}
@@ -5741,7 +5893,7 @@ function importCSV(text){
    } catch(e) { console.error("Import compHierarchy error", e); }
   }
  });
- ensureOnlineTestsStore(); ensureSubjectRegistry(); backfillClassSubjectsFromRegistry(); refreshLocksUI(); ensureNoteIds(); markLegacyCreated();
+ ensureOnlineTestsStore(); ensureSubjectRegistry(); backfillClassSubjectsFromRegistry(); refreshLocksUI(); ensureNoteIds(); markLegacyCreated(); snapNoteSigs();
  IS_MODIFIED = false;
  updateSaveStatusUI(null);
 }
@@ -5988,7 +6140,7 @@ function renderClassPreviewStu(classId){
       const empty = !note || isSpecial(note);
       if(empty) btn.classList.add("empty-eval");
       if(note && note.noteText === "EA"){ btn.classList.add("red"); hasEA = true; }
-      if(note && isNewNote(note, note.dateJJMMAA, note.isoDate)) btn.classList.add("today");
+      if(note && (isSpecial(note) || typeof note.note==="number") && isNewNote(note, note.dateJJMMAA, note.isoDate)) btn.classList.add("today","today-keep");
       if(note && !!note.important) btn.classList.add("important");
       if(!empty && (note.note/note.outof*20) < 10) btn.classList.add("red");
       btn.title = `${ev.label || "-"} — ${formatDateAAAA(ev.dateJJMMAA)} — Coef. ${fmtCoef(ev.coef)}`;
@@ -6184,7 +6336,7 @@ function renderClassPreviewContent(){
       if(empty) btn.classList.add("empty-eval");
       if(note && note.noteText==="EA"){ btn.classList.add("red"); evalHasEA=true; }
       
-      if(note && isNewNote(note, note.dateJJMMAA, note.isoDate)) btn.classList.add("today");
+      if(note && (isSpecial(note) || typeof note.note==="number") && isNewNote(note, note.dateJJMMAA, note.isoDate)) btn.classList.add("today","today-keep");
       if(note && !!note.important) btn.classList.add("important");
       if(!empty && (note.note/note.outof*20) < 10) btn.classList.add("red");
 
@@ -11997,7 +12149,7 @@ async function api(action,extra){
   }catch(e){ /* on envoie sans compression */ }
  }
  // setProf change le mot de passe : on ne le rejoue jamais automatiquement après un échec réseau
- const rejouable = action!=="setProf" && action!=="adminSetPass" && action!=="adminSetSupreme";
+ const rejouable = action!=="setProf" && action!=="adminSetPass" && action!=="adminSetSupreme" && action!=="uploadFile" && action!=="workUpload" && action!=="workCreate" && action!=="workUpdate" && action!=="workDelete";
  const rendu = action==="submitHomeworkSubmission";
  const maxTry = action==="rev" ? 1 : (rendu ? 6 : 3);
  const delai = action==="rev" ? 25000 : (rendu ? 45000 : 60000);
@@ -12708,6 +12860,7 @@ function sanitizeOnlineQuestion(question){
   /* temps imparti à cette question (secondes, 0 = aucun) ; ignoré si le test a un temps global */
   timeLimitSeconds: Number(question?.timeLimitSeconds) > 0 ? Math.floor(Number(question.timeLimitSeconds)) : 0
  };
+ { const _im=otCleanImgId(question?.img); if(_im){ base.img=_im; const _w=otCleanImgW(question?.imgW); if(_w) base.imgW=_w; } }
  if(base.type==="written"){
   base.expectedAnswers = normalizeOnlineAnswers(question?.expectedAnswers);
  }else if(base.type==="fillblank"){
@@ -12721,10 +12874,151 @@ function sanitizeOnlineQuestion(question){
   base.choices = (question?.choices||[]).map(choice=>({
    id: choice?.id || makeUid("choice"),
    text: String(choice?.text||"").trim(),
-   correct: !!choice?.correct
-  })).filter(choice=>choice.text);
+   correct: !!choice?.correct,
+   ...(otCleanImgId(choice?.img) ? { img: otCleanImgId(choice.img), ...(otCleanImgW(choice?.imgW) ? { imgW: otCleanImgW(choice.imgW) } : {}) } : {})
+  })).filter(choice=>choice.text || choice.img);
  }
  return base;
+}
+/* ── Images des quiz en ligne : stockées dans Google Drive, seul l'identifiant du fichier est enregistré dans le carnet ── */
+function otCleanImgId(v){ v=String(v||"").trim(); return /^[A-Za-z0-9_-]{10,100}$/.test(v) ? v : ""; }
+function otImgUrl(id,w){ id=otCleanImgId(id); return id ? "https://lh3.googleusercontent.com/d/"+encodeURIComponent(id)+"=w"+(w||1000) : ""; }
+function otImgUrlAlt(id,w){ id=otCleanImgId(id); return id ? "https://drive.google.com/thumbnail?id="+encodeURIComponent(id)+"&sz=w"+(w||1000) : ""; }
+function otCleanImgW(v){ v=Math.round(Number(v)); return (v>=60 && v<=1000) ? v : 0; }
+const OT_IMG_SIZES=[[120,"Très petite"],[200,"Petite"],[320,"Moyenne"],[480,"Grande"],[700,"Très grande"]];
+function otImgFallback(el){
+ const id=el.dataset.id;
+ if(!el.dataset.fb){ el.dataset.fb="1"; el.src=otImgUrlAlt(id,1000); return; }
+ if(el.dataset.fb==="1"){ el.dataset.fb="2"; el.src="https://drive.google.com/uc?export=view&id="+encodeURIComponent(id); return; }
+ el.classList.add("is-broken"); el.alt="Image indisponible (vérifie le partage du fichier dans Drive)";
+}
+function otImgTag(id,cls,w){
+ const u=otImgUrl(id); if(!u) return "";
+ w=otCleanImgW(w);
+ const st=w ? ` style="width:${w}px;max-width:100%;max-height:none"` : "";
+ return `<img class="ot-img ${cls||""}" data-id="${escHtml(otCleanImgId(id))}" src="${u}" alt="Illustration"${st} referrerpolicy="no-referrer" onerror="otImgFallback(this)" onclick="window.open('https://lh3.googleusercontent.com/d/'+this.dataset.id+'=w2000','_blank')">`;
+}
+const OT_IMG_SVG='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-8 9"/></svg>';
+function otCompressImage(file){
+ return new Promise((res,rej)=>{
+  if(!/^image\//.test(file.type||"")) return rej(new Error("ce fichier n’est pas une image"));
+  const url=URL.createObjectURL(file), im=new Image();
+  im.onload=()=>{
+   try{
+    const M=1400; let w=im.naturalWidth, h=im.naturalHeight; const r=Math.min(1,M/Math.max(w,h));
+    w=Math.max(1,Math.round(w*r)); h=Math.max(1,Math.round(h*r));
+    const c=document.createElement("canvas"); c.width=w; c.height=h;
+    const x=c.getContext("2d"); x.fillStyle="#fff"; x.fillRect(0,0,w,h); x.drawImage(im,0,0,w,h);
+    URL.revokeObjectURL(url);
+    res(c.toDataURL("image/jpeg",0.85).split(",")[1]);
+   }catch(e){ rej(e); }
+  };
+  im.onerror=()=>{ URL.revokeObjectURL(url); rej(new Error("image illisible")); };
+  im.src=url;
+ });
+}
+async function otUploadImage(file){
+ const data=await otCompressImage(file);
+ const j=await api("uploadImage",{ name:String(file.name||"image").slice(0,80), mime:"image/jpeg", data });
+ if(!j||!j.ok||!j.id) throw new Error((j&&j.error)||"échec de l’envoi");
+ return j.id;
+}
+/* Fenêtre « Ajuster l’image » : aperçu de la question + redimensionnement par les poignées d’angle (comme dans Word) */
+function otImgEditor(wrap,onApply){
+ const id=wrap.dataset.img; if(!id) return;
+ const qWrap=document.querySelector("#otQImgHost .ot-imgwrap");
+ const rows=[...document.querySelectorAll("#onlineQuestionChoices .online-choice-row")];
+ const multi=document.getElementById("onlineQuestionType")?.value==="qcm";
+ const prompt=(document.getElementById("onlineQuestionPrompt")?.value||"").trim();
+ const ov=document.createElement("div"); ov.className="otfit-ov";
+ ov.innerHTML=`<div class="otfit-card" role="dialog" aria-modal="true" aria-label="Ajuster l’image"><div class="otfit-head"><h3>Ajuster l’image</h3><button type="button" class="modal-close" aria-label="Fermer"></button></div><div class="otfit-body"><p class="otfit-hint">Tire sur les petits carrés aux coins de l’image pour l’agrandir ou la réduire (les proportions sont conservées).</p><div class="otfit-q"></div></div><div class="otfit-foot"><span class="otfit-val"></span><button type="button" class="btn" data-a="reset">Taille d’origine</button><button type="button" class="btn" data-a="cancel">Annuler</button><button type="button" class="btn btn-primary" data-a="ok">Appliquer</button></div></div>`;
+ const q=ov.querySelector(".otfit-q"), valEl=ov.querySelector(".otfit-val");
+ let cur=otCleanImgW(wrap.dataset.w)||320, figEl=null, badge=null;
+ const staticImg=(i,cls,w)=>otImgTag(i,cls,w);
+ const mkFig=()=>{
+  const f=document.createElement("div"); f.className="otfit-fig";
+  f.innerHTML=`${staticImg(id,"",0)}<i class="h nw"></i><i class="h ne"></i><i class="h sw"></i><i class="h se"></i><span class="otfit-badge"></span>`;
+  figEl=f; badge=f.querySelector(".otfit-badge");
+  f.style.width=cur+"px";
+  f.querySelectorAll(".h").forEach(h=>{
+   const left=h.classList.contains("nw")||h.classList.contains("sw");
+   h.addEventListener("pointerdown",e=>{
+    e.preventDefault(); e.stopPropagation();
+    h.setPointerCapture(e.pointerId);
+    const x0=e.clientX, w0=f.getBoundingClientRect().width;
+    const maxW=Math.max(60,Math.min(1000,Math.floor(f.parentElement.clientWidth)));
+    const mv=ev=>{
+     const dx=ev.clientX-x0;
+     const nw=Math.max(60,Math.min(maxW,Math.round(w0+(left?-dx:dx))));
+     cur=nw; f.style.width=nw+"px"; f.style.marginLeft=left?(w0-nw)+"px":"0";
+     upd();
+    };
+    const up=()=>{ h.removeEventListener("pointermove",mv); h.removeEventListener("pointerup",up); h.removeEventListener("pointercancel",up); f.style.marginLeft="0"; };
+    h.addEventListener("pointermove",mv); h.addEventListener("pointerup",up); h.addEventListener("pointercancel",up);
+   });
+  });
+  return f;
+ };
+ const upd=()=>{ const t=cur+" px"; if(badge) badge.textContent=t; valEl.textContent="Largeur : "+t; };
+ const isQ=!!wrap.closest("#otQImgHost");
+ // intitulé
+ const pr=document.createElement("div"); pr.className="otfit-prompt"+(prompt?"":" is-empty"); pr.textContent=prompt||"(intitulé de la question)";
+ q.appendChild(pr);
+ // image de la question
+ if(isQ){ q.appendChild(mkFig()); }
+ else if(qWrap && qWrap.dataset.img){ const d=document.createElement("div"); d.innerHTML=staticImg(qWrap.dataset.img,"",otCleanImgW(qWrap.dataset.w)); q.appendChild(d.firstChild); }
+ // propositions
+ rows.forEach(row=>{
+  const rw=row.querySelector(".ot-imgwrap"), me=rw===wrap;
+  const text=row.querySelector(".online-choice-input")?.value||"";
+  const c=document.createElement("div"); c.className="otfit-choice"+(me?" is-current":"");
+  c.innerHTML=`<span class="otfit-mark${multi?" sq":""}"></span><div class="otfit-choice-body"><span class="otfit-t"></span></div>`;
+  c.querySelector(".otfit-t").textContent=text;
+  const body=c.querySelector(".otfit-choice-body");
+  if(me){ body.appendChild(mkFig()); }
+  else if(rw && rw.dataset.img){ const d=document.createElement("div"); d.innerHTML=staticImg(rw.dataset.img,"ot-img-choice",otCleanImgW(rw.dataset.w)); body.appendChild(d.firstChild); }
+  q.appendChild(c);
+ });
+ document.body.appendChild(ov);
+ upd();
+ const close=()=>{ document.removeEventListener("keydown",onKey,true); ov.remove(); };
+ const onKey=e=>{ if(e.key==="Escape"){ e.stopPropagation(); close(); } };
+ document.addEventListener("keydown",onKey,true);
+ ov.addEventListener("mousedown",e=>{ if(e.target===ov) close(); });
+ ov.querySelector(".modal-close").addEventListener("click",close);
+ ov.querySelector('[data-a="cancel"]').addEventListener("click",close);
+ ov.querySelector('[data-a="reset"]').addEventListener("click",()=>{
+  const im=figEl.querySelector("img"); const maxW=Math.max(60,Math.min(1000,Math.floor(figEl.parentElement.clientWidth)));
+  const nat=im.naturalWidth||320; cur=Math.max(60,Math.min(maxW,nat)); figEl.style.width=cur+"px"; figEl.style.marginLeft="0"; upd();
+ });
+ ov.querySelector('[data-a="ok"]').addEventListener("click",()=>{ wrap.dataset.w=String(Math.round(cur)); close(); if(onApply) onApply(); });
+}
+/* Bouton rond « image » (+ petite croix pour retirer). L'identifiant courant est lu dans wrap.dataset.img */
+function otImgButton(imgId,onChange,imgW){
+ const w=document.createElement("span"); w.className="ot-imgwrap";
+ w.innerHTML=`<button type="button" class="ot-imgbtn" title="Ajouter une image" aria-label="Ajouter une image">${OT_IMG_SVG}</button><button type="button" class="ot-imgdel" title="Retirer l’image" aria-label="Retirer l’image" hidden>×</button><input type="file" accept="image/*" hidden><button type="button" class="btn ot-imgfit" title="Ajuster la taille de l’image" aria-label="Ajuster la taille de l’image" hidden><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>Ajuster</button>`;
+ const btn=w.children[0], del=w.children[1], file=w.children[2], size=w.children[3];
+ const paint=()=>{
+  const id=w.dataset.img||"";
+  btn.classList.toggle("has-img",!!id);
+  btn.style.backgroundImage=id?`url("${otImgUrl(id,160)}")`:"";
+  btn.title=id?"Remplacer l’image":"Ajouter une image";
+  del.hidden=!id; size.hidden=!id;
+ };
+ w.dataset.img=otCleanImgId(imgId);
+ w.dataset.w=String(otCleanImgW(imgW)||320);
+ size.addEventListener("click",e=>{ e.stopPropagation(); otImgEditor(w,()=>{ if(onChange) onChange(); }); });
+ paint();
+ btn.addEventListener("click",e=>{ e.stopPropagation(); if(!btn.disabled) file.click(); });
+ del.addEventListener("click",e=>{ e.stopPropagation(); w.dataset.img=""; paint(); if(onChange) onChange(); });
+ file.addEventListener("change",async()=>{
+  const f=file.files&&file.files[0]; file.value=""; if(!f) return;
+  btn.disabled=true; btn.classList.add("is-busy");
+  try{ w.dataset.img=await otUploadImage(f); paint(); if(onChange) onChange(); }
+  catch(err){ toast("Image non envoyée : "+((err&&err.message)||err)); }
+  finally{ btn.disabled=false; btn.classList.remove("is-busy"); }
+ });
+ return w;
 }
 function sanitizeOnlineTest(test){
  const meta = test || {};
@@ -12851,10 +13145,12 @@ function renderOnlineTestsView(){
   subjVal=[...subjSel.options].some(o=>o.value===prev)?prev:"";
   subjSel.value=subjVal;
  }
- const tests = allTests.filter(t=>!subjVal || (subjVal==="__NONE__" ? !String(t.subject||"").trim() : String(t.subject||"").trim()===subjVal));
+ const _norm=x=>String(x||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+ const _q=_norm(document.getElementById("onlineTestsSearch")?.value||"").trim();
+ const tests = allTests.filter(t=>(!subjVal || (subjVal==="__NONE__" ? !String(t.subject||"").trim() : String(t.subject||"").trim()===subjVal)) && (!_q || _norm((t.title||"")+" "+(t.subject||"")).includes(_q)));
  summary.textContent = `${tests.length} test${tests.length>1?"s":""} réalisé${tests.length>1?"s":""}`; 
  if(!tests.length){
-  list.innerHTML = allTests.length ? '<div class="online-modal-note">Aucun test pour cette matière.</div>' : "";
+  list.innerHTML = allTests.length ? '<div class="online-modal-note">Aucun test ne correspond.</div>' : "";
   return;
  }
  list.innerHTML = tests.map(test=>{
@@ -12863,23 +13159,14 @@ function renderOnlineTestsView(){
   const updated=formatOnlineTestDate(test.updatedAt);
   let pendingN=0; try{ pendingN=countPendingForOnlineTest(test.id); }catch(e){}
   return `
-   <article class="online-test-card${pendingN>0?" has-pending-correction":""}"${pendingN>0?` title="${pendingN} copie${pendingN>1?"s":""} à corriger"`:""}>
-    <div class="online-test-title-row">
-     <h4>${escHtml(test.title||"Sans titre")}</h4>
-     <div class="online-test-meta">
-      <span${test.subject?` style="background:${subjColor(test.subject)};border-color:${subjColor(test.subject)};color:${inkFor(subjColor(test.subject))}"`:""}>${escHtml(test.subject||"Matière non précisée")}</span>
-      ${test.basic?'<span style="background:#eef9ff;border-color:#8dd0fb;color:#0471b5;font-weight:700">Basique</span>':""}
-      <span>${questionCount} question${questionCount>1?"s":""}</span>
-     </div>
-    </div>
-    <div class="online-test-points">Total : ${fmt(totalPoints,2).replace(/\.00$/,"")} point${totalPoints>1?"s":""}${pendingN>0?` <span class="otc-pending">· ${pendingN} copie${pendingN>1?"s":""} à corriger</span>`:""}</div>
-    <div class="online-test-card-footer">
-     <span>${updated ? `Dernière mise à jour : ${updated}` : "Nouveau test"}</span>
-     <div class="online-test-card-actions">
-      <button type="button" class="btn btn-preview-online-test" data-testid="${escHtml(test.id)}">Visionner</button>
-      <button type="button" class="btn btn-edit-online-test" data-testid="${escHtml(test.id)}">Modifier</button>
-      <button type="button" class="btn btn-danger btn-delete-online-test" data-testid="${escHtml(test.id)}">Supprimer</button>
-     </div>
+   <article class="online-test-card${pendingN>0?" has-pending-correction":""}" title="${escHtml((updated?"Dernière mise à jour : "+updated+" · ":"")+questionCount+" question"+(questionCount>1?"s":"")+(pendingN>0?" · "+pendingN+" copie"+(pendingN>1?"s":"")+" à corriger":""))}">
+    <span class="otc-subj"${test.subject?` style="background:${subjColor(test.subject)};border-color:${subjColor(test.subject)};color:${inkFor(subjColor(test.subject))}"`:""}>${escHtml(test.subject||"Matière non précisée")}</span>
+    <h4 class="otc-title">${escHtml(test.title||"Sans titre")}${test.basic?' <span class="otc-basic">Basique</span>':""}</h4>
+    <span class="otc-pts">${fmt(totalPoints,2).replace(/\.00$/,"")} pt${totalPoints>1?"s":""}</span>
+    <div class="online-test-card-actions">
+     <button type="button" class="btn btn-preview-online-test" data-testid="${escHtml(test.id)}">Visionner</button>
+     <button type="button" class="btn btn-edit-online-test" data-testid="${escHtml(test.id)}">Modifier</button>
+     <button type="button" class="btn btn-danger btn-delete-online-test" data-testid="${escHtml(test.id)}">Supprimer</button>
     </div>
    </article>`;
  }).join("");
@@ -12912,6 +13199,7 @@ function renderOnlineTestsView(){
 }
 
 document.getElementById("onlineTestsSubjectFilter")?.addEventListener("change",()=>renderOnlineTestsView());
+document.getElementById("onlineTestsSearch")?.addEventListener("input",()=>renderOnlineTestsView());
 
 const onlineTestSetupModal=document.getElementById("onlineTestSetupModal");
 const onlineTestBuilderModal=document.getElementById("onlineTestBuilderModal");
@@ -13000,9 +13288,17 @@ function applyOnlineTestMetaToForm(meta){
   document.getElementById("onlineTestFocusMode").checked=!!data.options?.focusMode;
  document.getElementById("onlineTestIntroInput").value=data.intro||"";
  document.getElementById("onlineTestConclusionInput").value=data.conclusion||"";
+ otMsgInit("onlineTestIntroToggle","onlineTestIntroInput"); otMsgInit("onlineTestConclusionToggle","onlineTestConclusionInput");
  document.getElementById("onlineTestDefaultPoints").value=data.defaultPoints||1;
  { const dq=splitOnlineTestDuration(data.defaultQuestionSeconds||0); document.getElementById("onlineTestDefaultQMin").value=dq.minutes||""; document.getElementById("onlineTestDefaultQSec").value=dq.seconds||""; }
  syncOnlineTestSetupDependencies();
+}
+/* Case à cocher devant un message : la zone de saisie n’apparaît que si la case est cochée */
+function otMsgInit(toggleId,areaId){
+ const t=document.getElementById(toggleId), a=document.getElementById(areaId); if(!t||!a) return;
+ t.checked=!!String(a.value||"").trim();
+ a.hidden=!t.checked;
+ if(!t.dataset.bound){ t.dataset.bound="1"; t.addEventListener("change",()=>{ a.hidden=!t.checked; if(t.checked) a.focus(); }); }
 }
 function readOnlineTestMetaFromForm(){
  return sanitizeOnlineTest({
@@ -13020,8 +13316,8 @@ function readOnlineTestMetaFromForm(){
    focusMode: document.getElementById("onlineTestFocusMode").checked,
    hideCorrection: false
   },
-  intro: document.getElementById("onlineTestIntroInput").value,
-  conclusion: document.getElementById("onlineTestConclusionInput").value,
+  intro: document.getElementById("onlineTestIntroToggle")?.checked ? document.getElementById("onlineTestIntroInput").value : "",
+  conclusion: document.getElementById("onlineTestConclusionToggle")?.checked ? document.getElementById("onlineTestConclusionInput").value : "",
   defaultPoints: document.getElementById("onlineTestDefaultPoints").value,
   defaultQuestionSeconds: parseOnlineTestDurationToSeconds(document.getElementById("onlineTestDefaultQMin").value, document.getElementById("onlineTestDefaultQSec").value),
   questions: ONLINE_TEST_DRAFT.questions,
@@ -13047,9 +13343,7 @@ function syncOnlineTestSetupDependencies(){
  focus.disabled=training;
  if(training) focus.checked=false;
  focusWrap?.classList.toggle("is-disabled",focus.disabled);
- if(false) hint.textContent="Le test rendu est toujours corrigé par le professeur : l’élève voit sa note une fois la correction validée et les notes saisies.";
- else if(timed) hint.textContent="Le chronomètre s’appliquera uniquement au test lui-même, pas aux messages d’introduction et de conclusion.";
- else hint.textContent="Le mode entraînement se règle au moment de la création du devoir.";
+ if(hint){ hint.textContent=""; hint.style.display="none"; }
 }
 ["onlineTestTimed"].forEach(id=>{
  document.getElementById(id)?.addEventListener("change",syncOnlineTestSetupDependencies);
@@ -13096,7 +13390,7 @@ function renderBasicRows(){
    ${r.type==="written"?`<div class="obt-n" style="grid-column:span 2;opacity:.8"><span>Réponse saisie par l’élève · correction manuelle</span></div>`:`<div class="obt-n"><button type="button" data-act="minus" aria-label="Retirer une proposition">−</button><span>${r.n} prop.</span><button type="button" data-act="plus" aria-label="Ajouter une proposition">+</button></div>
    <div class="obt-chips">${Array.from({length:r.n},(_,k)=>`<button type="button" class="obt-chip${r.correct.includes(k)?" on":""}" data-act="chip" data-k="${k}" title="Marquer comme bonne réponse">${basicLabel(k)}</button>`).join("")}</div>`}
    <label class="obt-pts"><input type="number" min="0.25" step="0.25" value="${r.points}" data-act="points"> pt</label>
-   <label class="obt-pts obt-time" title="${$obt("obtTimed").checked?"Indisponible : temps global défini":"Temps imparti à la question (secondes, 0 = aucun)"}"><input type="number" min="0" step="5" value="${r.time||0}" data-act="qtime" ${$obt("obtTimed").checked?"disabled":""}> s</label>
+   <label class="obt-pts obt-time" title="Temps imparti à la question (secondes, 0 = aucun)"><input type="number" min="0" step="5" value="${r.time||0}" data-act="qtime" ${$obt("obtTimed").checked?"disabled":""}> s</label>
    <button type="button" class="btn btn-danger obt-del" data-act="del" aria-label="Supprimer la question">×</button>
   </div>`).join("");
  document.getElementById("onlineBasicCount").value=BASIC_TEST.rows.length||"";
@@ -13112,8 +13406,7 @@ function obtSync(){
  focus.disabled=training; if(training) focus.checked=false;
  $obt("obtFocusWrap")?.classList.toggle("is-disabled",focus.disabled);
  const hint=$obt("obtHint");
- if(!training) hint.textContent="Le test rendu est toujours corrigé par le professeur : l’élève voit sa note une fois la correction validée et les notes saisies.";
- else hint.textContent="Le mode entraînement désactive automatiquement le mode Focus.";
+ if(hint){ hint.textContent=""; hint.style.display="none"; }
 }
 ["obtTimed"].forEach(id=>$obt(id)?.addEventListener("change",obtSync));
 
@@ -13123,7 +13416,7 @@ function obtApplyMeta(m){
  $obt("obtTimed").checked=!!o.timed;
  $obt("obtMin").value=o.timed?d.minutes:""; $obt("obtSec").value=o.timed?d.seconds:"";
  $obt("obtFocus").checked=!!o.focusMode;
- $obt("obtIntro").value=m?.intro||""; $obt("obtConclusion").value=m?.conclusion||"";
+ $obt("obtIntro").value=m?.intro||""; $obt("obtConclusion").value=m?.conclusion||""; otMsgInit("obtIntroToggle","obtIntro"); otMsgInit("obtConclusionToggle","obtConclusion");
  obtSync();
 }
 function openBasicOnlineTest(existing){
@@ -13233,7 +13526,7 @@ document.getElementById("onlineBasicForm")?.addEventListener("submit",e=>{
  meta.coef=$obt("obtCoef").value;
  meta.defaultPoints=basicPoints($obt("onlineBasicPoints").value);
  meta.defaultQuestionSeconds=basicDefQTime();
- meta.intro=$obt("obtIntro").value; meta.conclusion=$obt("obtConclusion").value;
+ meta.intro=$obt("obtIntroToggle").checked?$obt("obtIntro").value:""; meta.conclusion=$obt("obtConclusionToggle").checked?$obt("obtConclusion").value:"";
  meta.options={
   showGradeDirect:false, shuffleQuestions:$obt("obtShuffle").checked, timed, timeLimitSeconds:timed?dur:"",
   trainingMode:training, manualReviewRequired:!training, focusMode:$obt("obtFocus").checked&&!training,
@@ -13556,7 +13849,7 @@ function renderOnlinePreviewQuestionInput(question){
  return `<div class="online-preview-options">${(question.choices||[]).map(choice=>`
   <label class="online-preview-option">
    <input type="${inputType}" name="preview_${escHtml(question.id)}" value="${escHtml(choice.id)}">
-   <span>${escHtml(choice.text||"")}</span>
+   <span>${escHtml(choice.text||"")}${otImgTag(choice.img,"ot-img-choice",choice.imgW)}</span>
   </label>
  `).join("")}</div>`;
 }
@@ -13660,7 +13953,7 @@ function renderOnlinePreviewForm(){
       <strong>Question ${index+1}</strong>
       <span>${fmt(question.points,2).replace(/\.00$/,"")} pt${Number(question.points)>1?"s":""}</span>
      </div>
-     <div class="online-preview-prompt">${escHtml(question.prompt||"").replace(/\n/g,"<br>")}</div>
+     <div class="online-preview-prompt">${escHtml(question.prompt||"").replace(/\n/g,"<br>")}</div>${otImgTag(question.img,"",question.imgW)}
      ${renderOnlinePreviewQuestionInput(question)}
     </section>
     <div class="online-preview-actions">
@@ -13885,6 +14178,7 @@ function createChoiceRow(choice={},type="qcu"){
  row.innerHTML = `
   <span class="online-choice-marker"></span>
   <input class="online-choice-input" placeholder="Proposition" value="${escHtml(choice.text||"")}">
+  <span class="ot-imgslot"></span>
   <span class="online-choice-status">${choice.correct ? "Acceptée" : "Double-clic / appui long = correcte"}</span>
   <button type="button" class="btn btn-danger">×</button>
  `;
@@ -13895,7 +14189,10 @@ function createChoiceRow(choice={},type="qcu"){
   const status=row.querySelector(".online-choice-status");
   if(status) status.textContent = next ? "Acceptée" : "Double-clic / appui long = correcte";
  });
- row.querySelector("button")?.addEventListener("click",()=>row.remove());
+ row.dataset.img=otCleanImgId(choice.img);
+ row.dataset.imgW=String(otCleanImgW(choice.imgW)||"");
+ { const slot=row.querySelector(".ot-imgslot"); const b=otImgButton(choice.img,()=>{ row.dataset.img=b.dataset.img||""; row.dataset.imgW=b.dataset.w||""; },choice.imgW); slot.replaceWith(b); }
+ row.querySelector("button.btn-danger")?.addEventListener("click",()=>row.remove());
  return row;
 }
 function addOnlineBlankRow(container,segment){
@@ -14020,7 +14317,9 @@ function readOpenQuestionFromForm(){
  if(!typeEl||!ONLINE_TEST_DRAFT.openId) return null;
  const type=typeEl.value;
  const question={ id: ONLINE_TEST_DRAFT.openId, type, prompt: document.getElementById("onlineQuestionPrompt").value, points: parseFloat(document.getElementById("onlineQuestionPoints").value),
-  timeLimitSeconds: ONLINE_TEST_DRAFT.meta?.options?.timed ? 0 : parseOnlineTestDurationToSeconds(document.getElementById("onlineQuestionMin")?.value, document.getElementById("onlineQuestionSec")?.value) };
+  timeLimitSeconds: ONLINE_TEST_DRAFT.meta?.options?.timed ? 0 : parseOnlineTestDurationToSeconds(document.getElementById("onlineQuestionMin")?.value, document.getElementById("onlineQuestionSec")?.value),
+  img: document.querySelector("#otQImgHost .ot-imgwrap")?.dataset.img || "",
+  imgW: document.querySelector("#otQImgHost .ot-imgwrap")?.dataset.w || "" };
  if(type==="written"){
   question.expectedAnswers=normalizeOnlineAnswers(JSON.parse(document.getElementById("onlineWrittenAnswerTarget")?.dataset.answers||"[]"));
  }else if(type==="fillblank"){
@@ -14034,7 +14333,9 @@ function readOpenQuestionFromForm(){
   question.choices=[...document.querySelectorAll("#onlineQuestionChoices .online-choice-row")].map(row=>({
    id: row.dataset.choiceId || makeUid("choice"),
    text: row.querySelector(".online-choice-input")?.value || "",
-   correct: row.dataset.correct==="1"
+   correct: row.dataset.correct==="1",
+   img: row.dataset.img || "",
+   imgW: row.dataset.imgW || ""
   }));
  }
  return sanitizeOnlineQuestion(question);
@@ -14085,11 +14386,12 @@ function renderOnlineQuestionsList(){
        <div><label>Points</label><input id="onlineQuestionPoints" type="number" min="0.25" step="0.25"></div>
        <div class="oq-time-box"><label>Temps imparti (facultatif)</label>
         <span class="oq-time-fields"><input id="onlineQuestionMin" type="number" min="0" step="1" placeholder="Min" aria-label="Minutes"><span>min</span><input id="onlineQuestionSec" type="number" min="0" max="59" step="1" placeholder="Sec" aria-label="Secondes"><span>s</span></span>
-        <small id="onlineQuestionTimeNote" class="oq-time-note"></small></div>
+        </div>
+       <small id="onlineQuestionTimeNote" class="oq-time-note"></small>
       </div>
       <div class="oq-top-right">
        <label>Intitulé de la question</label>
-       <textarea id="onlineQuestionPrompt" rows="3" placeholder="Saisir la consigne de la question..."></textarea>
+       <div class="oq-prompt-row"><textarea id="onlineQuestionPrompt" rows="1" placeholder="Saisir la consigne de la question..."></textarea><span id="otQImgHost"></span></div>
       </div>
      </div>
      <div id="onlineQuestionTypeFields"></div>
@@ -14105,8 +14407,9 @@ function renderOnlineQuestionsList(){
      const mi=document.getElementById("onlineQuestionMin"), se=document.getElementById("onlineQuestionSec"), nt=document.getElementById("onlineQuestionTimeNote");
      mi.value=(!gl&&q.timeLimitSeconds)?d.minutes:""; se.value=(!gl&&q.timeLimitSeconds)?d.seconds:"";
      mi.disabled=se.disabled=gl;
-     nt.textContent=gl?"Indisponible : un temps global est défini pour ce test.":"Passe automatiquement à la question suivante à la fin du temps."; }
+     nt.textContent=""; }
    const ta=document.getElementById("onlineQuestionPrompt"); ta.value=q.prompt||""; oqAutosize(ta);
+   { const host=document.getElementById("otQImgHost"); if(host) host.appendChild(otImgButton(q.img,null,q.imgW)); }
    renderOnlineQuestionTypeFields(q.type,q);
   }
  }
@@ -14817,14 +15120,80 @@ function initApp(){
    .replace(/\son\w+="[^"]*"/gi,"")
    .replace(/\son\w+='[^']*'/gi,"");
  }
- function normalizeHomeworkEntry(raw){
+ /* ── Fichiers joints à un devoir (stockés dans Google Drive ; on ne garde que {id, name, mime, size}) ── */
+  const HW_FILE_MAX=10*1024*1024, HW_FILES_PER_HW=10;
+  function hwCleanFiles(arr){
+   if(!Array.isArray(arr)) return [];
+   return arr.map(f=>({ id:otCleanImgId(f&&f.id), name:String((f&&f.name)||"fichier").slice(0,120), mime:String((f&&f.mime)||"").slice(0,100), size:Math.max(0,Number(f&&f.size)||0) })).filter(f=>f.id).slice(0,HW_FILES_PER_HW);
+  }
+  function hwFileKind(f){
+   const m=String(f.mime||"").toLowerCase(), n=String(f.name||"").toLowerCase();
+   if(/^image\/(jpeg|png|gif|webp)$/.test(m) || (!m && /\.(jpe?g|png|gif|webp)$/.test(n))) return "image";
+   if(m==="application/pdf" || (!m && /\.pdf$/.test(n))) return "pdf";
+   return "";
+  }
+  function hwFmtSize(n){ n=Number(n)||0; return n<1024 ? n+" o" : (n<1048576 ? Math.round(n/1024)+" Ko" : (n/1048576).toFixed(1).replace(".",",")+" Mo"); }
+  const HW_ICO_EYE='<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+  const HW_ICO_DL='<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 20h16"/></svg>';
+  const HW_ICO_FILE='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>';
+  function hwDownloadUrl(id){ return "https://drive.google.com/uc?export=download&id="+encodeURIComponent(id); }
+  function renderHomeworkFiles(files,editable){
+   files=hwCleanFiles(files); if(!files.length) return "";
+   return `<div class="hw-files">${files.map(f=>{
+    const k=hwFileKind(f), id=escHtml(f.id);
+    return `<div class="hw-file"><span class="hw-file-ico">${HW_ICO_FILE}</span><span class="hw-file-name" title="${escHtml(f.name)}">${escHtml(f.name)}</span><small>${hwFmtSize(f.size)}</small>${k?`<button type="button" class="hw-file-btn" data-hw-action="view-file" data-file-id="${id}" data-kind="${k}" data-name="${escHtml(f.name)}" title="Voir" aria-label="Voir ${escHtml(f.name)}">${HW_ICO_EYE}</button>`:""}<a class="hw-file-btn" href="${hwDownloadUrl(f.id)}" target="_blank" rel="noopener" title="Télécharger" aria-label="Télécharger ${escHtml(f.name)}">${HW_ICO_DL}</a>${editable?`<button type="button" class="hw-file-btn hw-file-del" data-hw-action="remove-file" data-file-id="${id}" title="Retirer le fichier" aria-label="Retirer le fichier">×</button>`:""}</div>`;
+   }).join("")}</div>`;
+  }
+  function hwOpenFileViewer(id,kind,name){
+   const ov=document.createElement("div"); ov.className="hwv-ov";
+   ov.innerHTML=`<div class="hwv-card" role="dialog" aria-modal="true"><div class="hwv-head"><strong class="hwv-title"></strong><span class="hwv-acts"><a class="btn" target="_blank" rel="noopener">Télécharger</a><button type="button" class="modal-close" aria-label="Fermer"></button></span></div><div class="hwv-body"></div></div>`;
+   ov.querySelector(".hwv-title").textContent=name||"Fichier";
+   ov.querySelector(".hwv-acts a").href=hwDownloadUrl(id);
+   const body=ov.querySelector(".hwv-body");
+   if(kind==="image"){ const im=document.createElement("img"); im.referrerPolicy="no-referrer"; im.alt=name||""; im.src=otImgUrl(id,2000); body.appendChild(im); }
+   else{ const fr=document.createElement("iframe"); fr.referrerPolicy="no-referrer"; fr.src="https://drive.google.com/file/d/"+encodeURIComponent(id)+"/preview"; fr.title=name||"PDF"; body.appendChild(fr); }
+   const close=()=>{ document.removeEventListener("keydown",onKey,true); ov.remove(); };
+   const onKey=e=>{ if(e.key==="Escape"){ e.stopPropagation(); close(); } };
+   document.addEventListener("keydown",onKey,true);
+   ov.addEventListener("mousedown",e=>{ if(e.target===ov) close(); });
+   ov.querySelector(".modal-close").addEventListener("click",close);
+   document.body.appendChild(ov);
+  }
+  function hwReadB64(file){
+   return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(String(r.result).split(",")[1]||""); r.onerror=()=>rej(new Error("lecture du fichier impossible")); r.readAsDataURL(file); });
+  }
+  document.addEventListener("change",async e=>{
+   const inp=e.target; if(!inp || inp.id!=="homeworkFileInput") return;
+   const list=[...(inp.files||[])]; inp.value="";
+   if(!list.length || !HOMEWORK_STATE.draft || AUTH.role!=="prof") return;
+   const draft=HOMEWORK_STATE.draft;
+   saveHomeworkDraftFromDom();
+   draft.files=hwCleanFiles(draft.files);
+   const btn=document.querySelector('[data-hw-action="attach-file"]');
+   const label=btn?btn.textContent:"";
+   for(const f of list){
+    if(draft.files.length>=HW_FILES_PER_HW){ toast("Maximum "+HW_FILES_PER_HW+" fichiers par devoir."); break; }
+    if(f.size>HW_FILE_MAX){ toast("« "+f.name+" » dépasse 10 Mo."); continue; }
+    try{
+     if(btn){ btn.disabled=true; btn.textContent="Envoi de « "+f.name.slice(0,24)+" »…"; }
+     const data=await hwReadB64(f);
+     const j=await api("uploadFile",{ name:f.name.slice(0,120), mime:f.type||"", data });
+     if(!j||!j.ok||!j.id) throw new Error((j&&j.error)||"échec de l’envoi");
+     draft.files.push({ id:j.id, name:j.name||f.name, mime:j.mime||f.type||"", size:j.size||f.size });
+    }catch(err){ toast("Fichier non envoyé : "+((err&&err.message)||err)); }
+   }
+   if(btn){ btn.disabled=false; btn.textContent=label; }
+   if(HOMEWORK_STATE.draft===draft){ saveHomeworkDraftFromDom(); renderHomeworkView(); }
+  });
+  function normalizeHomeworkEntry(raw){
   return {
    id: raw?.id || makeUid("hw"),
    dateISO: raw?.dateISO || todayISO(),
    classId: raw?.classId || "",
    subject: String(raw?.subject || "").trim(),
    contentHtml: sanitizeHomeworkHtml(raw?.contentHtml || ""),
-   isExam: !!raw?.isExam,
+    files: hwCleanFiles(raw?.files),
+    isExam: !!raw?.isExam,
    testIds: Array.isArray(raw?.testIds) ? raw.testIds.filter(Boolean) : [],
    /* tests de ce devoir proposés en mode entraînement (undefined = ancien devoir : on reprend le réglage historique du test) */
    trainingIds: Array.isArray(raw?.trainingIds) ? raw.trainingIds.filter(Boolean) : undefined,
@@ -15080,6 +15449,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
   const exam=document.getElementById("homeworkIsExam");
   if(editor) HOMEWORK_STATE.draft.contentHtml=sanitizeHomeworkHtml(editor.innerHTML);
   if(exam) HOMEWORK_STATE.draft.isExam=!!exam.checked;
+  try{ wrCaptureDraftReq(); }catch(e){}
  }
  function hasHomeworkCollision(draft){
   return (DATA.homework||[]).some(item=>item.dateISO===draft.dateISO && item.classId===draft.classId && item.subject===draft.subject && item.id!==draft.id);
@@ -15117,6 +15487,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
   renderHomeworkView();
  }
  function cancelHomeworkDraft(){
+  try{ if(HOMEWORK_STATE.draft) delete WR.draftReq[HOMEWORK_STATE.draft.id]; }catch(e){}
   HOMEWORK_STATE.draft=null;
   renderHomeworkView();
  }
@@ -15125,6 +15496,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
   const homeworkId=HOMEWORK_STATE.draft.id;
   const existing=getHomeworkById(homeworkId);
   if(!existing) return;
+  try{ wrDropRequestForHomework(homeworkId); }catch(e){ console.error(e); }
   /* Évaluations de classe / de groupe créées par les assignations de ce devoir :
      supprimées avec leurs notes élèves et leurs compétences liées. */
   const removedEvalIds=new Set();
@@ -15182,7 +15554,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
   if(!draft.subject){ alert("La matière est requise."); return; }
   if(window.edHwDenied && window.edHwDenied(draft)) return;
   const editorText=String(draft.contentHtml||"").replace(/<[^>]+>/g,"").trim();
-  if(!editorText){ alert("Saisis le contenu du devoir."); return; }
+  if(!editorText && !(draft.files||[]).length && !(draft.testIds||[]).length && !wrDraftGet(draft.id).on){ alert("Saisis le contenu du devoir (ou ajoute un fichier, un test ou une demande de rendu)."); return; }
   if(hasHomeworkCollision(draft)){
     alert("Un devoir existe déjà pour cette classe, cette matière et cette date.");
     return;
@@ -15199,6 +15571,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
    DATA.homework[idx]=draft;
   }else DATA.homework.push(draft);
   HOMEWORK_STATE.draft=null;
+  try{ wrApplyDraftRequest(draft); }catch(e){ console.error(e); }
   syncHomeworkDirectGrades();
   saveData();
   rebuildUI();
@@ -15352,41 +15725,39 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
   else if(hasHomeworkCollision({id:"",dateISO:date,classId:info.t,subject:info.s})) addReason="Un devoir existe déjà pour cette classe, cette matière et cette date.";
   return `
    <div class="homework-toolbar ${HOMEWORK_STATE.draft ? "is-hidden" : ""}">
-    <div class="homework-toolbar-left">
-     <div class="modal-form">
-      <label>Classe</label>
-      <select id="homeworkClassSelect">
-       <option value="" ${!f.cls?"selected":""}>—</option>
-       <option value="${HW_ALL}" ${f.cls===HW_ALL?"selected":""} ${info.specS?"":"disabled"}>Toutes classes et tous groupes</option>
-       ${classes.map(cls=>`<option value="${escHtml(cls.id)}" ${cls.id===f.cls?"selected":""}>${escHtml(cls.name)}</option>`).join("")}
-      </select>
+    <div class="hwf-bar">
+     <div class="hwf-target">
+      <div class="hwf">
+       <label for="homeworkClassSelect">Classe</label>
+       <select id="homeworkClassSelect">
+        <option value="" ${!f.cls?"selected":""}>—</option>
+        <option value="${HW_ALL}" ${f.cls===HW_ALL?"selected":""} ${info.specS?"":"disabled"}>Toutes classes et tous groupes</option>
+        ${classes.map(cls=>`<option value="${escHtml(cls.id)}" ${cls.id===f.cls?"selected":""}>${escHtml(cls.name)}</option>`).join("")}
+       </select>
+      </div>
+      <span class="hwf-or">ou</span>
+      <div class="hwf">
+       <label for="homeworkGroupSelect">Groupe</label>
+       <select id="homeworkGroupSelect"><option value="">—</option>${groups.map(g=>`<option value="${escHtml(g.id)}" ${g.id===f.group?"selected":""}>${escHtml(g.name)}</option>`).join("")}</select>
+      </div>
+      <span class="hwf-or">ou</span>
+      <div class="hwf">
+       <label for="homeworkStudentSelect">Élève</label>
+       <select id="homeworkStudentSelect" aria-label="Élève"><option value="">—</option>${stuOpts}</select>
+      </div>
      </div>
-     <div class="modal-form">
-      <label>&nbsp;</label>
-      <span style="padding:9px 2px;font-weight:700;color:#64748b">OU</span>
-     </div>
-     <div class="modal-form">
-      <label>Groupes</label>
-      <select id="homeworkGroupSelect"><option value="">—</option>${groups.map(g=>`<option value="${escHtml(g.id)}" ${g.id===f.group?"selected":""}>${escHtml(g.name)}</option>`).join("")}</select>
-     </div>
-     <div class="modal-form">
-      <label>&nbsp;</label>
-      <span style="padding:9px 2px;font-weight:700;color:#64748b">OU</span>
-     </div>
-     <div class="modal-form">
-      <label>Élève</label>
-      <select id="homeworkStudentSelect"><option value="">—</option>${stuOpts}</select>
-     </div>
-     <div class="modal-form">
-      <label>Matière</label>
+     <div class="hwf hwf-subject">
+      <label for="homeworkSubjectSelect">Matière</label>
       <select id="homeworkSubjectSelect">
        <option value="" ${!f.subject?"selected":""}>—</option>
        <option value="${HW_ALL}" ${f.subject===HW_ALL?"selected":""} ${info.specT?"":"disabled"}>Toutes matières</option>
        ${subjects.map(subject=>`<option value="${escHtml(subject)}" ${subject===f.subject?"selected":""}>${escHtml(subject)}</option>`).join("")}
       </select>
      </div>
+     <div class="hwf-actions">
+      <button type="button" class="btn btn-primary" data-hw-action="add-homework" ${addReason?`disabled title="${escHtml(addReason)}"`:""}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Ajouter un devoir</span></button>
+     </div>
     </div>
-    <button type="button" class="btn btn-primary" data-hw-action="add-homework" ${addReason?`disabled title="${escHtml(addReason)}"`:""}>Ajouter un devoir</button>
    </div>
   `;
  }
@@ -15464,16 +15835,24 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
      <input type="color" value="#fef08a" data-hw-action="editor-back-color">
     </div>
     <div id="homeworkEditorInput" class="homework-entry-body" contenteditable="true" data-placeholder="Saisis le devoir ici...">${draft.contentHtml || ""}</div>
-    <div class="homework-editor-actions">
-     <button type="button" class="btn" data-hw-action="open-assign-tests">Ajouter un test</button>
-     <div style="display:flex;gap:8px;">
+    <div class="hw-attach-bar" role="group" aria-label="Ajouter au devoir">
+     <span class="hw-attach-lab">Ajouter au devoir</span>
+     <button type="button" class="hw-chip ${(draft.files||[]).length?"is-on":""}" data-hw-action="attach-file">${HW_CHIP_ICO.file}<span>Joindre un fichier</span>${(draft.files||[]).length?`<em>${(draft.files||[]).length}</em>`:""}</button>
+     <button type="button" class="hw-chip ${(draft.testIds||[]).length?"is-on":""}" data-hw-action="open-assign-tests">${HW_CHIP_ICO.test}<span>Ajouter un test</span>${(draft.testIds||[]).length?`<em>${(draft.testIds||[]).length}</em>`:""}</button>
+     <button type="button" class="hw-chip ${wrDraftGet(draft.id).on?"is-on":""}" data-hw-action="request-work" aria-pressed="${wrDraftGet(draft.id).on?"true":"false"}">${HW_CHIP_ICO.req}<span>${wrDraftGet(draft.id).on?"Demande de rendu":"Demander un devoir"}</span>${wrDraftGet(draft.id).on?'<em>✓</em>':""}</button>
+     <input type="file" id="homeworkFileInput" multiple hidden>
+    </div>
+    ${renderHomeworkFiles(draft.files,true)}
+    ${renderHomeworkAssignedTests(draft.testIds,true)}
+    ${wrDraftPanel(draft)}
+    <div class="hw-foot">
+     <div class="hw-foot-left">${getHomeworkById(draft.id) ? '<button type="button" class="btn btn-danger" data-hw-action="delete-homework">Supprimer</button>' : ""}</div>
+     <div class="hw-foot-right">
       <button type="button" class="btn" data-hw-action="cancel-homework">Annuler</button>
-      ${getHomeworkById(draft.id) ? '<button type="button" class="btn btn-danger" data-hw-action="delete-homework">Supprimer</button>' : ""}
       <button type="button" class="btn btn-primary" data-hw-action="save-homework">Enregistrer</button>
      </div>
     </div>
-    ${renderHomeworkAssignedTests(draft.testIds,true)}
-   </article>
+    </article>
   `;
  }
  function renderTeacherHomeworkCard(homework){
@@ -15494,8 +15873,10 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
     </div>
     ${homework.isExam ? '<div class="homework-entry-badge">Contrôle</div>' : ""}
     <div class="homework-entry-body" contenteditable="false">${homework.contentHtml || '<span style="color:#94a3b8;">Aucun contenu.</span>'}</div>
-    ${renderHomeworkAssignedTests(homework.testIds,false)}
-   </article>
+    ${renderHomeworkFiles(homework.files,false)}
+     ${renderHomeworkAssignedTests(homework.testIds,false)}
+     ${wrCardBadge(homework.id)}
+    </article>
   `;
  }
  function getHomeworkStudentSubmissionState(homework,test){
@@ -15523,8 +15904,9 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
     </div>
     ${homework.isExam ? '<div class="homework-entry-badge">Contrôle</div>' : ""}
     <div class="homework-entry-body" contenteditable="false">${homework.contentHtml || '<span style="color:#94a3b8;">Aucun contenu.</span>'}</div>
-    <div class="homework-tests-list">
-     ${(homework.testIds||[]).map(testId=>{
+     ${renderHomeworkFiles(homework.files,false)}
+     <div class="homework-tests-list">
+      ${(homework.testIds||[]).map(testId=>{
       const test=getHomeworkTest(testId,homework.id);
       if(!test) return "";
       const total=fmt(getOnlineTestTotalPoints(test),2).replace(/\.00$/,"");
@@ -15540,6 +15922,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
       `;
      }).join("")}
     </div>
+    <div class="wr-slot" data-hid="${escHtml(homework.id)}">${wrSlotHtml(homework.id)}</div>
    </article>
   `;
  }
@@ -15556,7 +15939,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
    ? dayItems.map(renderStudentHomeworkCard).join("")
    : [HOMEWORK_STATE.draft ? renderHomeworkEditorCard() : "", ...dayItems.filter(item=>item.id!==HOMEWORK_STATE.draft?.id).map(renderTeacherHomeworkCard)].join("");
   main.innerHTML = `
-   ${isStudent ? "" : renderHomeworkTeacherToolbar()}
+   ${isStudent ? '<div id="wrStudentBox"></div>' : renderHomeworkTeacherToolbar()}
    <div class="homework-day-head">
     <div>
      <h3>${escHtml(homeworkFormatLong(HOMEWORK_STATE.selectedDate))}</h3>
@@ -15567,6 +15950,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
     ${cards || '<div class="homework-empty">Aucun devoir enregistré pour cette date.</div>'}
    </div>
   `;
+  try{ wrAfterRender(isStudent); }catch(err){ console.error(err); }
  }
  function openHomeworkAssignTestsModal(){
   if(!HOMEWORK_STATE.draft) return;
@@ -15744,7 +16128,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
   const type=q.type==="qcm"?"checkbox":"radio";
   const opts=(q.choices||[]).map(c=>{
    const picked=sel.has(c.id), good=!!c.correct;
-   return `<label class="homework-quiz-option hwt-opt${picked?" is-picked":""}${good?" is-expected":""}"><input type="${type}" disabled ${picked?"checked":""}><span>${escHtml(c.text||"")}</span></label>`;
+   return `<label class="homework-quiz-option hwt-opt${picked?" is-picked":""}${good?" is-expected":""}"><input type="${type}" disabled ${picked?"checked":""}><span>${escHtml(c.text||"")}${otImgTag(c.img,"ot-img-choice",c.imgW)}</span></label>`;
   }).join("");
   const manual=d.manual?`<div class="hwt-exp hwt-exp-none">Aucune bonne réponse définie : utilise le bouton à côté des points.</div>`:"";
   return `<div class="hwt-legend"><span class="hwt-lg-pick">Réponse de l’élève</span><span class="hwt-lg-exp">Réponse attendue</span></div><div class="homework-quiz-options">${opts}</div>${manual}`;
@@ -15794,12 +16178,12 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
      else if(picked&&good){ cls="is-ok"; tag="Ta réponse ✓"; }
      else if(picked&&!good){ cls="is-ko"; tag="Ta réponse ✗"; }
      else if(!picked&&good){ cls=ok?"is-ok":"is-ko"; tag="Réponse attendue"; }
-     return `<div class="hwc-choice ${cls}"><span class="hwc-mark ${q.type==="qcm"?"sq":""}">${picked?(q.type==="qcm"?"✓":'<i class="hwc-dot"></i>'):""}</span><span class="hwc-txt">${escHtml(c.text||"")}</span>${tag?`<b class="hwc-tag">${tag}</b>`:""}</div>`;
+     return `<div class="hwc-choice ${cls}"><span class="hwc-mark ${q.type==="qcm"?"sq":""}">${picked?(q.type==="qcm"?"✓":'<i class="hwc-dot"></i>'):""}</span><span class="hwc-txt">${escHtml(c.text||"")}${otImgTag(c.img,"ot-img-choice",c.imgW)}</span>${tag?`<b class="hwc-tag">${tag}</b>`:""}</div>`;
     }).join("")+'</div>';
    }
    const qc=String((submission.review&&submission.review.questionComments&&submission.review.questionComments[q.id])||"").trim();
    const qcHtml=qc?`<div class="hwc-comment"><b>Commentaire du professeur</b>${escHtml(qc).replace(/\n/g,"<br>")}</div>`:"";
-   return `<section class="hwc-q ${ok?"is-ok":"is-ko"}"><div class="hwc-head"><strong>Question ${i+1}</strong><span class="hwc-pts">${scoreTxt}</span></div><div class="hwc-prompt">${escHtml(q.prompt||"").replace(/\n/g,"<br>")}</div>${inner}${qcHtml}</section>`;
+   return `<section class="hwc-q ${ok?"is-ok":"is-ko"}"><div class="hwc-head"><strong>Question ${i+1}</strong><span class="hwc-pts">${scoreTxt}</span></div><div class="hwc-prompt">${escHtml(q.prompt||"").replace(/\n/g,"<br>")}</div>${otImgTag(q.img,"",q.imgW)}${inner}${qcHtml}</section>`;
   }).join("") || '<div class="homework-empty">Aucune question.</div>');
  }
  function hwCorrectifModal(){
@@ -16026,7 +16410,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
   return `<div class="homework-quiz-options">${(question.choices||[]).map(choice=>`
    <label class="homework-quiz-option">
     <input type="${inputType}" name="homework_${escHtml(question.id)}" value="${escHtml(choice.id)}">
-    <span>${escHtml(choice.text||"")}</span>
+    <span>${escHtml(choice.text||"")}${otImgTag(choice.img,"ot-img-choice",choice.imgW)}</span>
    </label>
   `).join("")}</div>`;
  }
@@ -16206,7 +16590,7 @@ async function finishHomeworkQuiz(reason){
      </div>
     </div>
     <div class="homework-quiz-question-counter">Question ${quiz.currentIndex+1} / ${total}</div>
-    <div class="online-preview-prompt">${escHtml(question.prompt||"").replace(/\n/g,"<br>")}</div>
+    <div class="online-preview-prompt">${escHtml(question.prompt||"").replace(/\n/g,"<br>")}</div>${otImgTag(question.img,"",question.imgW)}
     ${renderHomeworkQuizInput(question)}
     <div class="homework-quiz-actions">
      <button type="button" class="btn" data-hw-action="quiz-prev" ${(quiz.currentIndex===0||hwQuizPerQuestion(quiz)) ? "disabled" : ""}>←</button>
@@ -16809,7 +17193,7 @@ function openHomeworkStudentSubmittedState(homework,test,submission){
    return `
     <section class="homework-correction-question">
      <h4>Question ${index+1}</h4>
-     <div class="online-preview-prompt">${escHtml(question.prompt||"").replace(/\n/g,"<br>")}</div>
+     <div class="online-preview-prompt">${escHtml(question.prompt||"").replace(/\n/g,"<br>")}</div>${otImgTag(question.img,"",question.imgW)}
      ${hwtBody(question, detail)}
      <div class="homework-correction-score">
       <label>Points</label>
@@ -17473,7 +17857,7 @@ function handleHomeworkActionClick(btn){
   if(action==="cancel-homework"){ cancelHomeworkDraft(); return; }
   if(action==="delete-homework"){
    openConfirmModal({
-    message:"Supprimer définitivement ce devoir ?",
+    message:"Supprimer définitivement ce devoir ?"+((HOMEWORK_STATE.draft&&WR.reqs.some(x=>x.devoirId===HOMEWORK_STATE.draft.id))?" Sa demande de rendu, le dossier Drive et les fichiers déposés par les élèves seront aussi supprimés.":""),
     onConfirm:()=>deleteHomeworkDraft()
    });
    return;
@@ -17521,6 +17905,14 @@ function handleHomeworkActionClick(btn){
   }
   if(action==="edit-homework"){ startHomeworkDraft(btn.dataset.homeworkId); return; }
   if(action==="open-assign-tests"){ openHomeworkAssignTestsModal(); return; }
+   if(action==="attach-file"){ document.getElementById("homeworkFileInput")?.click(); return; }
+   if(action==="view-file"){ hwOpenFileViewer(btn.dataset.fileId,btn.dataset.kind,btn.dataset.name); return; }
+   if(action==="remove-file"){
+    saveHomeworkDraftFromDom();
+    HOMEWORK_STATE.draft.files=hwCleanFiles(HOMEWORK_STATE.draft.files).filter(f=>f.id!==btn.dataset.fileId);
+    renderHomeworkView();
+    return;
+   }
   if(action==="remove-assigned-test"){
    saveHomeworkDraftFromDom();
    openConfirmModal({
@@ -17601,7 +17993,7 @@ function handleHomeworkActionClick(btn){
   const base=originalBuildCSVText();
   const extra=[];
   DATA.homework.forEach(item=>{
-   extra.push(["homework",item.id,item.dateISO,item.classId,escapeCsv(item.subject||""),escapeCsv(item.contentHtml||""),item.isExam?1:0,item.locked?1:0,escapeCsv(JSON.stringify(item.testIds||[])),item.createdAt||"",item.updatedAt||"",Array.isArray(item.trainingIds)?escapeCsv(JSON.stringify(item.trainingIds)):""].join(";"));
+   extra.push(["homework",item.id,item.dateISO,item.classId,escapeCsv(item.subject||""),escapeCsv(item.contentHtml||""),item.isExam?1:0,item.locked?1:0,escapeCsv(JSON.stringify(item.testIds||[])),item.createdAt||"",item.updatedAt||"",Array.isArray(item.trainingIds)?escapeCsv(JSON.stringify(item.trainingIds)):"",(item.files&&item.files.length)?escapeCsv(JSON.stringify(item.files)):""].join(";"));
   });
   DATA.homeworkSubmissions.forEach(item=>{
    extra.push(["homeworkSubmission",item.id,item.homeworkId,item.testId,item.studentId,escapeCsv(JSON.stringify(item.answers||{})),escapeCsv(JSON.stringify(item.autoResult||null)),item.submittedAt||"",escapeCsv(JSON.stringify(item.review||{})),item.validatedAt||"",item.publishedAt||"",escapeCsv(item.manualOverride||""),item.noteId||""].join(";"));
@@ -17641,6 +18033,7 @@ function handleHomeworkActionClick(btn){
      locked: cols[7]!=="0",
      testIds,
      trainingIds: (()=>{ try{ const v=cols[11]?JSON.parse(unescapeCsv(cols[11])):undefined; return Array.isArray(v)?v:undefined; }catch(e){ return undefined; } })(),
+     files: (()=>{ try{ const v=cols[12]?JSON.parse(unescapeCsv(cols[12])):[]; return Array.isArray(v)?v:[]; }catch(e){ return []; } })(),
      createdAt: cols[9]||"",
      updatedAt: cols[10]||""
     }));
@@ -17709,6 +18102,332 @@ function handleHomeworkActionClick(btn){
  syncStudentHomeworkDate(true);
   renderHomeworkView();
  };
+ /* ══════ Devoirs à rendre : demande du professeur → fichiers des élèves (un dossier Drive par demande) ══════ */
+ const WR={ reqs:[], subs:[], loading:false, loaded:false, seen:false, list:[], at:0, pick:{}, busy:{}, open:new Set(), dl:{} };
+ const WR_MAX_FILES=5, WR_MAX_FILE=8*1024*1024, WR_MAX_TOTAL=15*1024*1024;
+ const wrFr=iso=>homeworkDateToFr(iso)||String(iso||"");
+ const wrNm=s=>s?(((s.first||"")+" "+(s.last||"")).trim()):"";
+ const wrWhen=iso=>{ const d=new Date(iso); return isNaN(d)?"":d.toLocaleString("fr-FR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}); };
+ const wrSafe=s=>String(s==null?"":s).replace(/[\\\/:*?"<>|;\u0000-\u001f]/g,"_").replace(/\s+/g," ").trim();
+ function wrStudents(cibleId){
+  if(isSoloId(cibleId)){ const s=homeworkStudentById(String(cibleId).slice(SOLO_PFX.length)); return s?[s]:[]; }
+  return targetStudents(cibleId)||[];
+ }
+ function wrB64Blob(b64,mime){
+  const bin=atob(b64), u=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) u[i]=bin.charCodeAt(i);
+  return new Blob([u],{type:mime||"application/octet-stream"});
+ }
+ function wrIsPreview(){ return document.body.classList.contains("ed-preview"); }
+
+ /* ── sous-onglets (professeur) ── */
+ function wrSetSub(sub){
+  WR.sub=sub;
+  const dev=document.getElementById("hwDevoirsPane"), ren=document.getElementById("hwRendusPane");
+  if(dev) dev.hidden=(sub==="rendus");
+  if(ren) ren.hidden=(sub!=="rendus");
+  document.querySelectorAll("#hwSubtabs .subtab-btn").forEach(b=>b.classList.toggle("active",b.dataset.hwsub===sub));
+  if(sub==="rendus") wrLoadProf();
+ }
+ async function wrLoadProf(){
+  if(AUTH.role!=="prof"||wrIsPreview()) return;
+  if(WR.loading) return;
+  WR.loading=true; wrRenderProf();
+  try{
+   const j=await api("workList");
+   if(!j||!j.ok) throw new Error((j&&j.error)||"échec");
+   WR.reqs=j.requests||[]; WR.subs=j.submissions||[]; WR.loaded=true;
+   if(!WR.seen){ WR.seen=true; const f=WR.reqs.slice().sort((a,b)=>String(b.dateISO).localeCompare(String(a.dateISO)))[0]; if(f) WR.open.add(f.id); }
+  }catch(err){ toast("Chargement impossible : "+((err&&err.message)||err)); }
+  WR.loading=false; wrRenderProf();
+ }
+ function wrRenderProf(){
+  const host=document.getElementById("wrProfList"); if(!host) return;
+  if(WR.loading && !WR.loaded){ host.innerHTML='<div class="homework-empty">Chargement…</div>'; return; }
+  const reqs=WR.reqs.slice().sort((a,b)=>String(b.dateISO).localeCompare(String(a.dateISO))||String(b.creeLe).localeCompare(String(a.creeLe)));
+  if(!reqs.length){ host.innerHTML='<div class="homework-empty">Aucun devoir à rendre pour le moment. Ajoute une demande de rendu à un devoir dans l’onglet Devoirs.</div>'; return; }
+  host.innerHTML=reqs.map(r=>{
+   const subBy={}; WR.subs.filter(x=>x.demandeId===r.id).forEach(x=>{ subBy[x.eleveId]=x; });
+   const studs=wrStudents(r.cibleId).map(s=>({ id:s.id, name:wrNm(s), last:(s.last||"")+" "+(s.first||""), cls:(DATA.classes.find(c=>c.id===s.classId)||{}).name||"" }));
+   Object.keys(subBy).forEach(id=>{ if(!studs.some(s=>s.id===id)) studs.push({ id, name:subBy[id].eleveNom||id, last:subBy[id].eleveNom||id, cls:"" }); });
+   studs.sort((a,b)=>a.last.localeCompare(b.last,"fr",{sensitivity:"base"}));
+   const done=studs.filter(s=>subBy[s.id]).length;
+   const rows=studs.map(s=>{
+    const x=subBy[s.id], files=x?(x.files||[]):[];
+    return `<tr>
+     <td><strong>${escHtml(s.name)}</strong></td>
+     <td>${escHtml(s.cls)}</td>
+     <td>${x?escHtml("Envoyé le "+wrWhen(x.rendeLe)):'<span class="wr-no">Non envoyé</span>'}</td>
+     <td class="wr-files">${files.map(f=>escHtml(f.name)+' <small style="color:#94a3b8">'+hwFmtSize(f.size)+'</small>').join("<br>")}</td>
+     <td style="text-align:right">${x&&files.length?`<button type="button" class="btn" data-wr="dl" data-rid="${escHtml(r.id)}" data-sid="${escHtml(s.id)}">${HW_ICO_DL} ${files.length>1?"Télécharger (zip)":"Télécharger"}</button>`:""}</td>
+    </tr>`;
+   }).join("");
+   return `<details class="wr-asg" data-id="${escHtml(r.id)}" ${WR.open.has(r.id)?"open":""}>
+    <summary>
+     <span class="wr-date">${escHtml(wrFr(r.dateISO))}</span>
+     <span class="wr-who">${escHtml(r.cibleNom)}</span>
+     <span class="wr-subj">${escHtml(r.matiere)}</span>
+     <span class="wr-title">${escHtml(r.titre||"")}</span>
+     <span class="wr-count ${studs.length&&done===studs.length?"all":""}">${done} / ${studs.length} rendu${done>1?"s":""}</span>
+     ${r.dossierId?`<a class="wr-ico" href="https://drive.google.com/drive/folders/${encodeURIComponent(r.dossierId)}" target="_blank" rel="noopener" title="Ouvrir le dossier Drive : ${escHtml(r.dossierNom||"")}">📁</a>`:""}
+     <button type="button" class="wr-ico del" data-wr="del" data-rid="${escHtml(r.id)}" title="Supprimer cette demande et son dossier Drive">🗑</button>
+    </summary>
+    ${r.consigne?`<div style="padding:8px 14px;color:#475569;font-size:14px;white-space:pre-wrap">${escHtml(r.consigne)}</div>`:""}
+    <div class="wr-scroll"><table class="wr-table"><thead><tr><th>Élève</th><th>Classe</th><th>Rendu</th><th>Fichiers</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="5" class="wr-no">Aucun élève concerné.</td></tr>'}</tbody></table></div>
+   </details>`;
+  }).join("");
+ }
+ async function wrDownload(btn){
+  const rid=btn.dataset.rid, sid=btn.dataset.sid, key=rid+"|"+sid;
+  if(WR.dl[key]) return; WR.dl[key]=1;
+  const lab=btn.innerHTML; btn.disabled=true; btn.textContent="Préparation…";
+  try{
+   const j=await api("workDownload",{ demandeId:rid, eleveId:sid });
+   if(!j||!j.ok) throw new Error((j&&j.error)||"échec");
+   const url=URL.createObjectURL(wrB64Blob(j.data,j.mime));
+   const a=document.createElement("a"); a.href=url; a.download=j.name||"devoir"; document.body.appendChild(a); a.click();
+   setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); },4000);
+  }catch(err){ toast("Téléchargement impossible : "+((err&&err.message)||err)); }
+  delete WR.dl[key]; btn.disabled=false; btn.innerHTML=lab;
+ }
+ async function wrDelete(rid){
+  const r=WR.reqs.find(x=>x.id===rid); if(!r) return;
+  if(!confirm("Supprimer la demande « "+r.cibleNom+" · "+r.matiere+" · "+wrFr(r.dateISO)+" » ?\n\nLe dossier Drive et tous les fichiers rendus seront mis à la corbeille.")) return;
+  try{
+   const j=await api("workDelete",{ demandeId:rid });
+   if(!j||!j.ok) throw new Error((j&&j.error)||"échec");
+   WR.reqs=WR.reqs.filter(x=>x.id!==rid); WR.subs=WR.subs.filter(x=>x.demandeId!==rid); wrRenderProf(); toast("Demande supprimée.");
+  }catch(err){ toast("Suppression impossible : "+((err&&err.message)||err)); }
+ }
+
+ /* ── « Demander un devoir » : fait partie du devoir (panneau intégré, enregistré avec lui) ── */
+ const HW_CHIP_ICO={
+  file:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5l-8.6 8.6a5.5 5.5 0 0 1-7.8-7.8l8.6-8.6a3.7 3.7 0 0 1 5.2 5.2l-8.6 8.6a1.8 1.8 0 0 1-2.6-2.6l7.9-7.9"/></svg>',
+  test:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 9l1.6 1.6L12.5 7.5M8 15h8"/></svg>',
+  req:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7.5 10.5L12 15l4.5-4.5"/><path d="M4 15v3.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V15"/></svg>'
+ };
+ WR.draftReq={};
+ /* état de la demande du devoir en cours d'édition (dérivé de la demande existante tant que le prof n'y touche pas) */
+ function wrDraftGet(id){
+  const ex=WR.reqs.find(x=>x.devoirId===id)||null, s=WR.draftReq[id];
+  if(s&&s.touched) return s;
+  return { touched:false, on:!!ex, titre:ex?ex.titre||"":"", consigne:ex?ex.consigne||"":"" };
+ }
+ function wrCaptureDraftReq(){
+  const dr=HOMEWORK_STATE.draft; if(!dr) return;
+  const t=document.getElementById("wrDraftTitle"), c=document.getElementById("wrDraftText");
+  if(!t||!c) return;
+  WR.draftReq[dr.id]={ touched:true, on:true, titre:t.value, consigne:c.value };
+ }
+ function wrDraftPanel(draft){
+  const st=wrDraftGet(draft.id); if(!st.on) return "";
+  const ex=WR.reqs.find(x=>x.devoirId===draft.id)||null;
+  const cibleNom=(targetName(draft.classId)||"").trim()||"Cible";
+  let nb=0; try{ nb=wrStudents(draft.classId).length; }catch(e){}
+  const dossier=ex&&ex.dossierNom?ex.dossierNom:wrSafe(cibleNom+"_"+(draft.dateISO||"")+"_"+draft.subject);
+  const n=ex?WR.subs.filter(x=>x.demandeId===ex.id).length:0;
+  return `<section class="wr-draft" aria-label="Demande de rendu">
+   <div class="wr-draft-head">
+    <div class="wr-draft-ttl">${HW_CHIP_ICO.req}<strong>Devoir à rendre par les élèves</strong></div>
+    <button type="button" class="wr-draft-x" data-hw-action="request-work" title="Retirer la demande de rendu de ce devoir">Retirer</button>
+   </div>
+   <div class="wr-meta">${escHtml(cibleNom)} · ${escHtml(draft.subject||"")} · pour le ${escHtml(wrFr(draft.dateISO))} · ${nb} élève${nb>1?"s":""} concerné${nb>1?"s":""}${ex?` · ${n} rendu${n>1?"s":""} déjà déposé${n>1?"s":""}`:""}</div>
+   <div class="wr-draft-grid">
+    <label for="wrDraftTitle">Titre <small>(facultatif)</small></label>
+    <input type="text" id="wrDraftTitle" maxlength="120" value="${escHtml(st.titre)}" placeholder="Ex. : Rédaction chapitre 3">
+    <label for="wrDraftText">Consigne <small>(facultatif)</small></label>
+    <textarea id="wrDraftText" maxlength="1500" placeholder="Ce que les élèves doivent rendre…">${escHtml(st.consigne)}</textarea>
+   </div>
+   <div class="wr-sum">Dossier Drive : ${escHtml(dossier)}${ex?"":" (créé à l’enregistrement du devoir)"}</div>
+  </section>`;
+ }
+ function wrOpenRequest(){
+  if(AUTH.role!=="prof") return;
+  if(wrIsPreview()){ toast("Indisponible en mode consultation."); return; }
+  const dr=HOMEWORK_STATE.draft;
+  if(!dr){ toast("Ouvre d’abord un devoir."); return; }
+  saveHomeworkDraftFromDom();
+  if(!dr.classId||!dr.subject){ toast("Choisis d’abord le destinataire et la matière du devoir."); return; }
+  const cur=wrDraftGet(dr.id), ex=WR.reqs.find(x=>x.devoirId===dr.id)||null;
+  const flip=()=>{ WR.draftReq[dr.id]={ touched:true, on:!cur.on, titre:cur.titre, consigne:cur.consigne }; renderHomeworkView(); };
+  if(cur.on && ex){
+   const n=WR.subs.filter(x=>x.demandeId===ex.id).length;
+   if(n){ openConfirmModal({ message:"Retirer la demande de rendu ? À l’enregistrement du devoir, les "+n+" rendu"+(n>1?"s":"")+" déjà déposé"+(n>1?"s":"")+" et le dossier Drive seront supprimés.", onConfirm:flip }); return; }
+  }
+  flip();
+  if(!cur.on) setTimeout(()=>{ try{ document.getElementById("wrDraftTitle").focus(); }catch(e){} },30);
+ }
+ /* appliquée à l'enregistrement du devoir : crée, met à jour ou supprime la demande liée */
+ async function wrApplyDraftRequest(draft){
+  if(AUTH.role!=="prof"||wrIsPreview()) return;
+  const id=draft.id, s=WR.draftReq[id]; delete WR.draftReq[id];
+  try{
+   if(!WR.loaded){ const l=await api("workList"); if(l&&l.ok){ WR.reqs=l.requests||[]; WR.subs=l.submissions||[]; WR.loaded=true; } }
+   const ex=WR.reqs.find(x=>x.devoirId===id)||null;
+   const want=(s&&s.touched)?s.on:!!ex;
+   if(!want&&!ex) return;
+   if(!want&&ex){
+    const j=await api("workDelete",{ demandeId:ex.id });
+    if(!j||!j.ok) throw new Error((j&&j.error)||"échec");
+    WR.reqs=WR.reqs.filter(x=>x.id!==ex.id); WR.subs=WR.subs.filter(x=>x.demandeId!==ex.id);
+    toast("Demande de rendu retirée."); renderHomeworkView(); return;
+   }
+   const cibleId=draft.classId;
+   if(isSoloId(cibleId)) ensureSoloGroup(String(cibleId).slice(SOLO_PFX.length));
+   const cibleNom=(targetName(cibleId)||"").trim()||"Cible";
+   const titre=(s&&s.touched)?s.titre:(ex?ex.titre:""), consigne=(s&&s.touched)?s.consigne:(ex?ex.consigne:"");
+   const body={ devoirId:id, cibleId, cibleNom, matiere:draft.subject, dateISO:draft.dateISO, titre, consigne };
+   if(ex){
+    const same=ex.cibleId===cibleId&&ex.matiere===draft.subject&&ex.dateISO===draft.dateISO&&(ex.titre||"")===String(titre||"").trim()&&(ex.consigne||"")===String(consigne||"").trim();
+    if(same) return;
+    const j=await api("workUpdate",Object.assign({ demandeId:ex.id },body));
+    if(!j||!j.ok) throw new Error((j&&j.error)||"échec");
+    WR.reqs=WR.reqs.filter(x=>x.id!==ex.id); WR.reqs.push(j.request);
+    toast("Demande de rendu mise à jour."); renderHomeworkView(); return;
+   }
+   const j=await api("workCreate",body);
+   if(!j||!j.ok) throw new Error((j&&j.error)||"échec");
+   if(j.request){ WR.reqs=WR.reqs.filter(x=>x.id!==j.request.id); WR.reqs.push(j.request); }
+   toast("Demande de rendu enregistrée avec le devoir."); renderHomeworkView();
+  }catch(err){ toast("Demande de rendu non enregistrée : "+((err&&err.message)||err)+" — rouvre le devoir pour réessayer."); }
+ }
+ /* le devoir est supprimé : sa demande (dossier Drive + rendus) l'est aussi */
+ async function wrDropRequestForHomework(hid){
+  const ex=WR.reqs.find(x=>x.devoirId===hid); if(!ex||AUTH.role!=="prof"||wrIsPreview()) return;
+  try{
+   const j=await api("workDelete",{ demandeId:ex.id });
+   if(j&&j.ok){ WR.reqs=WR.reqs.filter(x=>x.id!==ex.id); WR.subs=WR.subs.filter(x=>x.demandeId!==ex.id); }
+  }catch(e){ console.error(e); }
+ }
+
+ /* ── Élève : zone d'importation ── */
+ async function wrLoadStudent(){
+  if(AUTH.role!=="eleve"||WR.loading) return;
+  const prev=wrIsPreview(), sid=AUTH.studentId;
+  WR.loading=true;
+  try{
+   if(prev){
+    /* Consultation : le jeton est celui du professeur ; on filtre sa liste comme le ferait le serveur pour cet élève */
+    const j=await api("workList");
+    if(j&&j.ok){
+     WR.reqs=j.requests||[]; WR.subs=j.submissions||[]; WR.loaded=true;
+     WR.list=WR.reqs.filter(r=>wrTargetsStudent(r.cibleId,sid)).map(r=>{
+      const x=WR.subs.find(y=>y.demandeId===r.id&&y.eleveId===sid);
+      return { devoirId:r.devoirId, id:r.id, creeLe:r.creeLe, cibleId:r.cibleId, cibleNom:r.cibleNom, matiere:r.matiere, dateISO:r.dateISO, titre:r.titre, consigne:r.consigne, rendu:x?{ rendeLe:x.rendeLe, files:x.files||[] }:null };
+     });
+     WR.listFor=sid; WR.at=Date.now();
+    }
+   }else{
+    const j=await api("myWorkRequests"); if(j&&j.ok){ WR.list=j.requests||[]; WR.at=Date.now(); }
+   }
+  }catch(e){}
+  WR.loading=false; wrRenderStudent();
+ }
+ function wrTargetsStudent(cibleId,sid){
+  cibleId=String(cibleId||""); if(!cibleId||!sid) return false;
+  if(isSoloId(cibleId)) return cibleId===SOLO_PFX+sid;
+  const s=(DATA.students||[]).find(x=>x.id===sid);
+  if(s&&s.classId===cibleId) return true;
+  try{ const g=grpById(cibleId); return !!(g&&(g.memberIds||[]).includes(sid)); }catch(e){ return false; }
+ }
+ function wrCardHtml(r,inSlot){
+   const picks=WR.pick[r.id]||[], busy=WR.busy[r.id];
+   return `<article class="wr-card ${r.rendu?"done":""}" data-rid="${escHtml(r.id)}">
+    <div class="wr-top">
+     <div><strong>${inSlot?(r.titre?escHtml(r.titre):"Devoir à rendre"):escHtml(r.matiere)+(r.titre?" — "+escHtml(r.titre):"")}</strong><div class="wr-meta">${inSlot&&!r.titre?"":""}À rendre pour le ${escHtml(wrFr(r.dateISO))}</div></div>
+     <span class="wr-badge">${r.rendu?"✔ Envoyé":"À rendre"}</span>
+    </div>
+    ${r.consigne?`<p class="wr-instr">${escHtml(r.consigne)}</p>`:""}
+    ${r.rendu?`<div class="wr-sent">✔ Envoyé le ${escHtml(wrWhen(r.rendu.rendeLe))} : ${(r.rendu.files||[]).map(f=>escHtml(f.name)).join(", ")}</div>`:""}
+    <label class="wr-drop${wrIsPreview()?" off":""}" data-wr-drop="${escHtml(r.id)}">
+     <input type="file" multiple class="wr-file" data-rid="${escHtml(r.id)}" ${wrIsPreview()?"disabled":""}>
+     <span>${r.rendu?"Remplacer mon envoi : ":""}Glisse tes fichiers ici ou <u>choisis-les</u></span><br><small>${wrIsPreview()?"Aperçu : le dépôt est désactivé en consultation":WR_MAX_FILES+" fichiers maximum · 8 Mo par fichier"}</small>
+    </label>
+    ${picks.map((f,i)=>`<div class="wr-pick"><span>${escHtml(f.name)} · ${hwFmtSize(f.size)}</span><button type="button" data-wr="unpick" data-rid="${escHtml(r.id)}" data-i="${i}" aria-label="Retirer">×</button></div>`).join("")}
+    ${picks.length||busy?`<button type="button" class="btn btn-primary wr-send" data-wr="send" data-rid="${escHtml(r.id)}" ${busy?"disabled":""}>${busy?"Envoi "+escHtml(busy)+"…":(r.rendu?"Remplacer l’envoi":"Envoyer le devoir")}</button>`:""}
+   </article>`;
+ }
+ function wrSlotHtml(hid){ const r=WR.list.find(x=>x.devoirId===hid); return r?wrCardHtml(r,true):""; }
+ function wrRenderStudent(){
+  document.querySelectorAll(".wr-slot").forEach(el=>{ el.innerHTML=wrSlotHtml(el.dataset.hid); });
+  const box=document.getElementById("wrStudentBox"); if(!box) return;
+  const known=new Set((DATA.homework||[]).map(h=>h.id));
+  const orph=WR.list.filter(r=>!r.devoirId||!known.has(r.devoirId));
+  box.innerHTML=orph.map(wrCardHtml).join("");
+ }
+ function wrAddPicks(rid,files){
+  if(wrIsPreview()){ toast("Indisponible en mode consultation."); return; }
+  const cur=(WR.pick[rid]||[]).slice();
+  for(const f of files){
+   if(cur.length>=WR_MAX_FILES){ toast("Maximum "+WR_MAX_FILES+" fichiers."); break; }
+   if(f.size>WR_MAX_FILE){ toast("« "+f.name+" » dépasse 8 Mo."); continue; }
+   if(cur.reduce((s,x)=>s+x.size,0)+f.size>WR_MAX_TOTAL){ toast("Total limité à 15 Mo."); break; }
+   if(!f.size){ toast("« "+f.name+" » est vide."); continue; }
+   cur.push(f);
+  }
+  WR.pick[rid]=cur; wrRenderStudent();
+ }
+ async function wrSend(rid){
+  if(wrIsPreview()){ toast("Indisponible en mode consultation."); return; }
+  const files=WR.pick[rid]||[]; if(!files.length||WR.busy[rid]) return;
+  try{
+   for(let i=0;i<files.length;i++){
+    WR.busy[rid]=(i+1)+"/"+files.length; wrRenderStudent();
+    const data=await hwReadB64(files[i]);
+    const j=await api("workUpload",{ demandeId:rid, name:files[i].name.slice(0,120), mime:files[i].type||"", data, first:i===0 });
+    if(!j||!j.ok) throw new Error((j&&j.error)||"échec de l’envoi");
+   }
+   delete WR.pick[rid]; toast("Devoir envoyé ✔");
+  }catch(err){ toast("Envoi interrompu : "+((err&&err.message)||err)); }
+  delete WR.busy[rid];
+  WR.loading=false; await wrLoadStudent();
+ }
+
+ function wrCardBadge(hid){
+  const r=WR.reqs.find(x=>x.devoirId===hid); if(!r) return "";
+  const n=WR.subs.filter(x=>x.demandeId===r.id).length, tot=wrStudents(r.cibleId).length;
+  return `<div class="wr-pblock"><div class="wr-pinfo"><div class="wr-ptitle">${HW_CHIP_ICO.req}<strong>${r.titre?escHtml(r.titre):"Devoir à rendre"}</strong><span class="wr-count ${tot&&n===tot?"all":""}">${n} / ${tot} rendu${n>1?"s":""}</span></div><div class="wr-meta">À rendre pour le ${escHtml(wrFr(r.dateISO))}</div>${r.consigne?`<div class="wr-instr">${escHtml(r.consigne)}</div>`:""}</div><button type="button" class="btn" data-wr="goto" data-rid="${escHtml(r.id)}">Voir les rendus</button></div>`;
+ }
+ function wrAfterRender(isStudent){
+  const st=document.getElementById("hwSubtabs"); if(st) st.style.display=isStudent?"none":"";
+  if(isStudent){
+   if(wrIsPreview()){ if(WR.listFor!==AUTH.studentId){ WR.list=[]; WR.at=0; } }
+   else if(WR.listFor){ WR.list=[]; WR.at=0; WR.listFor=null; }
+   wrRenderStudent();
+   if(!WR.loading && Date.now()-WR.at>30000) wrLoadStudent();
+  }else if(AUTH.role==="prof" && !WR.loaded && !WR.loading && !WR.tried && !wrIsPreview()){
+   WR.tried=true;
+   api("workList").then(j=>{ if(j&&j.ok){ WR.reqs=j.requests||[]; WR.subs=j.submissions||[]; WR.loaded=true; renderHomeworkView(); } }).catch(()=>{});
+  }
+ }
+
+ document.addEventListener("click",e=>{
+  const t=e.target; if(!t||!t.closest) return;
+  const rq=t.closest('[data-hw-action="request-work"]'); if(rq){ e.preventDefault(); if(!rq.disabled) wrOpenRequest(); return; }
+  const sb=t.closest("[data-hwsub]"); if(sb&&sb.closest("#hwSubtabs")){ wrSetSub(sb.dataset.hwsub); return; }
+  const w=t.closest("[data-wr]"); if(!w) return;
+  const k=w.dataset.wr;
+  if(k==="goto"){ WR.open.add(w.dataset.rid); wrSetSub("rendus"); }
+  else if(k==="refresh"){ WR.loaded=false; wrLoadProf(); }
+  else if(k==="dl"){ e.preventDefault(); wrDownload(w); }
+  else if(k==="del"){ e.preventDefault(); wrDelete(w.dataset.rid); }
+  else if(k==="send"){ wrSend(w.dataset.rid); }
+  else if(k==="unpick"){ const a=(WR.pick[w.dataset.rid]||[]).slice(); a.splice(Number(w.dataset.i),1); WR.pick[w.dataset.rid]=a; wrRenderStudent(); }
+ });
+ document.addEventListener("change",e=>{
+  const i=e.target; if(!i||!i.classList||!i.classList.contains("wr-file")) return;
+  const files=[...(i.files||[])]; i.value=""; if(files.length) wrAddPicks(i.dataset.rid,files);
+ });
+ ["dragenter","dragover"].forEach(n=>document.addEventListener(n,e=>{ const z=e.target.closest&&e.target.closest(".wr-drop"); if(z){ e.preventDefault(); z.classList.add("over"); } }));
+ ["dragleave","drop"].forEach(n=>document.addEventListener(n,e=>{
+  const z=e.target.closest&&e.target.closest(".wr-drop"); if(!z) return;
+  e.preventDefault(); z.classList.remove("over");
+  if(n==="drop"){ const fl=[...((e.dataTransfer&&e.dataTransfer.files)||[])]; if(fl.length) wrAddPicks(z.dataset.wrDrop,fl); }
+ }));
+ document.addEventListener("toggle",e=>{
+  const d=e.target; if(!d||!d.classList||!d.classList.contains("wr-asg")) return;
+  if(d.open) WR.open.add(d.dataset.id); else WR.open.delete(d.dataset.id);
+ },true);
 })();
 
 /* Mini bannière des notes spéciales : clic droit (ordinateur) ou appui long (mobile) sur une case de note de la fenêtre de correction */
@@ -21330,7 +22049,7 @@ document.addEventListener("click",async ev=>{
   "editCompCycleFilter","editCompDomainFilter","editCompSubDomainFilter","classSelect","classSubject","classEvalPeriod","classCompSetupSubject"];
  const CS_SEL="select";
  function csEligible(s){
-  if(!s||s.dataset.cs==="1"||s.dataset.ss==="1"||s.classList.contains("cs-native")) return false;
+  if(!s||s.dataset.cs==="1"||s.dataset.ss==="1"||s.classList.contains("cs-native")||s.id==="homeworkStudentSelect"||s.id==="homeworkDraftStudentSelect") return false;
   if(s.multiple||s.size>1||s.closest(".cs")) return false;
   if(s.hasAttribute("data-pm-sel")||s.matches('[data-hw-action^="editor-"]')) return false;   /* barres d'outils de l'éditeur de texte */
   if(s.style.display==="none"||s.hidden||s.type==="hidden") return CS_IDS.indexOf(s.id)>=0;
@@ -21432,6 +22151,80 @@ document.addEventListener("click",async ev=>{
 #consultSearch{border-radius:999px;background-color:#f1f5f9;border-color:transparent;box-shadow:none}
 #consultSearch:focus{background-color:#fff}
 #consultSearch.open{border-radius:22px 22px 0 0;background-color:#fff}
+
+/* ── Liste fine des tests en ligne ── */
+.online-tests-grid{ grid-template-columns:1fr !important; gap:8px !important }
+.online-test-card{ flex-direction:row !important; align-items:center; gap:12px !important; padding:7px 12px !important; border-radius:12px !important; box-shadow:none !important; background:#fff !important; flex-wrap:wrap }
+.online-test-card .otc-subj{ flex:0 0 150px; max-width:150px; box-sizing:border-box; padding:4px 10px; border-radius:999px; border:1px solid #c3e6fd; background:#e6f5fe; font-size:12.5px; font-weight:700; color:#0471b5; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.online-test-card .otc-title{ flex:1 1 200px; min-width:0; margin:0; font-size:15px !important; line-height:1.25; color:#0471b5; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.online-test-card .otc-basic{ display:inline-block; margin-left:6px; padding:1px 7px; border-radius:999px; background:#eef9ff; border:1px solid #8dd0fb; color:#0471b5; font-size:11px; font-weight:700; vertical-align:middle }
+.online-test-card .otc-pts{ flex:0 0 auto; min-width:56px; text-align:right; font-weight:700; font-size:13.5px; color:#0f172a; font-variant-numeric:tabular-nums }
+.online-test-card .online-test-card-actions{ flex:0 0 auto; flex-wrap:nowrap; gap:6px; align-items:center; margin-left:auto }
+.online-test-card .online-test-card-actions .btn{ padding:5px 10px; font-size:13px }
+.online-test-card .btn-homework-review{ padding:3px 8px }
+.online-test-card .online-test-badge{ top:-8px; right:-8px }
+@media (max-width:760px){ .online-test-card .otc-subj{ flex-basis:auto } .online-test-card .online-test-card-actions{ flex-wrap:wrap } }
+
+/* ── Paramètres du test : 3 cases par ligne ── */
+#onlineTestSetupModal .online-checklist, #onlineBasicTestModal .online-checklist{ grid-template-columns:repeat(3,minmax(0,1fr)) !important }
+#onlineTestSetupModal .online-check-item, #onlineBasicTestModal .online-check-item{ padding:6px 8px; gap:6px }
+#onlineTestSetupModal .online-check-item strong{ font-size:13px }
+#onlineTestSetupModal .online-check-item .online-inline-field input, #onlineBasicTestModal .online-check-item .online-inline-field input{ width:50px !important; padding:5px 4px !important }
+#onlineTestSetupModal .online-check-item .online-inline-field{ gap:4px }
+@media (max-width:720px){ #onlineTestSetupModal .online-checklist, #onlineBasicTestModal .online-checklist{ grid-template-columns:repeat(2,minmax(0,1fr)) !important } }
+@media (max-width:480px){ #onlineTestSetupModal .online-checklist, #onlineBasicTestModal .online-checklist{ grid-template-columns:1fr !important } }
+.otmsg-head{ display:flex !important; align-items:center; gap:8px; margin:4px 0 0 !important; cursor:pointer }
+.otmsg-head input[type=checkbox]{ width:18px !important; height:18px; margin:0 !important; padding:0 !important; flex:none }
+.otmsg textarea{ margin-top:8px }
+.otmsg textarea[hidden]{ display:none !important }
+
+/* ── Éditeur de question : type, points, temps sur une seule ligne ── */
+.oq-top{ grid-template-columns:1fr !important }
+.oq-top-left{ display:grid !important; grid-template-columns:minmax(0,1.3fr) minmax(0,.7fr) minmax(0,1.6fr); gap:12px !important; align-items:start }
+.oq-top-left > div + div label{ margin-top:0 !important }
+.oq-top-left .oq-time-note{ grid-column:1 / -1; margin-top:-4px }
+.oq-top-left .oq-time-note:empty{ display:none }
+@media (max-width:560px){ .oq-top-left{ grid-template-columns:1fr 1fr } .oq-top-left .oq-time-box{ grid-column:1 / -1 } }
+
+/* ── Tests : barre de recherche, boutons à gauche ── */
+.online-tests-toolbar{ justify-content:flex-start !important; align-items:center !important; gap:10px !important }
+.online-tests-toolbar #onlineTestsSummary{ margin:0 12px 0 0 !important; white-space:nowrap }
+.online-tests-toolbar .otsearch{ width:220px; max-width:100%; margin:0; align-self:center }
+/* ── Intitulé de la question : petite zone qui grandit avec le texte ── */
+.oq-prompt-row{ display:flex; align-items:flex-start; gap:8px }
+.oq-prompt-row textarea{ flex:1 1 auto; min-width:0; min-height:42px !important; height:auto; resize:none !important; overflow:hidden !important; line-height:1.4 }
+.oq-prompt-row #otQImgHost{ flex:none; display:inline-flex; align-items:center; min-height:42px }
+/* ── Encadré « test rendu » : toujours vert ── */
+.online-preview-note{ background:#ecfdf5 !important; border:1px solid #86efac !important; color:#15803d !important }
+
+/* ── Tests : tout sur une seule ligne ── */
+@media (min-width:1100px){ .online-tests-toolbar{ flex-wrap:nowrap !important } }
+.online-tests-toolbar > *{ flex:none }
+.online-tests-toolbar #onlineTestsSummary{ margin:0 6px 0 0 !important; padding:0 12px !important; height:38px; display:inline-flex; align-items:center; box-sizing:border-box }
+.online-tests-toolbar .otsearch{ width:210px !important; height:38px; margin:0 !important; padding-top:0 !important; padding-bottom:0 !important }
+.online-tests-toolbar #onlineTestsSubjectFilter{ width:200px !important; min-width:0 !important; max-width:100%; height:38px; margin:0 !important; padding-top:0 !important; padding-bottom:0 !important }
+.online-tests-toolbar .btn{ height:38px; box-sizing:border-box }
+.online-tests-toolbar .btn{ font-size:14px !important; padding:8px 12px !important; white-space:nowrap }
+/* Notes du jour : le soulignement reste visible sur Abs / NR / EA… */
+.note-pill.empty-eval.today.today-keep::after{ display:block !important }
+
+/* ── Fichiers joints aux devoirs ── */
+.hw-files{ display:flex; flex-direction:column; gap:6px; margin-top:12px }
+.hw-file{ display:flex; align-items:center; gap:8px; padding:6px 10px; border:1px solid #e2e8f0; border-radius:12px; background:#f8fafc; min-width:0 }
+.hw-file-ico{ flex:none; display:inline-flex; color:#0471b5 }
+.hw-file-name{ flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:600; font-size:14px; color:#0f172a }
+.hw-file small{ flex:none; color:#64748b; font-size:12px }
+.hw-file-btn{ flex:none; width:32px; height:32px; padding:0; border:1px solid #cbd5e1; border-radius:50%; background:#fff; color:#0471b5; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; text-decoration:none; font-size:18px; line-height:1 }
+.hw-file-btn:hover{ background:#eef9ff; border-color:#8dd0fb }
+.hw-file-del{ color:#dc2626 } .hw-file-del:hover{ background:#fee2e2; border-color:#fecaca }
+.hwv-ov{ position:fixed; inset:0; z-index:400; background:rgba(15,23,42,.6); display:flex; align-items:center; justify-content:center; padding:12px }
+.hwv-card{ position:relative; width:1000px; max-width:100%; height:92vh; display:flex; flex-direction:column; background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 20px 40px rgba(0,0,0,.3) }
+.hwv-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 14px; border-bottom:1px solid var(--border) }
+.hwv-title{ min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#0471b5 }
+.hwv-acts{ display:inline-flex; align-items:center; gap:8px; flex:none }
+.hwv-body{ flex:1 1 auto; min-height:0; background:#f1f5f9; display:flex; align-items:center; justify-content:center; overflow:auto }
+.hwv-body iframe{ width:100%; height:100%; border:0; background:#fff }
+.hwv-body img{ max-width:100%; max-height:100%; object-fit:contain }
 </style>
 <script>
 /* Blocage de compte : état du bouton dans « Modifier élève » + éjection d'un élève déjà connecté */
@@ -21536,7 +22329,8 @@ function edBlockedKick(){
  }
  function ameliorer(sel){
   if(!sel||sel.dataset.ss==="1") return;
-  sel.dataset.ss="1"; sel.style.display="none";
+  sel.dataset.ss="1"; sel.style.setProperty("display","none","important");
+  { const nx=sel.nextElementSibling; if(nx&&nx.classList&&nx.classList.contains("ss-btn")) nx.remove(); }
   const btn=document.createElement("button"); btn.type="button"; btn.className="ss-btn";
   btn.setAttribute("aria-haspopup","listbox"); btn.setAttribute("aria-expanded","false");
   btn.setAttribute("aria-label",sel.getAttribute("aria-label")||"Élève");
@@ -21569,5 +22363,67 @@ document.addEventListener("input",function(e){
  });
 })();
 </script>
+<style id="patch-hw-clean">
+/* ── Devoirs : barre d'outils sous les onglets ── */
+.homework-toolbar .hwf-bar{ padding:14px 16px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; gap:12px 16px; align-items:flex-end }
+.homework-toolbar .hwf-target{ gap:10px; flex:1 1 560px }
+.homework-toolbar .hwf > label{ font-size:12.5px; font-weight:600; color:#475569; margin:0 0 2px 2px }
+.homework-toolbar .hwf select,.homework-toolbar .hwf .ss-btn{ height:40px; border:1px solid #d5dde8; border-radius:10px; background:#fff; padding:0 12px; box-shadow:none; transition:border-color .15s, box-shadow .15s }
+.homework-toolbar .hwf select:hover,.homework-toolbar .hwf .ss-btn:hover{ border-color:#9fc3e6 }
+.homework-toolbar .hwf select:focus,.homework-toolbar .hwf .ss-btn:focus-visible{ outline:none; border-color:#0080d0; box-shadow:0 0 0 3px rgba(0,128,208,.16) }
+.homework-toolbar .hwf-or{ align-self:end; padding:0 0 11px; font-size:11.5px; font-weight:600; color:#94a3b8; text-transform:none; letter-spacing:.02em }
+.homework-toolbar .hwf-actions{ margin-left:auto; align-self:flex-end }
+.homework-toolbar .hwf-actions .btn{ height:40px; display:inline-flex; align-items:center; gap:8px; padding:0 18px; border-radius:10px; font-weight:600; white-space:nowrap }
+.homework-toolbar .hwf-actions .btn:disabled{ background:#e8eef5; color:#8a99ad; border-color:#e8eef5; box-shadow:none; opacity:1 }
+@media (max-width:720px){
+ .homework-toolbar .hwf-bar{ padding:12px }
+ .homework-toolbar .hwf-actions{ width:100%; margin-left:0 }
+ .homework-toolbar .hwf-actions .btn{ width:100%; justify-content:center }
+}
+/* ── Devoir en édition : « Ajouter au devoir » ── */
+.hw-attach-bar{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:16px; padding:10px 12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px }
+.hw-attach-lab{ font-size:12.5px; font-weight:600; color:#64748b; margin-right:4px }
+.hw-chip{ display:inline-flex; align-items:center; gap:8px; height:38px; padding:0 14px; border:1px solid #d5dde8; border-radius:999px; background:#fff; color:#334155; font:inherit; font-size:14px; font-weight:600; cursor:pointer; transition:background .15s, border-color .15s, color .15s }
+.hw-chip svg{ flex:none; color:#0471b5 }
+.hw-chip:hover:not(:disabled){ background:#eef7fe; border-color:#9fc3e6; color:#0471b5 }
+.hw-chip:focus-visible{ outline:2px solid #0080d0; outline-offset:2px }
+.hw-chip:disabled{ opacity:.6; cursor:progress }
+.hw-chip em{ font-style:normal; font-size:12px; font-weight:700; min-width:20px; height:20px; padding:0 6px; border-radius:999px; background:#0471b5; color:#fff; display:inline-flex; align-items:center; justify-content:center }
+.hw-chip.is-on{ background:#eaf4fd; border-color:#7bb6e6; color:#0471b5 }
+/* panneau de demande de rendu */
+.wr-draft{ margin-top:12px; padding:14px 16px; border:1px solid #bfdbfe; background:#f5faff; border-radius:12px }
+.wr-draft-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:4px }
+.wr-draft-ttl{ display:flex; align-items:center; gap:8px; color:#0f172a } .wr-draft-ttl svg{ color:#0471b5 }
+.wr-draft-x{ border:none; background:none; color:#dc2626; font:inherit; font-size:13px; font-weight:600; cursor:pointer; padding:4px 8px; border-radius:8px }
+.wr-draft-x:hover{ background:#fee2e2 }
+.wr-draft-grid{ display:grid; grid-template-columns:minmax(0,1fr); gap:4px; margin-top:10px }
+.wr-draft-grid label{ font-size:13px; font-weight:600; color:#334155; margin-top:8px } .wr-draft-grid label small{ font-weight:400; color:#94a3b8 }
+.wr-draft-grid input,.wr-draft-grid textarea{ width:100%; box-sizing:border-box; padding:9px 11px; border:1px solid #d5dde8; border-radius:10px; font:inherit; background:#fff }
+.wr-draft-grid input:focus,.wr-draft-grid textarea:focus{ outline:none; border-color:#0080d0; box-shadow:0 0 0 3px rgba(0,128,208,.16) }
+.wr-draft-grid textarea{ min-height:78px; resize:vertical }
+.wr-draft .wr-sum{ margin-top:10px }
+/* pied de l'éditeur */
+.hw-foot{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-top:16px; padding-top:14px; border-top:1px solid #e2e8f0 }
+.hw-foot-left,.hw-foot-right{ display:flex; gap:8px; flex-wrap:wrap }
+.hw-foot .btn{ height:40px; padding:0 18px; border-radius:10px; font-weight:600 }
+.hw-foot .btn-danger:hover{ background:#fee2e2 }
+@media (max-width:560px){ .hw-foot-right{ width:100%; } .hw-foot-right .btn{ flex:1 1 0 } .hw-foot-left{ order:2; width:100% } .hw-foot-left .btn{ width:100% } .hw-chip{ flex:1 1 100%; justify-content:center } .hw-attach-lab{ width:100% } }
+/* encadré « devoir à rendre » dans la carte du devoir (professeur et élève) */
+.wr-pblock{ display:flex; justify-content:space-between; align-items:center; gap:10px 16px; flex-wrap:wrap; margin-top:14px; padding:12px 14px; border:1px solid #bfdbfe; background:#f5faff; border-radius:12px }
+.wr-pinfo{ min-width:0; flex:1 1 240px }
+.wr-ptitle{ display:flex; align-items:center; flex-wrap:wrap; gap:8px; color:#0f172a } .wr-ptitle svg{ color:#0471b5; flex:none }
+.wr-slot .wr-card{ margin:14px 0 0; padding:14px 16px }
+.wr-card .wr-top strong{ font-size:15px }
+.wr-drop{ border-radius:12px }
+</style>
+<style id="patch-hw-tabs">
+/* sous-onglets Devoirs / Devoirs rendus : même présentation que Vie scolaire, sur fond blanc */
+body:not(.student-mode) #homeworkView .hw-subtabs{ display:flex; gap:6px; margin:0; padding:6px 14px 0; background:#fff; border:1px solid var(--border); border-bottom:2px solid #e2e8f0; border-radius:12px 12px 0 0; box-shadow:0 4px 10px rgba(16,24,40,.04) }
+body:not(.student-mode) #homeworkView .hw-subtabs .subtab-btn{ background:transparent; border:0; border-bottom:3px solid transparent; border-radius:0; padding:9px 16px; margin-bottom:-2px; font-size:14px; font-weight:600; color:#64748b; box-shadow:none }
+body:not(.student-mode) #homeworkView .hw-subtabs .subtab-btn:hover:not(.active){ background:transparent; color:#0075bf }
+body:not(.student-mode) #homeworkView .hw-subtabs .subtab-btn.active{ background:#fff; color:#0075bf; border-bottom-color:#0080d0; box-shadow:none }
+body:not(.student-mode) #homeworkView .hw-subtabs ~ .card{ margin-top:0; border-top:0; border-radius:0 0 12px 12px }
+.wr-drop.off{ opacity:.6; cursor:not-allowed; border-color:#cbd5e1; background:#f8fafc }
+</style>
 </body>
 </html>
