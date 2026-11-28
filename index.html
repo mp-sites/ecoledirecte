@@ -2749,14 +2749,17 @@ body.student-mode .hw-subtabs{ display:none !important }
    <div class="card-body">
     <div class="online-tests-shell">
      <div class="online-tests-toolbar">
-      <div id="onlineTestsSummary" class="online-modal-note" style="margin-top:0;">0 test réalisé</div>
-      <input id="onlineTestsSearch" type="search" class="modern-input otsearch" placeholder="Rechercher un test…" aria-label="Rechercher un test" autocomplete="off">
-      <select id="onlineTestsSubjectFilter" class="modern-select" aria-label="Filtrer par matière"><option value="">Toutes les matières</option></select>
-      <button class="btn btn-primary" id="openCreateOnlineTestBtn" type="button" style="font-size:16px;padding:12px 18px;">+ Créer un test</button>
-      <button class="btn" id="openBasicOnlineTestBtn" type="button" style="font-size:16px;padding:12px 18px;background:#fff;color:#048de2;border:2px solid #048de2;">Créer test basique</button>
-      <button class="btn" id="importOnlineTestBtn" type="button" style="font-size:16px;padding:12px 18px;">Importer un test</button>
-      <button class="btn" id="downloadOnlineTestTemplateBtn" type="button" style="font-size:16px;padding:12px 18px;">Télécharger modèle</button>
-      <input type="file" id="importOnlineTestFile" accept=".xlsx,.xls,.ods,.csv" style="display:none">
+      <div class="ot-actions">
+       <button class="btn btn-primary" id="openCreateOnlineTestBtn" type="button" title="Créer un test" aria-label="Créer un test"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+       <button class="btn" id="openBasicOnlineTestBtn" type="button" title="Créer un test basique" aria-label="Créer un test basique" style="background:#fff;color:#048de2;border:2px solid #048de2;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M12 11v6M9 14h6"/></svg></button>
+       <button class="btn" id="importOnlineTestBtn" type="button" title="Importer un test" aria-label="Importer un test"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7.5 8.5L12 4l4.5 4.5"/><path d="M4 15v3.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V15"/></svg></button>
+       <button class="btn" id="downloadOnlineTestTemplateBtn" type="button" title="Exporter / télécharger le modèle" aria-label="Exporter le modèle"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v12M7.5 11.5L12 16l4.5-4.5"/><path d="M4 15v3.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V15"/></svg></button>
+       <input type="file" id="importOnlineTestFile" accept=".xlsx,.xls,.ods,.csv" style="display:none">
+      </div>
+      <div class="ot-filters">
+       <input id="onlineTestsSearch" type="search" class="modern-input otsearch" placeholder="Rechercher un test…" aria-label="Rechercher un test" autocomplete="off">
+       <select id="onlineTestsSubjectFilter" class="modern-select" aria-label="Filtrer par matière"><option value="">Toutes les matières</option></select>
+      </div>
      </div>
      <div id="onlineTestsList" class="online-tests-grid"></div>
     </div>
@@ -2798,7 +2801,7 @@ body.student-mode .hw-subtabs{ display:none !important }
   </div>
   <div class="card" id="hwRendusPane" hidden>
    <div class="card-body">
-    <div class="wr-head"><h3>Devoirs rendus</h3><button type="button" class="btn" data-wr="refresh">Actualiser</button></div>
+    <div class="wr-head"><h3>Devoirs rendus</h3><button type="button" class="btn wr-refresh" data-wr="refresh" title="Actualiser" aria-label="Actualiser"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.5-4.2M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14.5 4.2M20 20v-4h-4"/></svg></button></div>
     <div id="wrProfList"></div>
    </div>
   </div>
@@ -13130,9 +13133,8 @@ function countPendingForOnlineTest(testId){
 }
 function renderOnlineTestsView(){
  ensureOnlineTestsStore();
- const summary=document.getElementById("onlineTestsSummary");
  const list=document.getElementById("onlineTestsList");
- if(!summary||!list) return;
+ if(!list) return;
  populateOnlineTestSubjectSuggestions();
  const allTests = DATA.onlineTests.slice().sort((a,b)=>String(b.updatedAt||"").localeCompare(String(a.updatedAt||"")));
  const subjSel=document.getElementById("onlineTestsSubjectFilter");
@@ -13148,7 +13150,6 @@ function renderOnlineTestsView(){
  const _norm=x=>String(x||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
  const _q=_norm(document.getElementById("onlineTestsSearch")?.value||"").trim();
  const tests = allTests.filter(t=>(!subjVal || (subjVal==="__NONE__" ? !String(t.subject||"").trim() : String(t.subject||"").trim()===subjVal)) && (!_q || _norm((t.title||"")+" "+(t.subject||"")).includes(_q)));
- summary.textContent = `${tests.length} test${tests.length>1?"s":""} réalisé${tests.length>1?"s":""}`; 
  if(!tests.length){
   list.innerHTML = allTests.length ? '<div class="online-modal-note">Aucun test ne correspond.</div>' : "";
   return;
@@ -15198,6 +15199,9 @@ function initApp(){
    /* tests de ce devoir proposés en mode entraînement (undefined = ancien devoir : on reprend le réglage historique du test) */
    trainingIds: Array.isArray(raw?.trainingIds) ? raw.trainingIds.filter(Boolean) : undefined,
    locked: raw?.locked !== false,
+   /* devoir à rendre : modification d'un rendu par l'élève / dépôt de nouveaux rendus (actifs par défaut) */
+   wrEdit: raw?.wrEdit !== false,
+   wrOpen: raw?.wrOpen !== false,
    createdAt: raw?.createdAt || new Date().toISOString(),
    updatedAt: raw?.updatedAt || new Date().toISOString()
   };
@@ -16131,7 +16135,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
    return `<label class="homework-quiz-option hwt-opt${picked?" is-picked":""}${good?" is-expected":""}"><input type="${type}" disabled ${picked?"checked":""}><span>${escHtml(c.text||"")}${otImgTag(c.img,"ot-img-choice",c.imgW)}</span></label>`;
   }).join("");
   const manual=d.manual?`<div class="hwt-exp hwt-exp-none">Aucune bonne réponse définie : utilise le bouton à côté des points.</div>`:"";
-  return `<div class="hwt-legend"><span class="hwt-lg-pick">Réponse de l’élève</span><span class="hwt-lg-exp">Réponse attendue</span></div><div class="homework-quiz-options">${opts}</div>${manual}`;
+  return `<div class="hwt-legend"><span class="hwt-lg-pick">Réponse de l’élève</span><span class="hwt-lg-exp">Réponse attendue</span></div><div class="homework-quiz-options hw-choices">${opts}</div>${manual}`;
  }
  function hwAutoDetails(submission,test){
   const snap=(submission&&submission.autoResult&&Array.isArray(submission.autoResult.details)) ? submission.autoResult.details.map(d=>d&&d.question).filter(Boolean) : [];
@@ -16407,7 +16411,7 @@ function syncTeacherHomeworkDate(force=false){ if(AUTH.role==="prof" && force &&
    }).join("")}</div>`;
   }
   const inputType=question.type==="qcm" ? "checkbox" : "radio";
-  return `<div class="homework-quiz-options">${(question.choices||[]).map(choice=>`
+  return `<div class="homework-quiz-options hw-choices">${(question.choices||[]).map(choice=>`
    <label class="homework-quiz-option">
     <input type="${inputType}" name="homework_${escHtml(question.id)}" value="${escHtml(choice.id)}">
     <span>${escHtml(choice.text||"")}${otImgTag(choice.img,"ot-img-choice",choice.imgW)}</span>
@@ -18119,6 +18123,25 @@ function handleHomeworkActionClick(btn){
   return new Blob([u],{type:mime||"application/octet-stream"});
  }
  function wrIsPreview(){ return document.body.classList.contains("ed-preview"); }
+ const WR_ICO={
+  trash:'<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 3h6a1 1 0 0 1 1 1v1h4a1 1 0 1 1 0 2h-1l-.8 12.1A2.5 2.5 0 0 1 15.7 21H8.3a2.5 2.5 0 0 1-2.5-2.4L5 7H4a1 1 0 0 1 0-2h4V4a1 1 0 0 1 1-1zm1 2v0h4V5h-4zM8 7l.8 11.9a.5.5 0 0 0 .5.1h5.4a.5.5 0 0 0 .5-.1L16 7H8zm2.5 2.5a1 1 0 0 1 1 1v5a1 1 0 1 1-2 0v-5a1 1 0 0 1 1-1zm3 0a1 1 0 0 1 1 1v5a1 1 0 1 1-2 0v-5a1 1 0 0 1 1-1z"/></svg>',
+  pen:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19.5 8.5a2.1 2.1 0 0 0-3-3L5 17v3z"/><path d="M14.5 7.5l3 3"/></svg>',
+  up:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7.5 8.5L12 4l4.5 4.5"/><path d="M4 15v3.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V15"/></svg>'
+ };
+ /* réglages d'une demande (portés par le devoir) : modification des rendus / dépôt de rendus — actifs par défaut */
+ function wrFlags(r){
+  const h=(DATA.homework||[]).find(x=>x.id===(r&&r.devoirId));
+  return { edit: h? h.wrEdit!==false : true, open: h? h.wrOpen!==false : true };
+ }
+ function wrToggleFlag(rid,key){
+  if(AUTH.role!=="prof"||wrIsPreview()) return;
+  const r=WR.reqs.find(x=>x.id===rid); if(!r) return;
+  const h=(DATA.homework||[]).find(x=>x.id===r.devoirId);
+  if(!h){ toast("Devoir introuvable pour cette demande."); return; }
+  h[key]=!(h[key]!==false);
+  saveData(); wrRenderProf();
+  toast(key==="wrEdit" ? (h.wrEdit?"Les élèves peuvent modifier leur rendu.":"Modification des rendus désactivée.") : (h.wrOpen?"Dépôt de rendus activé.":"Rendus clos."));
+ }
 
  /* ── sous-onglets (professeur) ── */
  function wrSetSub(sub){
@@ -18151,7 +18174,7 @@ function handleHomeworkActionClick(btn){
    const studs=wrStudents(r.cibleId).map(s=>({ id:s.id, name:wrNm(s), last:(s.last||"")+" "+(s.first||""), cls:(DATA.classes.find(c=>c.id===s.classId)||{}).name||"" }));
    Object.keys(subBy).forEach(id=>{ if(!studs.some(s=>s.id===id)) studs.push({ id, name:subBy[id].eleveNom||id, last:subBy[id].eleveNom||id, cls:"" }); });
    studs.sort((a,b)=>a.last.localeCompare(b.last,"fr",{sensitivity:"base"}));
-   const done=studs.filter(s=>subBy[s.id]).length;
+   const done=studs.filter(s=>subBy[s.id]).length, fl=wrFlags(r);
    const rows=studs.map(s=>{
     const x=subBy[s.id], files=x?(x.files||[]):[];
     return `<tr>
@@ -18169,8 +18192,11 @@ function handleHomeworkActionClick(btn){
      <span class="wr-subj">${escHtml(r.matiere)}</span>
      <span class="wr-title">${escHtml(r.titre||"")}</span>
      <span class="wr-count ${studs.length&&done===studs.length?"all":""}">${done} / ${studs.length} rendu${done>1?"s":""}</span>
-     ${r.dossierId?`<a class="wr-ico" href="https://drive.google.com/drive/folders/${encodeURIComponent(r.dossierId)}" target="_blank" rel="noopener" title="Ouvrir le dossier Drive : ${escHtml(r.dossierNom||"")}">📁</a>`:""}
-     <button type="button" class="wr-ico del" data-wr="del" data-rid="${escHtml(r.id)}" title="Supprimer cette demande et son dossier Drive">🗑</button>
+     <span class="wr-actions">
+      <button type="button" class="wr-ico wr-tg ${fl.edit?"on":"off"}" data-wr="tgedit" data-rid="${escHtml(r.id)}" aria-pressed="${fl.edit}" title="${fl.edit?"Modification des rendus par les élèves : activée (cliquer pour désactiver)":"Modification des rendus par les élèves : désactivée (cliquer pour activer)"}">${WR_ICO.pen}</button>
+      <button type="button" class="wr-ico wr-tg ${fl.open?"on":"off"}" data-wr="tgopen" data-rid="${escHtml(r.id)}" aria-pressed="${fl.open}" title="${fl.open?"Dépôt de rendus : activé (cliquer pour clore les rendus)":"Rendus clos (cliquer pour réactiver le dépôt)"}">${WR_ICO.up}</button>
+      <button type="button" class="wr-ico del" data-wr="del" data-rid="${escHtml(r.id)}" title="Supprimer cette demande et ses rendus" aria-label="Supprimer">${WR_ICO.trash}</button>
+     </span>
     </summary>
     ${r.consigne?`<div style="padding:8px 14px;color:#475569;font-size:14px;white-space:pre-wrap">${escHtml(r.consigne)}</div>`:""}
     <div class="wr-scroll"><table class="wr-table"><thead><tr><th>Élève</th><th>Classe</th><th>Rendu</th><th>Fichiers</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="5" class="wr-no">Aucun élève concerné.</td></tr>'}</tbody></table></div>
@@ -18331,7 +18357,7 @@ function handleHomeworkActionClick(btn){
   try{ const g=grpById(cibleId); return !!(g&&(g.memberIds||[]).includes(sid)); }catch(e){ return false; }
  }
  function wrCardHtml(r,inSlot){
-   const picks=WR.pick[r.id]||[], busy=WR.busy[r.id];
+   const picks=WR.pick[r.id]||[], busy=WR.busy[r.id], fl=wrFlags(r);
    return `<article class="wr-card ${r.rendu?"done":""}" data-rid="${escHtml(r.id)}">
     <div class="wr-top">
      <div><strong>${inSlot?(r.titre?escHtml(r.titre):"Devoir à rendre"):escHtml(r.matiere)+(r.titre?" — "+escHtml(r.titre):"")}</strong><div class="wr-meta">${inSlot&&!r.titre?"":""}À rendre pour le ${escHtml(wrFr(r.dateISO))}</div></div>
@@ -18339,13 +18365,23 @@ function handleHomeworkActionClick(btn){
     </div>
     ${r.consigne?`<p class="wr-instr">${escHtml(r.consigne)}</p>`:""}
     ${r.rendu?`<div class="wr-sent">✔ Envoyé le ${escHtml(wrWhen(r.rendu.rendeLe))} : ${(r.rendu.files||[]).map(f=>escHtml(f.name)).join(", ")}</div>`:""}
-    <label class="wr-drop${wrIsPreview()?" off":""}" data-wr-drop="${escHtml(r.id)}">
-     <input type="file" multiple class="wr-file" data-rid="${escHtml(r.id)}" ${wrIsPreview()?"disabled":""}>
-     <span>${r.rendu?"Remplacer mon envoi : ":""}Glisse tes fichiers ici ou <u>choisis-les</u></span><br><small>${wrIsPreview()?"Aperçu : le dépôt est désactivé en consultation":WR_MAX_FILES+" fichiers maximum · 8 Mo par fichier"}</small>
-    </label>
+    ${ (r.rendu ? fl.edit : fl.open)
+      ? `<label class="wr-drop" data-wr-drop="${escHtml(r.id)}">
+     <input type="file" multiple class="wr-file" data-rid="${escHtml(r.id)}">
+     <span>${r.rendu?"Remplacer mon envoi : ":""}Glisse tes fichiers ici ou <u>choisis-les</u></span><br><small>${WR_MAX_FILES+" fichiers maximum · 8 Mo par fichier"}</small>
+    </label>`
+      : `<div class="wr-closed">${r.rendu?"La modification de ton rendu est désactivée.":"Les rendus sont clos."}</div>` }
     ${picks.map((f,i)=>`<div class="wr-pick"><span>${escHtml(f.name)} · ${hwFmtSize(f.size)}</span><button type="button" data-wr="unpick" data-rid="${escHtml(r.id)}" data-i="${i}" aria-label="Retirer">×</button></div>`).join("")}
     ${picks.length||busy?`<button type="button" class="btn btn-primary wr-send" data-wr="send" data-rid="${escHtml(r.id)}" ${busy?"disabled":""}>${busy?"Envoi "+escHtml(busy)+"…":(r.rendu?"Remplacer l’envoi":"Envoyer le devoir")}</button>`:""}
    </article>`;
+ }
+ /* l'élève peut-il déposer (premier rendu) ou remplacer son rendu ? selon les réglages du professeur */
+ function wrCanSend(rid){
+  const r=WR.list.find(x=>x.id===rid); if(!r) return false;
+  const fl=wrFlags(r);
+  if(r.rendu && !fl.edit){ toast("La modification des rendus est désactivée."); return false; }
+  if(!r.rendu && !fl.open){ toast("Les rendus sont clos."); return false; }
+  return true;
  }
  function wrSlotHtml(hid){ const r=WR.list.find(x=>x.devoirId===hid); return r?wrCardHtml(r,true):""; }
  function wrRenderStudent(){
@@ -18356,7 +18392,7 @@ function handleHomeworkActionClick(btn){
   box.innerHTML=orph.map(wrCardHtml).join("");
  }
  function wrAddPicks(rid,files){
-  if(wrIsPreview()){ toast("Indisponible en mode consultation."); return; }
+  if(!wrCanSend(rid)) return;
   const cur=(WR.pick[rid]||[]).slice();
   for(const f of files){
    if(cur.length>=WR_MAX_FILES){ toast("Maximum "+WR_MAX_FILES+" fichiers."); break; }
@@ -18368,13 +18404,13 @@ function handleHomeworkActionClick(btn){
   WR.pick[rid]=cur; wrRenderStudent();
  }
  async function wrSend(rid){
-  if(wrIsPreview()){ toast("Indisponible en mode consultation."); return; }
+  if(!wrCanSend(rid)){ delete WR.pick[rid]; wrRenderStudent(); return; }
   const files=WR.pick[rid]||[]; if(!files.length||WR.busy[rid]) return;
   try{
    for(let i=0;i<files.length;i++){
     WR.busy[rid]=(i+1)+"/"+files.length; wrRenderStudent();
     const data=await hwReadB64(files[i]);
-    const j=await api("workUpload",{ demandeId:rid, name:files[i].name.slice(0,120), mime:files[i].type||"", data, first:i===0 });
+    const j=await api("workUpload",Object.assign({ demandeId:rid, name:files[i].name.slice(0,120), mime:files[i].type||"", data, first:i===0 }, wrIsPreview()?{ eleveId:AUTH.studentId }:{}));
     if(!j||!j.ok) throw new Error((j&&j.error)||"échec de l’envoi");
    }
    delete WR.pick[rid]; toast("Devoir envoyé ✔");
@@ -18391,6 +18427,10 @@ function handleHomeworkActionClick(btn){
  function wrAfterRender(isStudent){
   const st=document.getElementById("hwSubtabs"); if(st) st.style.display=isStudent?"none":"";
   if(isStudent){
+   /* le sous-onglet « Devoirs rendus » (professeur) ne doit jamais rester affiché côté élève (ex. aperçu depuis Consultation) */
+   WR.sub="devoirs";
+   { const dv=document.getElementById("hwDevoirsPane"), rn=document.getElementById("hwRendusPane"); if(dv) dv.hidden=false; if(rn) rn.hidden=true; }
+   document.querySelectorAll("#hwSubtabs .subtab-btn").forEach(b=>b.classList.toggle("active",b.dataset.hwsub==="devoirs"));
    if(wrIsPreview()){ if(WR.listFor!==AUTH.studentId){ WR.list=[]; WR.at=0; } }
    else if(WR.listFor){ WR.list=[]; WR.at=0; WR.listFor=null; }
    wrRenderStudent();
@@ -18411,6 +18451,8 @@ function handleHomeworkActionClick(btn){
   else if(k==="refresh"){ WR.loaded=false; wrLoadProf(); }
   else if(k==="dl"){ e.preventDefault(); wrDownload(w); }
   else if(k==="del"){ e.preventDefault(); wrDelete(w.dataset.rid); }
+  else if(k==="tgedit"){ e.preventDefault(); wrToggleFlag(w.dataset.rid,"wrEdit"); }
+  else if(k==="tgopen"){ e.preventDefault(); wrToggleFlag(w.dataset.rid,"wrOpen"); }
   else if(k==="send"){ wrSend(w.dataset.rid); }
   else if(k==="unpick"){ const a=(WR.pick[w.dataset.rid]||[]).slice(); a.splice(Number(w.dataset.i),1); WR.pick[w.dataset.rid]=a; wrRenderStudent(); }
  });
@@ -22424,6 +22466,91 @@ body:not(.student-mode) #homeworkView .hw-subtabs .subtab-btn:hover:not(.active)
 body:not(.student-mode) #homeworkView .hw-subtabs .subtab-btn.active{ background:#fff; color:#0075bf; border-bottom-color:#0080d0; box-shadow:none }
 body:not(.student-mode) #homeworkView .hw-subtabs ~ .card{ margin-top:0; border-top:0; border-radius:0 0 12px 12px }
 .wr-drop.off{ opacity:.6; cursor:not-allowed; border-color:#cbd5e1; background:#f8fafc }
+</style>
+<style id="patch-quiz-grid-toolbar">
+/* ── Quiz : propositions deux par deux (A B / C D / E …) ── */
+.homework-quiz-options.hw-choices,.online-preview-options,.hwc-choices{ display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; align-items:stretch }
+.hw-choices .homework-quiz-option,.online-preview-options .online-preview-option,.hwc-choices .hwc-choice{ min-width:0; box-sizing:border-box }
+.hw-choices .homework-quiz-option span,.online-preview-options .online-preview-option span,.hwc-choices .hwc-txt{ min-width:0; overflow-wrap:anywhere }
+.hw-choices img,.online-preview-options img,.hwc-choices img{ max-width:100% }
+
+/* ── Tests : boutons à gauche, puis recherche, puis filtre matière (sans dépasser) ── */
+#onlineTestsView .online-tests-toolbar{ display:flex !important; flex-wrap:wrap !important; justify-content:flex-start !important; align-items:center !important; gap:10px !important; width:100%; max-width:100%; box-sizing:border-box }
+#onlineTestsView .online-tests-toolbar > *{ flex:0 1 auto; min-width:0 }
+#onlineTestsView .online-tests-toolbar .ot-actions{ display:flex; flex-wrap:wrap; align-items:center; gap:10px; min-width:0; max-width:100% }
+#onlineTestsView .online-tests-toolbar .ot-filters{ display:flex; align-items:center; gap:10px; flex:1 1 320px; min-width:0; max-width:100% }
+#onlineTestsView .online-tests-toolbar .ot-actions .btn{ height:38px; box-sizing:border-box; font-size:14px !important; padding:8px 12px !important; white-space:nowrap; margin:0 }
+#onlineTestsView .online-tests-toolbar .ot-filters .otsearch{ flex:1 1 140px; width:auto !important; min-width:0 !important; max-width:none; height:38px; margin:0 !important; padding-top:0 !important; padding-bottom:0 !important }
+#onlineTestsView .online-tests-toolbar .ot-filters #onlineTestsSubjectFilter{ flex:0 1 200px; width:auto !important; min-width:0 !important; max-width:100%; height:38px; margin:0 !important; padding-top:0 !important; padding-bottom:0 !important }
+@media (max-width:760px){
+ #onlineTestsView .online-tests-toolbar .ot-actions{ flex:1 1 100%; width:100%; flex-wrap:nowrap; gap:6px }
+ #onlineTestsView .online-tests-toolbar .ot-actions .btn{ flex:1 1 0; min-width:0; height:auto; min-height:38px; font-size:11.5px !important; padding:6px 4px !important; white-space:normal; line-height:1.2; text-align:center }
+ #onlineTestsView .online-tests-toolbar .ot-filters{ flex:1 1 100%; width:100% }
+ #onlineTestsView .online-tests-toolbar .ot-filters .otsearch,
+ #onlineTestsView .online-tests-toolbar .ot-filters #onlineTestsSubjectFilter{ flex:1 1 0; font-size:14px }
+}
+</style>
+<style id="patch-wr-icons">
+/* Devoirs rendus : icônes (actualiser, crayon, importer, poubelle bleue unie) */
+.wr-head .wr-refresh{ display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; padding:0; color:#0471b5 }
+.wr-actions{ margin-left:auto; display:inline-flex; align-items:center; gap:8px }
+.wr-ico.del{ color:#0471b5 } .wr-ico.del:hover{ background:#eef9ff }
+.wr-ico svg{ display:block }
+.wr-ico.wr-tg{ position:relative }
+.wr-ico.wr-tg.on{ background:#0471b5; border-color:#0471b5; color:#fff }
+.wr-ico.wr-tg.on:hover{ background:#0366a3 }
+.wr-ico.wr-tg.off{ background:#fff; color:#94a3b8; border-color:#cbd5e1 }
+.wr-ico.wr-tg.off::after{ content:""; position:absolute; left:6px; right:6px; top:50%; height:2px; background:#94a3b8; border-radius:2px; transform:rotate(-45deg) }
+.wr-closed{ margin-top:10px; padding:10px 12px; border:1px dashed #cbd5e1; border-radius:12px; background:#f8fafc; color:#64748b; font-size:14px; text-align:center }
+</style>
+<style id="patch-tests-icons">
+#onlineTestsView .online-tests-toolbar{ flex-wrap:nowrap !important }
+#onlineTestsView .online-tests-toolbar .ot-actions{ flex:0 0 auto; flex-wrap:nowrap; width:auto; gap:8px }
+#onlineTestsView .online-tests-toolbar .ot-actions .btn{ flex:0 0 38px; width:38px; min-width:38px; height:38px; min-height:38px; padding:0 !important; display:inline-flex; align-items:center; justify-content:center; font-size:0 !important; line-height:1 }
+#onlineTestsView .online-tests-toolbar .ot-filters{ flex:1 1 0; min-width:0; width:auto }
+#onlineTestsView .online-tests-toolbar .ot-filters .otsearch{ flex:1 1 0 }
+#onlineTestsView .online-tests-toolbar .ot-filters #onlineTestsSubjectFilter{ flex:0 1 320px }
+@media (max-width:760px){
+ #onlineTestsView .online-tests-toolbar{ flex-wrap:wrap !important }
+ #onlineTestsView .online-tests-toolbar .ot-actions{ flex:1 1 100%; width:100% }
+ #onlineTestsView .online-tests-toolbar .ot-actions .btn{ flex:0 0 38px; width:38px; min-width:38px; height:38px; padding:0 !important; font-size:0 !important }
+ #onlineTestsView .online-tests-toolbar .ot-filters{ flex:1 1 100%; width:100% }
+ #onlineTestsView .online-tests-toolbar .ot-filters #onlineTestsSubjectFilter{ flex:1 1 0 }
+}
+</style>
+<style id="patch-tests-size">
+/* Tests en ligne : boutons plus gros, recherche large, filtre matière réduit */
+#onlineTestsView .online-tests-toolbar .ot-actions{ gap:10px }
+#onlineTestsView .online-tests-toolbar .ot-actions .btn{ flex:0 0 46px; width:46px; min-width:46px; height:46px; min-height:46px; border-radius:12px }
+#onlineTestsView .online-tests-toolbar .ot-actions .btn svg{ width:24px; height:24px }
+#onlineTestsView .online-tests-toolbar .ot-filters{ flex:1 1 0; min-width:0 }
+#onlineTestsView .online-tests-toolbar .ot-filters .otsearch{ flex:1 1 0; min-width:0 !important; width:auto !important; height:46px; font-size:15px }
+#onlineTestsView .online-tests-toolbar .ot-filters #onlineTestsSubjectFilter{ flex:0 0 150px; width:150px !important; min-width:0 !important; height:46px; font-size:14px }
+@media (max-width:760px){
+ #onlineTestsView .online-tests-toolbar .ot-actions .btn{ flex:0 0 44px; width:44px; min-width:44px; height:44px; min-height:44px }
+ #onlineTestsView .online-tests-toolbar .ot-filters .otsearch{ height:44px }
+ #onlineTestsView .online-tests-toolbar .ot-filters #onlineTestsSubjectFilter{ flex:0 0 120px; width:120px !important; height:44px }
+}
+</style>
+<style id="patch-tests-equal">
+/* Tests en ligne : recherche et filtre matière (composant .cs) de même largeur, sans dépasser */
+#onlineTestsView .online-tests-toolbar .ot-filters{ display:flex; align-items:center; gap:10px; flex:1 1 0; min-width:0; max-width:100%; box-sizing:border-box }
+#onlineTestsView .online-tests-toolbar .ot-filters > .otsearch,
+#onlineTestsView .online-tests-toolbar .ot-filters > .cs{ flex:1 1 0 !important; width:auto !important; min-width:0 !important; max-width:none !important; box-sizing:border-box; margin:0 !important }
+#onlineTestsView .online-tests-toolbar .ot-filters > .otsearch{ height:46px; box-sizing:border-box !important }
+#onlineTestsView .online-tests-toolbar .ot-filters > .cs{ box-sizing:border-box !important }
+#onlineTestsView .online-tests-toolbar .ot-filters > .cs{ position:relative }
+#onlineTestsView .online-tests-toolbar .ot-filters > .cs .cs-btn{ height:46px; min-width:0; overflow:hidden }
+@media (max-width:760px){
+ #onlineTestsView .online-tests-toolbar .ot-filters > .otsearch,
+ #onlineTestsView .online-tests-toolbar .ot-filters > .cs .cs-btn{ height:44px }
+}
+</style>
+<style id="patch-tests-grid">
+/* recherche et filtre matière : deux colonnes strictement égales */
+#onlineTestsView .online-tests-toolbar .ot-filters{ display:grid !important; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px; align-items:center }
+#onlineTestsView .online-tests-toolbar .ot-filters > .otsearch,
+#onlineTestsView .online-tests-toolbar .ot-filters > .cs{ flex:none !important; width:100% !important; min-width:0 !important }
 </style>
 </body>
 </html>
